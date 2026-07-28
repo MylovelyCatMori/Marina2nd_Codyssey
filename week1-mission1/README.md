@@ -4,29 +4,27 @@
 
 | 항목 | 내용 |
 |------|------|
-| OS | macOS (평가 환경) / Windows 11 (작업 환경) |
-| Shell | bash |
-| Terminal | - |
-| Docker | - |
-| Git | - |
-
-> 실습 완료 후 실제 버전 정보로 업데이트
+| OS | macOS (평가 환경) / Windows 11 Home (작업 환경) |
+| Shell | bash (Git Bash / PowerShell) |
+| Terminal | Antigravity Terminal (Windows), PowerShell |
+| Docker | 29.6.2 (docker:desktop-linux) |
+| Git | 2.53.0.windows.2 |
 
 ---
 
 ## 2) 수행 체크리스트
 
-- [ ] 터미널 기본 조작 및 폴더 구성
-- [ ] 권한 변경 실습 (chmod)
-- [ ] Docker 설치/점검 (docker --version, docker info)
-- [ ] hello-world 컨테이너 실행
-- [ ] ubuntu 컨테이너 진입 및 명령 실행
-- [ ] Dockerfile 빌드 및 컨테이너 실행
-- [ ] 포트 매핑 접속 확인 (브라우저 스크린샷)
-- [ ] 바인드 마운트 반영 확인
-- [ ] Docker 볼륨 영속성 검증
-- [ ] Git 사용자 설정 (git config --list)
-- [ ] GitHub 저장소 연동
+- [x] 터미널 기본 조작 및 폴더 구성
+- [x] 권한 변경 실습 (chmod) - ubuntu 컨테이너 내부에서 수행
+- [x] Docker 설치/점검 (docker --version, docker info)
+- [x] hello-world 컨테이너 실행
+- [x] ubuntu 컨테이너 진입 및 명령 실행
+- [x] Dockerfile 빌드 및 컨테이너 실행
+- [x] 포트 매핑 접속 확인 (브라우저 스크린샷)
+- [x] 바인드 마운트 반영 확인
+- [x] Docker 볼륨 영속성 검증
+- [x] Git 사용자 설정 (git config --list)
+- [ ] GitHub 저장소 연동 (스크린샷 첨부 예정)
 
 ---
 
@@ -79,42 +77,55 @@ Windows Git이 자동으로 CRLF 변환하는 것을 막는다. `.gitattributes`
 
 ### 3-1. 기본 조작
 
+ubuntu 컨테이너(`vol-test2`) 내부에서 수행.
+
 ```bash
-# 현재 위치 확인
-$ pwd
-
-# 숨김 파일 포함 목록
-$ ls -la
-
-# 디렉토리 생성
-$ mkdir -p ~/codyssey/practice
-
-# 파일 생성 및 내용 확인
-$ touch test.txt
-$ echo "hello codyssey" > test.txt
-$ cat test.txt
-
-# 복사 / 이름변경 / 삭제
-$ cp test.txt test_copy.txt
-$ mv test_copy.txt renamed.txt
-$ rm renamed.txt
+root@a80b52f7c295:/# pwd
+/
+root@a80b52f7c295:/# mkdir -p ~/practice/docs
+root@a80b52f7c295:/# cd ~/practice
+root@a80b52f7c295:~/practice# ls -la
+total 12
+drwxr-xr-x 3 root root 4096 Jul 28 13:00 .
+drwx------ 1 root root 4096 Jul 28 13:00 ..
+drwxr-xr-x 2 root root 4096 Jul 28 13:00 docs
+root@a80b52f7c295:~/practice# touch hello.txt
+root@a80b52f7c295:~/practice# cp hello.txt docs/hello-copy.txt
+root@a80b52f7c295:~/practice# mv hello.txt renamed.txt
+root@a80b52f7c295:~/practice# ls -la
+total 12
+drwxr-xr-x 3 root root 4096 Jul 28 13:00 .
+drwx------ 1 root root 4096 Jul 28 13:00 ..
+drwxr-xr-x 2 root root 4096 Jul 28 13:00 docs
+-rw-r--r-- 1 root root    0 Jul 28 13:00 renamed.txt
+root@a80b52f7c295:~/practice# rm renamed.txt
+root@a80b52f7c295:~/practice# ls -la
+total 12
+drwxr-xr-x 3 root root 4096 Jul 28 13:03 .
+drwx------ 1 root root 4096 Jul 28 13:00 ..
+drw-r--r-- 2 root root 4096 Jul 28 13:00 docs
 ```
-
-> 실습 후 실제 출력 결과 여기에 추가
 
 ### 3-2. 권한 실습
 
 ```bash
-# 파일 권한 확인
-$ ls -l test.txt
+# 변경 전 확인
+root@a80b52f7c295:~/practice# ls -la renamed.txt
+-rw-r--r-- 1 root root 0 Jul 28 13:00 renamed.txt
 
-# 권한 변경 (644: 소유자 읽기/쓰기, 그 외 읽기만)
-$ chmod 644 test.txt
-$ ls -l test.txt
+# 644 -> 755 (실행권한 추가)
+root@a80b52f7c295:~/practice# chmod 755 renamed.txt
+root@a80b52f7c295:~/practice# ls -la renamed.txt
+-rwxr-xr-x 1 root root 0 Jul 28 13:00 renamed.txt
 
-# 디렉토리 권한 변경 (755: 소유자 모든 권한, 그 외 읽기/실행)
-$ chmod 755 practice/
-$ ls -ld practice/
+# 디렉토리 755 -> 644 (실행권한 제거)
+root@a80b52f7c295:~/practice# chmod 644 docs/
+root@a80b52f7c295:~/practice# ls -la
+total 12
+drwxr-xr-x 3 root root 4096 Jul 28 13:00 .
+drwx------ 1 root root 4096 Jul 28 13:00 ..
+drw-r--r-- 2 root root 4096 Jul 28 13:00 docs
+-rwxr-xr-x 1 root root    0 Jul 28 13:00 renamed.txt
 ```
 
 **권한 표기법 해석:**
@@ -135,10 +146,10 @@ r=4, w=2, x=1
 
 ```bash
 $ docker --version
-# Docker version X.X.X, build XXXXXXX
+Docker version 29.6.2, build dfc4efb
 
-$ docker info
-# 실제 출력 결과 추가
+$ docker info --format '{{.ServerVersion}}'
+29.6.2
 ```
 
 ---
@@ -146,26 +157,44 @@ $ docker info
 ## 5) Docker 기본 운영
 
 ```bash
-# 이미지 목록
-$ docker images
-
-# hello-world 실행
 $ docker run hello-world
+Unable to find image 'hello-world:latest' locally
+latest: Pulling from library/hello-world
+4f55086f7dd0: Pull complete
+Digest: sha256:c3cbe1cc1aa588a64951ac6286e0df7b27fe2e6324b1001c619bb358770c0178
+Status: Downloaded newer image for hello-world:latest
 
-# ubuntu 컨테이너 진입
+Hello from Docker!
+This message shows that your installation appears to be working correctly.
+
 $ docker run -it ubuntu bash
-root@<id>:/# ls
-root@<id>:/# echo "hello from ubuntu container"
-root@<id>:/# exit
+root@e4f96ac758ff:/# ls
+bin   dev  home  lib64  mnt  proc  run   srv  tmp  var
+boot  etc  lib   media  opt  root  sbin  sys  usr
+root@e4f96ac758ff:/# echo "hello from ubuntu"
+hello from ubuntu
+root@e4f96ac758ff:/# exit
 
-# 컨테이너 목록 (실행중 + 종료된 것 포함)
+$ docker images
+IMAGE                ID             DISK USAGE
+hello-world:latest   c3cbe1cc1aa5   25.9kB
+ubuntu:latest        3131b4cc82a7   161MB
+
 $ docker ps -a
+CONTAINER ID   IMAGE         COMMAND    CREATED   STATUS                    NAMES
+e4f96ac758ff   ubuntu        "bash"     ...        Exited (0)               keen_banach
+3721937481ee   hello-world   "/hello"   ...        Exited (0)               friendly_gagarin
 
-# 로그 확인
-$ docker logs <container_id>
+$ docker logs e4f96ac758ff
+root@e4f96ac758ff:/# ls
+bin   dev  home  lib64  mnt  proc  run   srv  tmp  var
+boot  etc  lib   media  opt  root  sbin  sys  usr
+root@e4f96ac758ff:/# echo "hello from ubuntu"
+hello from ubuntu
 
-# 리소스 확인
 $ docker stats --no-stream
+CONTAINER ID   NAME      CPU %     MEM USAGE / LIMIT   MEM %     NET I/O   BLOCK I/O   PIDS
+(실행 중인 컨테이너 없음 - 빈 표 출력)
 ```
 
 ---
@@ -183,41 +212,54 @@ $ docker stats --no-stream
 | `COPY site/` | 커스텀 HTML 페이지로 기본 nginx 페이지 교체 |
 
 ```bash
-# 빌드
 $ docker build -t my-web:1.0 .
+[+] Building 1.6s (7/7) FINISHED                       docker:desktop-linux
+ => [internal] load build definition from Dockerfile   0.1s
+ => [internal] load metadata for docker.io/library/nginx:alpine   1.0s
+ => [1/2] FROM docker.io/library/nginx:alpine@sha256:4a73...      0.1s
+ => [2/2] COPY site/ /usr/share/nginx/html/                       0.0s
+ => exporting to image                                             0.3s
+ => naming to docker.io/library/my-web:1.0                        0.0s
 
-# 실행 (포트 매핑: 호스트 8080 -> 컨테이너 80)
 $ docker run -d -p 8080:80 --name my-web-8080 my-web:1.0
+723c77f9dd5a...
 
-# 접속 확인
-$ curl http://localhost:8080
+$ docker run -d -p 8081:80 --name my-web-bind \
+  -v "d:/Projects/Codyssey with Claude/week1-mission1/site:/usr/share/nginx/html" \
+  my-web:1.0
 ```
 
 **브라우저 접속 증거:**
-> http://localhost:8080 접속 스크린샷 추가
+
+포트 매핑(8080) 및 바인드 마운트(8081) 브라우저 스크린샷 참고.
+
+바인드 마운트 검증: `index.html`에서 "Running" -> "Running [Bind Mount Test]" 수정 후 브라우저 새로고침으로 즉시 반영 확인.
 
 ---
 
 ## 7) Docker 볼륨 영속성 검증
 
 ```bash
-# 볼륨 생성
 $ docker volume create mydata
+mydata
 
-# 컨테이너에 볼륨 연결 후 데이터 기록
 $ docker run -d --name vol-test -v mydata:/data ubuntu sleep infinity
-$ docker exec -it vol-test bash -c "echo 'persistent data' > /data/hello.txt && cat /data/hello.txt"
+43bc9e5b8241...
 
-# 컨테이너 삭제
+$ docker exec -it vol-test bash -c "echo 'codyssey-test' > /data/hello.txt && cat /data/hello.txt"
+codyssey-test
+
 $ docker rm -f vol-test
+vol-test
 
-# 새 컨테이너에서 동일 볼륨 연결 -> 데이터 유지 확인
 $ docker run -d --name vol-test2 -v mydata:/data ubuntu sleep infinity
-$ docker exec -it vol-test2 bash -c "cat /data/hello.txt"
-# 출력: persistent data
+a80b52f7c295...
+
+$ docker exec vol-test2 bash -c "cat /data/hello.txt"
+codyssey-test
 ```
 
-**검증 결과:** 컨테이너 삭제 후에도 볼륨 데이터 유지됨
+**검증 결과:** `vol-test` 삭제 후 `vol-test2`에서 동일 데이터(`codyssey-test`) 유지 확인. 볼륨이 컨테이너 생명주기와 독립적으로 존재함을 증명.
 
 ---
 
@@ -225,31 +267,88 @@ $ docker exec -it vol-test2 bash -c "cat /data/hello.txt"
 
 ```bash
 $ git config --list
-# 실제 출력 결과 추가 (토큰/비밀번호 절대 포함 금지)
+diff.astextplain.textconv=astextplain
+filter.lfs.clean=git-lfs clean -- %f
+filter.lfs.smudge=git-lfs smudge -- %f
+filter.lfs.process=git-lfs filter-process
+filter.lfs.required=true
+http.sslbackend=schannel
+core.autocrlf=true          # 전역(global) 기본값
+core.fscache=true
+core.symlinks=false
+pull.rebase=false
+credential.helper=manager
+init.defaultbranch=master
+user.email=kimyhwdcp@gmail.com
+user.name=MylovelyCatMori
+core.repositoryformatversion=0
+core.filemode=false
+core.bare=false
+core.logallrefupdates=true
+core.ignorecase=true
+core.autocrlf=false         # 로컬(이 저장소) 설정 - 전역 덮어씀
+user.name=MylovelyCatMori
+user.email=kimyhwdcp@gmail.com
+remote.origin.url=https://github.com/MylovelyCatMori/Marina2nd_Codyssey.git
+remote.origin.fetch=+refs/heads/*:refs/remotes/origin/*
+branch.master.remote=origin
+branch.master.merge=refs/heads/master
 ```
 
+> 민감정보(토큰, 비밀번호) 미포함 확인
+
+**GitHub 저장소:** https://github.com/MylovelyCatMori/Marina2nd_Codyssey
+
 **VSCode GitHub 연동 증거:**
-> 스크린샷 추가
+> 스크린샷 첨부 예정
 
 ---
 
 ## 9) 트러블슈팅
 
-### Case 1: (제목)
-| 항목 | 내용 |
-|------|------|
-| 문제 | |
-| 원인 가설 | |
-| 확인 방법 | |
-| 해결/대안 | |
+### Case 1: gh 설치 후 `command not found` 오류
 
-### Case 2: (제목)
 | 항목 | 내용 |
 |------|------|
-| 문제 | |
-| 원인 가설 | |
-| 확인 방법 | |
-| 해결/대안 | |
+| 문제 | `winget install --id GitHub.cli`로 gh 설치 완료했으나 터미널에서 `gh: command not found` 오류 발생 |
+| 원인 가설 | 설치 시점에 열려 있던 터미널 세션은 PATH 환경변수를 설치 전 상태로 유지함. 새로 추가된 경로를 인식하지 못함 |
+| 확인 방법 | 새 터미널(PowerShell) 창을 열고 `gh --version` 실행 |
+| 해결/대안 | 새 터미널에서 `gh --version` 정상 출력 확인. 기존 터미널 세션은 재시작 전까지 새 PATH 미반영 |
+
+```bash
+# 기존 터미널 (오류)
+$ gh --version
+command not found: gh
+
+# 새 터미널에서 확인
+$ gh --version
+gh version 2.96.0 (2026-07-02)
+```
+
+---
+
+### Case 2: 바인드 마운트 `docker run` 명령 미실행
+
+| 항목 | 내용 |
+|------|------|
+| 문제 | `docker run -d -p 8081:80 ... my-web:1.0` 실행했으나 컨테이너가 생성되지 않음. `docker ps -a`에서 해당 컨테이너 없음 |
+| 원인 가설 | 긴 명령어를 여러 줄로 나눠 입력하는 과정에서 줄바꿈 처리가 되지 않아 명령이 실제로 실행되지 않음 |
+| 확인 방법 | `docker logs my-web-bind` 실행 시 `Error response from daemon: No such container` 응답으로 미생성 확인 |
+| 해결/대안 | 명령을 한 줄로 붙여서 재입력. 컨테이너 ID 해시가 출력되며 정상 생성 확인 |
+
+```bash
+# 실패: 명령 미실행
+$ docker run -d -p 8081:80 --name my-web-bind \
+  -v "d:/Projects/..." my-web:1.0
+# (아무 출력 없음)
+
+$ docker logs my-web-bind
+Error response from daemon: No such container: my-web-bind
+
+# 해결: 한 줄로 재실행
+$ docker run -d -p 8081:80 --name my-web-bind -v "d:/Projects/Codyssey with Claude/week1-mission1/site:/usr/share/nginx/html" my-web:1.0
+7672a7f7f6cd...  # 컨테이너 ID 출력 = 정상 생성
+```
 
 ---
 
