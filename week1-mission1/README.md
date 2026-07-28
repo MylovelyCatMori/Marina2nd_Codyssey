@@ -166,9 +166,33 @@ r=4, w=2, x=1
 $ docker --version
 Docker version 29.6.2, build dfc4efb
 
-$ docker info --format '{{.ServerVersion}}'
-29.6.2
+$ docker info
+Client:
+ Version:    29.6.2
+ Context:    desktop-linux
+ Debug Mode: false
+
+Server:
+ Containers: 5
+  Running: 3
+  Paused: 0
+  Stopped: 2
+ Images: 3
+ Server Version: 29.6.2
+ Storage Driver: overlayfs
+ Logging Driver: json-file
+ Cgroup Driver: cgroupfs
+ Kernel Version: 6.18.33.2-microsoft-standard-WSL2
+ Operating System: Docker Desktop
+ OSType: linux
+ Architecture: x86_64
+ CPUs: 12
+ Total Memory: 3.241GiB
+ Debug Mode: false
+ Live Restore Enabled: false
 ```
+
+> Docker 데몬 정상 동작 확인. Server 섹션이 출력되면 daemon이 실행 중임을 의미함.
 
 ---
 
@@ -327,8 +351,10 @@ branch.master.merge=refs/heads/master
 
 **GitHub 저장소:** https://github.com/MylovelyCatMori/Marina2nd_Codyssey
 
-**VSCode GitHub 연동 증거:**
-> 스크린샷 첨부 예정
+**커밋 내역:** https://github.com/MylovelyCatMori/Marina2nd_Codyssey/commits/master
+
+**GitHub 연동 증거 (스크린샷):**
+> 저장소 메인 페이지 스크린샷 첨부
 
 ---
 
@@ -377,6 +403,36 @@ Error response from daemon: No such container: my-web-bind
 $ docker run -d -p 8081:80 --name my-web-bind -v "d:/Projects/Codyssey with Claude/week1-mission1/site:/usr/share/nginx/html" my-web:1.0
 7672a7f7f6cd...  # 컨테이너 ID 출력 = 정상 생성
 ```
+
+### Case 3: 포트 충돌 진단 절차
+
+| 항목 | 내용 |
+|------|------|
+| 문제 | `docker run -p 8080:80` 실행 시 "port is already allocated" 또는 브라우저 연결 거부 발생 |
+| 원인 가설 | 호스트 8080번 포트를 다른 프로세스(또는 이전 컨테이너)가 이미 점유 중 |
+| 확인 방법 | 포트 점유 프로세스 확인 후 종료 또는 다른 포트로 변경 |
+| 해결/대안 | 점유 프로세스 종료 또는 `-p 8082:80`처럼 다른 호스트 포트 사용 |
+
+```bash
+# 1단계: 어떤 컨테이너가 포트 점유 중인지 확인
+$ docker ps
+CONTAINER ID   IMAGE        PORTS                  NAMES
+723c77f9dd5a   my-web:1.0   0.0.0.0:8080->80/tcp   my-web-8080
+
+# 2단계: 컨테이너가 아닌 일반 프로세스 확인 (Linux/Mac)
+$ ss -tulnp | grep 8080
+# 또는
+$ netstat -ano | findstr 8080   # Windows
+
+# 3단계: 해결 - 기존 컨테이너 중지 후 재실행
+$ docker stop my-web-8080
+$ docker run -d -p 8080:80 --name my-web-new my-web:1.0
+
+# 또는 다른 포트로 우회
+$ docker run -d -p 8082:80 --name my-web-8082 my-web:1.0
+```
+
+> 포트는 한 번에 하나의 프로세스만 점유 가능. 충돌 시 먼저 `docker ps`로 컨테이너 점유 여부 확인, 없으면 OS 프로세스 확인 순으로 진단한다.
 
 ---
 
