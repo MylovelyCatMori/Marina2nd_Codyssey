@@ -145,6 +145,8 @@ drwx------ 1 root root 4096 Jul 28 13:00 ..
 drw-r--r-- 2 root root 4096 Jul 28 13:00 docs
 -rwxr-xr-x 1 root root    0 Jul 28 13:00 renamed.txt
 ```
+<img width="704" height="206" alt="스크린샷 2026-07-28 220306" src="https://github.com/user-attachments/assets/2095e175-a805-453e-bb8f-a3c7fb81d2a6" />
+
 
 **권한 표기법 해석:**
 ```
@@ -284,6 +286,8 @@ $ docker run -d -p 8081:80 --name my-web-bind \
 **브라우저 접속 증거:**
 
 포트 매핑(8080) 및 바인드 마운트(8081) 브라우저 스크린샷 참고.
+<img width="1917" height="975" alt="스크린샷 2026-07-28 214433" src="https://github.com/user-attachments/assets/49d475ba-d2df-4555-b44a-673870ebb0aa" />
+<img width="1919" height="980" alt="스크린샷 2026-07-28 214839" src="https://github.com/user-attachments/assets/5d2c0d60-ca1b-43e3-bb39-6f87b61d7eed" />
 
 바인드 마운트 검증: `index.html`에서 "Running" -> "Running [Bind Mount Test]" 수정 후 브라우저 새로고침으로 즉시 반영 확인.
 
@@ -312,6 +316,7 @@ codyssey-test
 ```
 
 **검증 결과:** `vol-test` 삭제 후 `vol-test2`에서 동일 데이터(`codyssey-test`) 유지 확인. 볼륨이 컨테이너 생명주기와 독립적으로 존재함을 증명.
+<img width="753" height="141" alt="스크린샷 2026-07-28 215713" src="https://github.com/user-attachments/assets/6677d06d-c29f-44ba-a064-e1c7bbb697ec" />
 
 ---
 
@@ -354,7 +359,7 @@ branch.master.merge=refs/heads/master
 **커밋 내역:** https://github.com/MylovelyCatMori/Marina2nd_Codyssey/commits/master
 
 **GitHub 연동 증거 (스크린샷):**
-> 저장소 메인 페이지 스크린샷 첨부
+<img width="1919" height="895" alt="스크린샷 2026-07-28 220851" src="https://github.com/user-attachments/assets/e9d5ca59-3019-41be-8bef-da38afbebdb2" />
 
 ---
 
