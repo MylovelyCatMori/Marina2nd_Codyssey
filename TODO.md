@@ -52,6 +52,13 @@
 
 ---
 
+### Week1 Mission1 - 보너스 과제 (선택, 언제든 가능)
+- [ ] Docker Compose 기초 (단일 서비스 compose로 실행)
+- [ ] Docker Compose 멀티 컨테이너 (웹서버 + 보조 서비스)
+- [ ] Compose 운영 명령어 (up/down/ps/logs)
+- [ ] 환경 변수 활용 (Dockerfile/Compose에서 주입)
+- [ ] GitHub SSH 키 설정
+
 ### Week2 Mission2 - Python & Git 기초 (대기)
 
 **제출 repo (신규):**

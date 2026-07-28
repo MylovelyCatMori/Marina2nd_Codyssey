@@ -1,0 +1,202 @@
+AI 사전평가 결과
+평가 시각: 2026-07-28 22:53:25
+
+83%
+(15 / 18 항목 통과)
+종합 평가
+대부분 핵심 요구사항을 README의 터미널 로그·Docker 명령·스크린샷·Dockerfile로 잘 증빙했습니다. 부족한 부분은 Git 푸시 기록(체크아웃/푸시 로그), 포트 충돌 진단 절차, 백업 전략 문서화입니다.
+
+항목별 평가 (18개)
+PASS
+평가 항목 #1
+근거
+week1-mission1/README.md > 'root@a80b52f7c295:~/practice# mv hello.txt renamed.txt'
+잘한 점
+파일 생성·복사·이동·삭제 명령과 출력이 실제 로그로 기록됨
+부족한 점
+해당 없음
+보완
+명령 앞뒤에 타임스탬프를 추가해 더 명확한 변경 이력을 남기세요
+
+PASS
+평가 항목 #2
+근거
+week1-mission1/README.md > 'root@a80b52f7c295:~/practice# chmod 755 renamed.txt'
+잘한 점
+chmod 수행과 변경 후 ls -la 결과가 함께 제시되어 있어 확인 용이함
+부족한 점
+해당 없음
+보완
+권한 변경 의도를 한 줄로 설명하면 검토자가 이해하기 더 쉬움
+
+PASS
+평가 항목 #3
+근거
+week1-mission1/README.md > '$ docker --version\nDocker version 29.6.2, build dfc4efb'
+잘한 점
+Docker 버전 명령과 서버 버전 정보가 명시되어 있음
+부족한 점
+동작 상태(daemon 상태 확인 방법)를 짧게 보완하면 완전함
+보완
+docker info 또는 systemctl 상태 출력도 함께 첨부해 데몬 상태를 명시하세요
+
+PASS
+평가 항목 #4
+근거
+week1-mission1/README.md > 'Hello from Docker!'
+잘한 점
+hello-world 실행 로그와 성공 메시지를 직접 캡쳐·기록함
+부족한 점
+해당 없음
+보완
+hello-world 실행 시 출력 전체(이미지 풀 로그 포함)를 원본으로 첨부하면 더 명확합니다
+
+PASS
+평가 항목 #5
+근거
+week1-mission1/README.md > '$ docker ps -a\nCONTAINER ID IMAGE COMMAND CREATED STATUS NAMES'
+잘한 점
+docker images/ps 출력 예시가 있어 목록·상태 확인 가능함
+부족한 점
+삭제 이력(예: docker rm 로그) 원문 캡처가 더 있으면 완전함
+보완
+컨테이너/이미지 삭제 명령과 반환값(컨테이너 ID)을 함께 스크린샷으로 남기세요
+
+PASS
+평가 항목 #6
+근거
+week1-mission1/README.md > '$ docker build -t my-web:1.0 .'
+잘한 점
+Dockerfile 파일과 docker build 명령·빌드 로그를 기록함
+부족한 점
+해당 없음
+보완
+빌드된 이미지 ID를 docker images 출력과 함께 명시하면 증빙력이 증가합니다
+
+PASS
+평가 항목 #7
+근거
+week1-mission1/README.md > '$ docker run -d -p 8080:80 --name my-web-8080 my-web:1.0'
+잘한 점
+포트 매핑 명령과 브라우저 스크린샷으로 접속 증거를 제시함
+부족한 점
+해당 없음
+보완
+브라우저에서 접속한 URL과 응답 HTTP 코드도 캡쳐해 첨부하세요
+
+PASS
+평가 항목 #8
+근거
+week1-mission1/README.md > '$ docker exec vol-test2 bash -c "cat /data/hello.txt"\ncodyssey-test'
+잘한 점
+볼륨 생성·쓰기·삭제·재마운트 후 데이터 유지까지 단계별로 증명함
+부족한 점
+해당 없음
+보완
+볼륨 목록(docker volume ls) 스냅샷을 추가하면 독립성 증명이 더 견고해집니다
+
+FAIL
+평가 항목 #9
+근거
+week1-mission1/README.md > 'remote.origin.url=https://github.com/MylovelyCatMori/Marina2nd_Codyssey.git'
+잘한 점
+git config 및 원격(repo URL) 정보가 README에 기록되어 있음
+부족한 점
+푸시 기록(예: git push 출력 또는 remote repo에 커밋 내역 링크) 미제출
+보완
+최근 push 명령 출력 또는 GitHub 리포지토의 커밋/브랜치 스냅샷 링크를 첨부하세요
+
+PASS
+평가 항목 #10
+근거
+README.md > ' README.md <- 이 파일'
+잘한 점
+루트 및 하위 디렉토리 구조와 파일 역할이 트리 형태로 정리되어 있음
+부족한 점
+해당 없음
+보완
+중요 파일별(예: Dockerfile, site/) 책임과 재현 절차를 한 줄씩 덧붙이면 더 명확합니다
+
+PASS
+평가 항목 #11
+근거
+week1-mission1/README.md > '$ docker run -d -p 8080:80 --name my-web-8080 my-web:1.0'
+잘한 점
+포트/볼륨 설정 방법과 명령 예시가 실습 위주로 잘 정리됨
+부족한 점
+해당 없음
+보완
+한두 줄의 재현 가이드(예: 순서별 명령 목록)를 별도 섹션으로 요약해 주세요
+
+PASS
+평가 항목 #12
+근거
+week1-mission1/README.md > '- **Docker**: 이미지-컨테이너 분리 개념, 포트매핑, 바인드마운트, 볼륨'
+잘한 점
+이미지와 컨테이너의 분리 개념을 명시적으로 기술함
+부족한 점
+해당 없음
+보완
+이미지 불변성과 컨테이너 상태 변경 차이를 짧은 예시로 보완하세요
+
+PASS
+평가 항목 #13
+근거
+week1-mission1/README.md > '컨테이너는 격리된 네트워크 공간에서 실행된다. 호스트에서 컨테이너 내부 포트에 접근하려면 `-p <호스트포트>:<컨테이너포트>`로 명시적 연결이 필요하다.'
+잘한 점
+포트 노출 필요성과 이유를 명확하게 설명함
+부족한 점
+해당 없음
+보완
+보안 관점(노출 최소화, 방화벽 등)도 한 문장 추가하면 더 좋습니다
+
+PASS
+평가 항목 #14
+근거
+week1-mission1/README.md > '- **절대 경로**: 루트(`/`)부터 시작. 예) `/home/user/documents/file.txt`'
+잘한 점
+절대·상대 경로 개념 및 플랫폼 관련 선택 기준을 설명함
+부족한 점
+해당 없음
+보완
+호스트 vs 컨테이너에서의 권장 사용 사례를 예시로 덧붙이세요
+
+PASS
+평가 항목 #15
+근거
+week1-mission1/README.md > '755 = rwxr-xr-x'
+잘한 점
+권한 숫자 규칙(755/644)과 rwx 비트 해석을 명확히 기술함
+부족한 점
+해당 없음
+보완
+소유자/그룹 변경 예시(chown)도 한 줄 추가하면 운영에 유용합니다
+
+FAIL
+평가 항목 #16
+부족한 점
+포트 확인→프로세스 확인→포트 변경의 진단 절차 문서화가 없음
+보완
+포트 충돌 진단 명령(netstat/ss/ps)과 순서화된 체크리스트를 README에 추가하세요
+
+FAIL
+평가 항목 #17
+근거
+week1-mission1/README.md > 'Docker 볼륨이란?\n컨테이너는 삭제되면 내부 데이터도 함께 사라진다. 볼륨은 컨테이너 생명주기와 독립적으로 데이터를 유지하는 저장소다.'
+잘한 점
+볼륨과 바인드 마운트 사용 사례 및 영속성 검증이 포함되어 있음
+부족한 점
+백업 전략(예: 볼륨 백업/스냅샷 절차)이 누락됨
+보완
+볼륨 백업/복원 방법 또는 권장 스냅샷 도구·명령을 문서화하세요
+
+PASS
+평가 항목 #18
+근거
+week1-mission1/README.md > '### Case 1: gh 설치 후 `command not found` 오류'
+잘한 점
+트러블슈팅을 가설→확인→조치 흐름으로 사례별로 서술함
+부족한 점
+해당 없음
+보완
+각 케이스에 사용한 로그·명령의 전체 원본(스크린샷/텍스트)을 링크로 연결하면 재현성이 높아집니다
