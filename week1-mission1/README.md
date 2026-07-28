@@ -1,5 +1,23 @@
 # Week1 Mission1 - 개발 워크스테이션 구축
 
+## 0) 프로젝트 개요
+
+### 미션 목표
+"코드가 내 컴퓨터에서만 돌아가는 문제"를 없애기 위한 개발 워크스테이션을 직접 구축한다.
+
+터미널(CLI), Docker(컨테이너), Git/GitHub(버전관리)를 직접 손으로 세팅하고, 각 도구가 왜 필요한지 설명할 수 있는 수준으로 체득하는 것이 목표다.
+
+### 핵심 학습 내용
+- **터미널**: 절대/상대 경로, 파일 조작, 권한(r/w/x) 이해
+- **Docker**: 이미지-컨테이너 분리 개념, 포트매핑, 바인드마운트, 볼륨
+- **Git/GitHub**: 로컬 버전관리(Git) vs 원격 협업 플랫폼(GitHub) 역할 차이
+
+### 작업 환경
+Windows 11에서 작업 후 GitHub에 push. 동료평가는 Mac(OrbStack 환경)에서 수행됨.
+크로스플랫폼 호환성을 위해 `.gitattributes`로 LF 줄바꿈 강제 적용.
+
+---
+
 ## 1) 실행 환경
 
 | 항목 | 내용 |
@@ -174,6 +192,16 @@ boot  etc  lib   media  opt  root  sbin  sys  usr
 root@e4f96ac758ff:/# echo "hello from ubuntu"
 hello from ubuntu
 root@e4f96ac758ff:/# exit
+
+**컨테이너 종료/유지 방식 차이 관찰:**
+
+| 방식 | 명령 | 컨테이너 상태 | 특징 |
+|------|------|--------------|------|
+| `exit` | 셸에서 exit 입력 | 종료(Exited) | 컨테이너가 완전히 멈춤 |
+| `Ctrl+P, Q` | 키보드 단축키 | 실행 유지(Up) | 컨테이너는 살아있고 셸만 분리 |
+| `docker exec` | 실행 중 컨테이너에 명령 추가 | 실행 유지 | 이미 떠 있는 컨테이너에 접속. 볼륨 실습에서 `docker exec vol-test2 bash -c "..."` 방식으로 사용 |
+
+> `docker run -it`는 새 컨테이너를 만들며 진입. `docker exec -it`는 이미 실행 중인 컨테이너에 추가로 진입. exit해도 컨테이너는 계속 실행됨.
 
 $ docker images
 IMAGE                ID             DISK USAGE
