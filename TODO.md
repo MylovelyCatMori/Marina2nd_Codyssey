@@ -36,24 +36,36 @@
 - [ ] GitHub 저장소 연동 -- [📸필수] VSCode GitHub 로그인 + 저장소 연동 화면
 
 **문서 완성**
-- [ ] week1-mission1/README.md 실제 출력 결과 채우기 (현재 플레이스홀더 상태)
-- [ ] 트러블슈팅 Case 최소 2건 작성
-- [ ] 브라우저 스크린샷 첨부
+- [x] week1-mission1/README.md 실제 출력 결과 채우기
+- [x] 트러블슈팅 Case 최소 2건 작성
+- [x] 프로젝트 개요 섹션 추가
+- [x] 컨테이너 종료/유지 차이 정리 추가
+- [x] 스크린샷 4장 README에 첨부
 
 **검증 & 제출**
+- [x] 위 커밋+push 완료 (프로젝트 개요/컨테이너 차이 추가분)
 - [ ] `/grill-with-docs` 로 핵심 개념 검증 + MD 저장 (Docker 컨테이너/볼륨/포트매핑)
+  - AI 사전평가 FAIL 3건 보완 완료 (docker info, 커밋링크, 포트충돌 진단)
 - [ ] knowledge/phase1-concepts.md 실제 내용으로 업데이트
-- [ ] 동료 평가 신청 (500pt 보유 확인 후)
+- [x] 동료 평가 신청 (500pt 보유 확인 후)
 - [ ] 동료 평가 3회 PASS
 
 ---
 
 ### Week2 Mission2 - Python & Git 기초 (대기)
-- [ ] 미션 수령 후 week2-mission2/ 폴더 세팅
-- [ ] phase1-admission/week2/ README 작성
+
+**제출 repo (신규):**
+- [ ] GitHub에 `codyssey-p1-mission2` repo 공개 생성
+- [ ] 루트에 README.md, .gitattributes 배치
+- [ ] 동료평가 신청 시 해당 repo URL 제출
+
+**프로젝트 관리 repo (Marina2nd_Codyssey):**
+- [ ] week2-mission2/ 폴더 세팅 (학습 이력용)
+- [ ] knowledge/ 미션 개념 누적
 
 ### Week3 Mission3 - CS 기초 (대기)
-- [ ] 미션 수령 후 week3-mission3/ 폴더 세팅
+- [ ] `codyssey-p1-mission3` repo 공개 생성 (미션 수령 후)
+- [ ] week3-mission3/ 폴더 세팅 (학습 이력용)
 
 ### Term-Project - 7개 도메인 아이디어톤 (대기)
 - [ ] 제약/Physical AI 도메인 아이디어 사전 구상
