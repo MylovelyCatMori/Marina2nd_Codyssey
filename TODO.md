@@ -46,6 +46,8 @@
 - [x] 위 커밋+push 완료 (프로젝트 개요/컨테이너 차이 추가분)
 - [ ] `/grill-with-docs` 로 핵심 개념 검증 + MD 저장 (Docker 컨테이너/볼륨/포트매핑)
   - AI 사전평가 FAIL 3건 보완 완료 (docker info, 커밋링크, 포트충돌 진단)
+  - 세션 중단: Q2 미답변 (chmod 644 docs/ 복구 명령)
+  - 재개 명령: `/grill-with-docs week1-mission1 이어서 진행해줘`
 - [ ] knowledge/phase1-concepts.md 실제 내용으로 업데이트
 - [x] 동료 평가 신청 (500pt 보유 확인 후)
 - [ ] 동료 평가 3회 PASS
