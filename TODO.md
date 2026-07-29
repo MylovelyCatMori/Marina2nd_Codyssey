@@ -58,7 +58,7 @@
 - [ ] 환경 변수 활용 (Dockerfile/Compose에서 주입)
 - [ ] GitHub SSH 키 설정
 
-### Week2 Mission2 - Python & Git 기초 (대기)
+### Week2 Mission2 - Python & Git 기초 ⬅ 다음 작업
 
 **제출 repo (신규):**
 - [ ] GitHub에 `codyssey-p1-mission2` repo 공개 생성
