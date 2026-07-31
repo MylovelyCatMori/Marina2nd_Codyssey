@@ -320,49 +320,6 @@ codyssey-test
 
 ---
 
-## 7-1) Docker 볼륨 백업 전략
-
-볼륨은 컨테이너와 독립적으로 존재하지만, 호스트 장애나 Docker 재설치 시 데이터가 손실될 수 있다. 이를 대비한 백업 절차는 다음과 같다.
-
-### 볼륨 백업 (볼륨 → 호스트 파일)
-
-```bash
-# 임시 컨테이너를 이용해 볼륨 내용을 tar로 압축하여 호스트에 저장
-$ docker run --rm \
-  -v mydata:/source \
-  -v "$(pwd):/backup" \
-  ubuntu \
-  tar czf /backup/mydata-backup.tar.gz -C /source .
-
-# Windows PowerShell에서는 $(pwd) 대신 ${PWD} 사용
-$ docker run --rm -v mydata:/source -v "${PWD}:/backup" ubuntu tar czf /backup/mydata-backup.tar.gz -C /source .
-```
-
-실행 결과: 현재 디렉토리에 `mydata-backup.tar.gz` 파일 생성.
-
-### 볼륨 복원 (호스트 파일 → 볼륨)
-
-```bash
-# 백업 파일로 볼륨 내용 복원
-$ docker run --rm \
-  -v mydata:/target \
-  -v "$(pwd):/backup" \
-  ubuntu \
-  tar xzf /backup/mydata-backup.tar.gz -C /target
-```
-
-### 백업 원리
-
-`--rm` 옵션은 컨테이너 종료 시 자동 삭제. 백업/복원 작업 전용 임시 컨테이너를 만들고, 볼륨과 호스트 디렉토리를 동시에 마운트하여 데이터를 복사한다.
-
-| 명령 | 역할 |
-|------|------|
-| `-v mydata:/source` | 백업할 볼륨을 컨테이너 `/source`에 마운트 |
-| `-v $(pwd):/backup` | 호스트 현재 디렉토리를 컨테이너 `/backup`에 마운트 |
-| `tar czf` | `/source` 내용을 `/backup`에 압축 저장 → 결과적으로 호스트에 저장 |
-
----
-
 ## 8) Git 설정 및 GitHub 연동
 
 ```bash
