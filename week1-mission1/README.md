@@ -320,6 +320,49 @@ codyssey-test
 
 ---
 
+## 7-1) Docker 볼륨 백업 전략
+
+볼륨은 컨테이너와 독립적으로 존재하지만, 호스트 장애나 Docker 재설치 시 데이터가 손실될 수 있다. 이를 대비한 백업 절차는 다음과 같다.
+
+### 볼륨 백업 (볼륨 → 호스트 파일)
+
+```bash
+# 임시 컨테이너를 이용해 볼륨 내용을 tar로 압축하여 호스트에 저장
+$ docker run --rm \
+  -v mydata:/source \
+  -v "$(pwd):/backup" \
+  ubuntu \
+  tar czf /backup/mydata-backup.tar.gz -C /source .
+
+# Windows PowerShell에서는 $(pwd) 대신 ${PWD} 사용
+$ docker run --rm -v mydata:/source -v "${PWD}:/backup" ubuntu tar czf /backup/mydata-backup.tar.gz -C /source .
+```
+
+실행 결과: 현재 디렉토리에 `mydata-backup.tar.gz` 파일 생성.
+
+### 볼륨 복원 (호스트 파일 → 볼륨)
+
+```bash
+# 백업 파일로 볼륨 내용 복원
+$ docker run --rm \
+  -v mydata:/target \
+  -v "$(pwd):/backup" \
+  ubuntu \
+  tar xzf /backup/mydata-backup.tar.gz -C /target
+```
+
+### 백업 원리
+
+`--rm` 옵션은 컨테이너 종료 시 자동 삭제. 백업/복원 작업 전용 임시 컨테이너를 만들고, 볼륨과 호스트 디렉토리를 동시에 마운트하여 데이터를 복사한다.
+
+| 명령 | 역할 |
+|------|------|
+| `-v mydata:/source` | 백업할 볼륨을 컨테이너 `/source`에 마운트 |
+| `-v $(pwd):/backup` | 호스트 현재 디렉토리를 컨테이너 `/backup`에 마운트 |
+| `tar czf` | `/source` 내용을 `/backup`에 압축 저장 → 결과적으로 호스트에 저장 |
+
+---
+
 ## 8) Git 설정 및 GitHub 연동
 
 ```bash
@@ -419,29 +462,87 @@ $ docker run -d -p 8081:80 --name my-web-bind -v "d:/Projects/Codyssey with Clau
 | 해결/대안 | 점유 프로세스 종료 또는 `-p 8082:80`처럼 다른 호스트 포트 사용 |
 
 ```bash
-# 1단계: 어떤 컨테이너가 포트 점유 중인지 확인
+# 1단계: Docker 컨테이너가 포트 점유 중인지 확인
 $ docker ps
 CONTAINER ID   IMAGE        PORTS                  NAMES
 723c77f9dd5a   my-web:1.0   0.0.0.0:8080->80/tcp   my-web-8080
 
-# 2단계: 컨테이너가 아닌 일반 프로세스 확인 (Linux/Mac)
-$ ss -tulnp | grep 8080
-# 또는
-$ netstat -ano | findstr 8080   # Windows
+# 2단계: OS 프로세스 확인 (환경별 명령어 다름)
+$ netstat -ano | findstr :8080        # Windows (cmd / PowerShell)
+$ lsof -i :8080                       # Mac
+$ ss -tulnp | grep 8080               # Linux (Ubuntu 컨테이너 내부)
 
-# 3단계: 해결 - 기존 컨테이너 중지 후 재실행
-$ docker stop my-web-8080
-$ docker run -d -p 8080:80 --name my-web-new my-web:1.0
+# 3단계-A: 기존 컨테이너가 있는 경우 → restart (run 아님)
+# docker run은 새 컨테이너를 만드는 명령. 같은 이름이 이미 존재하면 오류 발생.
+$ docker restart my-web-8080          # 이미 존재하는 컨테이너 재시작
 
-# 또는 다른 포트로 우회
+# 3단계-B: 컨테이너를 완전히 새로 만들어야 하는 경우
+$ docker rm my-web-8080               # 기존 컨테이너 삭제 후
+$ docker run -d -p 8080:80 --name my-web-8080 my-web:1.0   # 새로 생성
+
+# 3단계-C: 포트만 바꿔서 우회
 $ docker run -d -p 8082:80 --name my-web-8082 my-web:1.0
 ```
 
 > 포트는 한 번에 하나의 프로세스만 점유 가능. 충돌 시 먼저 `docker ps`로 컨테이너 점유 여부 확인, 없으면 OS 프로세스 확인 순으로 진단한다.
+> `docker restart` = 이미 존재하는 컨테이너 재시작. `docker run` = 새 컨테이너 생성. 컨테이너가 이미 있는 상황에서 `docker run`을 실행하면 이름 충돌 오류가 발생한다.
 
 ---
 
-## 10) 핵심 개념 정리
+## 10) 환경 재현 방법 (Runbook)
+
+이 문서를 처음 접한 사람이 동일한 환경을 처음부터 구성할 수 있도록 순서를 정리한다.
+
+### 사전 준비
+
+- Docker Desktop 설치 (v29.6.2 이상)
+- Git 설치 (v2.53 이상)
+- 저장소 clone
+
+```bash
+git clone https://github.com/MylovelyCatMori/Marina2nd_Codyssey.git
+cd Marina2nd_Codyssey/week1-mission1
+```
+
+### 이미지 빌드
+
+```bash
+docker build -t my-web:1.0 .
+```
+
+### 컨테이너 실행
+
+```bash
+# 포트 매핑 (빌드된 이미지 사용)
+docker run -d -p 8080:80 --name my-web-8080 my-web:1.0
+
+# 바인드 마운트 (소스 실시간 반영, 경로는 본인 환경에 맞게 수정)
+docker run -d -p 8081:80 --name my-web-bind \
+  -v "$(pwd)/site:/usr/share/nginx/html" \
+  my-web:1.0
+```
+
+### 접속 확인
+
+```
+http://localhost:8080   # 포트 매핑 확인
+http://localhost:8081   # 바인드 마운트 확인
+```
+
+### 볼륨 영속성 검증
+
+```bash
+docker volume create mydata
+docker run -d --name vol-test -v mydata:/data ubuntu sleep infinity
+docker exec vol-test bash -c "echo 'test-data' > /data/hello.txt"
+docker rm -f vol-test
+docker run -d --name vol-test2 -v mydata:/data ubuntu sleep infinity
+docker exec vol-test2 bash -c "cat /data/hello.txt"   # test-data 출력 확인
+```
+
+---
+
+## 11) 핵심 개념 정리
 
 ### 절대 경로 vs 상대 경로
 - **절대 경로**: 루트(`/`)부터 시작. 예) `/home/user/documents/file.txt`
