@@ -7,6 +7,7 @@
 
 | 파일 | 내용 |
 |------|------|
+| general-concepts.md | 미션 외 보충 학습 개념 누적 (동료평가 피드백, 자기주도 학습 등) |
 | phase1-concepts.md | 입학연수 핵심 개념 누적 |
 | pharma-ai-insights.md | 제약 현장 + AI 연결 인사이트 |
 | troubleshooting-patterns.md | 반복 오류 패턴 + 해결 방법 |
@@ -16,4 +17,5 @@
 ## 사용 규칙
 - 파일 덮어쓰기 금지 → 내용 추가(append)만 허용
 - 미션 완료 후 해당 phase 파일에 핵심 개념 기록
+- 미션 외 보충 학습 → general-concepts.md에 기록
 - pharma-ai-insights.md는 AI-tutor 세션 후 바로 기록

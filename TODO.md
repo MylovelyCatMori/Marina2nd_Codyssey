@@ -51,6 +51,14 @@
 
 ---
 
+### 보충 학습 (동료평가 피드백 기반)
+
+- [x] 듀얼부팅 + Ubuntu 개념 -- general-concepts.md 저장 완료 (2026-07-31)
+- [x] 포트 개념 (Well-known / Registered / Dynamic) -- general-concepts.md 저장 완료 (2026-07-31)
+- [x] 동료평가 항목 전체 점검 -- 완료 (2026-07-31)
+- [ ] Database ports -- 대기
+- [ ] 메모리 계층별 작동 구조와 성능 비교, 캐시메모리 -- 대기
+
 ### Week1 Mission1 - 보너스 과제 (선택, 언제든 가능)
 - [ ] Docker Compose 기초 (단일 서비스 compose로 실행)
 - [ ] Docker Compose 멀티 컨테이너 (웹서버 + 보조 서비스)
@@ -60,14 +68,27 @@
 
 ### Week2 Mission2 - Python & Git 기초 ⬅ 다음 작업
 
-**제출 repo (신규):**
-- [ ] GitHub에 `codyssey-p1-mission2` repo 공개 생성
-- [ ] 루트에 README.md, .gitattributes 배치
-- [ ] 동료평가 신청 시 해당 repo URL 제출
+**레포 전략 확정**: Mission1과 동일한 `Marina2nd_Codyssey` 단일 레포 사용. 별도 repo 없음.
+**제출**: 동료평가 시 Marina2nd_Codyssey URL + week2-mission2/ 경로 명시
 
-**프로젝트 관리 repo (Marina2nd_Codyssey):**
-- [ ] week2-mission2/ 폴더 세팅 (학습 이력용)
+**세팅:**
+- [x] week2-mission2/ 폴더 세팅 -- 2026-07-31 완료
+- [x] .gitattributes, .gitignore, README.md, STEPS.md 생성 -- 2026-07-31
+- [ ] 첫 커밋 + push (STEP 0)
 - [ ] knowledge/ 미션 개념 누적
+
+**구현 (STEPS.md 기준):**
+- [ ] STEP 1: Quiz 클래스
+- [ ] STEP 2: 기본 퀴즈 데이터 5개+ (주제: AI/바이브코딩/Physical AI/AX)
+- [ ] STEP 3: QuizGame 클래스 + state.json
+- [ ] STEP 4: 메뉴 + 입력 예외 처리
+- [ ] STEP 5: 퀴즈 풀기 (브랜치)
+- [ ] STEP 6: 퀴즈 추가
+- [ ] STEP 7: 퀴즈 목록
+- [ ] STEP 8: 점수 확인
+- [ ] STEP 9: README 완성 + 스크린샷
+- [ ] STEP 10: clone/pull 실습
+- [ ] 동료평가 신청
 
 ### Week3 Mission3 - CS 기초 (대기)
 - [ ] `codyssey-p1-mission3` repo 공개 생성 (미션 수령 후)
