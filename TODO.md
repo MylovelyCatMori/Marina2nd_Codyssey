@@ -1,6 +1,6 @@
 # TODO - Codyssey with Claude
 
-최종 업데이트: 2026-07-28
+최종 업데이트: 2026-08-03
 
 ---
 
@@ -15,11 +15,16 @@
 - [ ] 단계(phase) 완료 후 archive/ 이관
 - [ ] knowledge/ 개념 파일 미션별 누적 기록 유지
 
+### 레포 전략 (재검토 필요)
+- 기본: 단일 레포 `Marina2nd_Codyssey` (master 브랜치)
+- 동료평가용: 미션별 별도 레포 `codyssey-p1-mission2` 등 (main 브랜치, 평가 시스템 연동)
+- 미결정: 앞으로도 별도 레포를 매번 만들지, 단일 레포로 통일할지 추후 결정
+
 ---
 
 ## Week & Mission
 
-### Week1 Mission1 - 개발 워크스페이스 구축 (진행중)
+### Week1 Mission1 - 개발 워크스페이스 구축 (완료)
 
 **실습 수행** (캡쳐 규칙: 명령어 입력 + 출력 결과 반드시 함께 포함)
 - [x] 터미널 기본 조작 (pwd, ls -la, mkdir, cp, mv, rm) -- 출력 결과 README 코드블록 기록
@@ -88,7 +93,17 @@
 - [x] STEP 8: 점수 확인 -- 2026-08-03
 - [x] STEP 9: README 완성 + 스크린샷 8장 -- 2026-08-03
 - [x] STEP 10: clone/pull 실습 -- 2026-08-03
-- [ ] STUDY_GUIDE.md 학습 후 동료평가 신청
+
+**문서 보강 (2026-08-03):**
+- [x] main.py 상세 학습 주석 작성 (LEARNING_RULES 적용)
+- [x] STUDY_GUIDE.md 7단계 학습 가이드 작성
+- [x] README 대원칙 기반 전면 보강 (코드 구조/핵심 개념/예외 처리/Git 기록)
+- [x] LEARNING_RULES.md에 README 작성 대원칙 추가 (모든 미션 공통 적용)
+- [x] 파일 손상 테스트 스크린샷 GitHub 업로드
+
+**동료평가 준비:**
+- [ ] grill-me 세션으로 핵심 개념 학습 (Python/클래스/파일IO/Git)
+- [ ] 동료평가 신청
 
 ### Week3 Mission3 - CS 기초 (대기)
 - [ ] `codyssey-p1-mission3` repo 공개 생성 (미션 수령 후)
