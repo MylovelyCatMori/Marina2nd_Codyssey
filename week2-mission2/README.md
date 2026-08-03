@@ -178,8 +178,9 @@ week2-mission2/
 
 <img width="416" height="178" alt="image" src="https://github.com/user-attachments/assets/393376b5-2124-4388-a558-63a8dbcc458c" />
 
-<img width="558" height="289" alt="image" src="https://github.com/user-attachments/assets/fd7e9495-2e5d-4956-bfb2-f2449df492dd" />
+<img width="580" height="871" alt="image" src="https://github.com/user-attachments/assets/b027b66a-fdc4-4cd0-9c58-430586fabacc" />
 
+<img width="558" height="289" alt="image" src="https://github.com/user-attachments/assets/fd7e9495-2e5d-4956-bfb2-f2449df492dd" />
 
 
 ## 실행 화면
