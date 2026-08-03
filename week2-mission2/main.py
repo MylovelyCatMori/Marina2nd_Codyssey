@@ -146,3 +146,70 @@ class QuizGame:
         """기본 퀴즈 데이터를 불러온다."""
         self.quizzes = [Quiz(**q) for q in DEFAULT_QUIZZES]
         self.best_score = 0
+
+    def show_menu(self):
+        """메인 메뉴를 출력한다."""
+        print("\n=== AI 지식 퀴즈 게임 ===")
+        print("1. 퀴즈 풀기")
+        print("2. 퀴즈 추가")
+        print("3. 퀴즈 목록")
+        print("4. 점수 확인")
+        print("5. 종료")
+
+    def get_int_input(self, prompt, min_val, max_val):
+        """정수 입력을 받는다. 범위 밖/빈 입력/문자 입력 시 재입력 안내."""
+        while True:
+            raw = input(prompt).strip()
+            if not raw:
+                print("입력이 없습니다. 다시 입력해 주세요.")
+                continue
+            try:
+                value = int(raw)
+            except ValueError:
+                print("숫자만 입력해 주세요.")
+                continue
+            if not (min_val <= value <= max_val):
+                print(f"{min_val}~{max_val} 범위의 숫자를 입력해 주세요.")
+                continue
+            return value
+
+    def run(self):
+        """메인 루프. KeyboardInterrupt/EOFError 발생 시 저장 후 종료."""
+        try:
+            while True:
+                self.show_menu()
+                choice = self.get_int_input("선택: ", 1, 5)
+                if choice == 1:
+                    self.play()
+                elif choice == 2:
+                    self.add_quiz()
+                elif choice == 3:
+                    self.show_list()
+                elif choice == 4:
+                    self.show_score()
+                elif choice == 5:
+                    print("저장 중...")
+                    self.save_state()
+                    print("종료합니다.")
+                    break
+        except (KeyboardInterrupt, EOFError):
+            print("\n저장 중...")
+            self.save_state()
+            print("종료합니다.")
+
+    def play(self):
+        pass
+
+    def add_quiz(self):
+        pass
+
+    def show_list(self):
+        pass
+
+    def show_score(self):
+        pass
+
+
+if __name__ == "__main__":
+    game = QuizGame()
+    game.run()
