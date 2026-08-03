@@ -95,6 +95,9 @@ week2-mission2/
 ### 종료
 ![종료](docs/screenshots/exit.png)
 
+### 재실행 시 데이터 저장 확인
+![재실행 시 데이터 저장 확인](docs/screenshots/restart.png)
+
 ## Clone/Pull 실습 기록
 
 ```bash
