@@ -1,3 +1,8 @@
+import json
+import os
+
+STATE_FILE = "state.json"
+
 DEFAULT_QUIZZES = [
     {
         "question": "바이브코딩(Vibe Coding)의 핵심 특징은 무엇인가?",
@@ -89,3 +94,55 @@ class Quiz:
     def check_answer(self, user_input):
         """사용자 입력이 정답인지 확인한다. bool 반환."""
         return user_input == self.answer
+
+    def to_dict(self):
+        """직렬화용 dict 반환."""
+        return {
+            "question": self.question,
+            "choices": self.choices,
+            "answer": self.answer,
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        """dict에서 Quiz 인스턴스 생성."""
+        return cls(data["question"], data["choices"], data["answer"])
+
+
+class QuizGame:
+    """퀴즈 게임 전체를 관리하는 클래스."""
+
+    def __init__(self):
+        self.quizzes = []
+        self.best_score = 0
+        self.load_state()
+
+    def load_state(self):
+        """state.json에서 퀴즈 목록과 최고 점수를 불러온다."""
+        if not os.path.exists(STATE_FILE):
+            self._load_defaults()
+            return
+        try:
+            with open(STATE_FILE, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            self.quizzes = [Quiz.from_dict(q) for q in data.get("quizzes", [])]
+            self.best_score = data.get("best_score", 0)
+            if not self.quizzes:
+                self._load_defaults()
+        except json.JSONDecodeError:
+            print("저장 파일이 손상되었습니다. 기본 데이터로 초기화합니다.")
+            self._load_defaults()
+
+    def save_state(self):
+        """현재 퀴즈 목록과 최고 점수를 state.json에 저장한다."""
+        data = {
+            "quizzes": [q.to_dict() for q in self.quizzes],
+            "best_score": self.best_score,
+        }
+        with open(STATE_FILE, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+
+    def _load_defaults(self):
+        """기본 퀴즈 데이터를 불러온다."""
+        self.quizzes = [Quiz(**q) for q in DEFAULT_QUIZZES]
+        self.best_score = 0
