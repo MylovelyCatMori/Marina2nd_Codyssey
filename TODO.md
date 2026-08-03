@@ -47,7 +47,7 @@
 - [x] `/grill-with-docs` 로 핵심 개념 검증 + MD 저장 (Docker 컨테이너/볼륨/포트매핑) -- 2026-07-29 Q1~Q6 완료
 - [x] knowledge/phase1-concepts.md 실제 내용으로 업데이트 -- 2026-07-29 grill-with-docs Q1~Q6 반영
 - [x] 동료 평가 신청 (500pt 보유 확인 후)
-- [ ] 동료 평가 3회 PASS (1회 FAIL → README 보완 완료 2026-07-31, 재신청 대기)
+- [x] 동료 평가 3회 PASS -- 완료 2026-08-03
 
 ---
 
