@@ -198,7 +198,31 @@ class QuizGame:
             print("종료합니다.")
 
     def play(self):
-        pass
+        """퀴즈를 순서대로 출제하고 결과를 표시한다."""
+        if not self.quizzes:
+            print("등록된 퀴즈가 없습니다. 먼저 퀴즈를 추가해 주세요.")
+            return
+
+        score = 0
+        total = len(self.quizzes)
+        print(f"\n총 {total}문제를 시작합니다.\n")
+
+        for i, quiz in enumerate(self.quizzes, start=1):
+            print(f"[{i}/{total}]", end="")
+            quiz.display()
+            answer = self.get_int_input("정답 번호 입력: ", 1, 4)
+            if quiz.check_answer(answer):
+                print("정답입니다!")
+                score += 1
+            else:
+                print(f"오답입니다. 정답은 {quiz.answer}번이었습니다.")
+
+        print(f"\n결과: {total}문제 중 {score}개 정답")
+
+        if score > self.best_score:
+            print(f"최고 점수 갱신! {self.best_score} -> {score}")
+            self.best_score = score
+            self.save_state()
 
     def add_quiz(self):
         pass
