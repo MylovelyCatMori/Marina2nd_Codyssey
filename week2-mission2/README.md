@@ -174,6 +174,13 @@ week2-mission2/
 | 퀴즈 추가 시 빈 선택지 입력 | `"선택지를 입력해 주세요"` 안내 후 재입력 | `add_quiz()` - `if choice:` 검증 루프 |
 
 ---
+<img width="507" height="335" alt="image" src="https://github.com/user-attachments/assets/1c48d667-5df5-4ad6-9789-7b74184bda82" />
+
+<img width="416" height="178" alt="image" src="https://github.com/user-attachments/assets/393376b5-2124-4388-a558-63a8dbcc458c" />
+
+<img width="558" height="289" alt="image" src="https://github.com/user-attachments/assets/fd7e9495-2e5d-4956-bfb2-f2449df492dd" />
+
+
 
 ## 실행 화면
 
