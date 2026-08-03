@@ -258,7 +258,12 @@ class QuizGame:
             print(f"{i}. {quiz.question}")
 
     def show_score(self):
-        pass
+        """최고 점수를 표시한다."""
+        print("\n=== 점수 확인 ===")
+        if self.best_score == 0:
+            print("아직 플레이 기록이 없습니다.")
+        else:
+            print(f"최고 점수: {self.best_score} / {len(self.quizzes)}")
 
 
 if __name__ == "__main__":
