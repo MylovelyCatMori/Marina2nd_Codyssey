@@ -167,6 +167,8 @@ week2-mission2/
 | 숫자가 아닌 입력 (abc) | `"숫자만 입력해 주세요"` 안내 후 재입력 | `get_int_input()` - `except ValueError:` |
 | 범위 밖 숫자 (0, 9 등) | `"1~5 범위의 숫자를 입력해 주세요"` 안내 후 재입력 | `get_int_input()` - `if not (min_val <= value <= max_val):` |
 | Ctrl+C 강제 종료 | 데이터 저장 후 안전하게 종료 | `run()` - `except (KeyboardInterrupt, EOFError):` |
+<img width="416" height="178" alt="image" src="https://github.com/user-attachments/assets/393376b5-2124-4388-a558-63a8dbcc458c" />
+
 | state.json 파일 없음 | 기본 퀴즈 7개로 자동 시작 | `load_state()` - `if not os.path.exists(STATE_FILE):` |
 | state.json 파일 손상 | `"저장 파일이 손상되었습니다"` 안내 후 기본 데이터로 복구 | `load_state()` - `except json.JSONDecodeError:` |
 | 퀴즈 없는 상태에서 풀기 시도 | `"등록된 퀴즈가 없습니다"` 안내 후 메뉴로 복귀 | `play()` - `if not self.quizzes:` |
