@@ -95,4 +95,20 @@ week2-mission2/
 ### 종료
 ![종료](docs/screenshots/exit.png)
 
-# Clone/Pull 실습 완료
+## Clone/Pull 실습 기록
+
+```bash
+# 1. 별도 디렉토리에 저장소 복제 (clone)
+git clone https://github.com/MylovelyCatMori/Marina2nd_Codyssey.git D:/Projects/Marina2nd_Codyssey-clone
+
+# 2. 복제된 저장소에서 README 수정 후 commit + push
+cd D:/Projects/Marina2nd_Codyssey-clone
+git add week2-mission2/README.md
+git commit -m "Docs: clone/pull 실습용 변경"
+git push origin master
+
+# 3. 원래 작업 디렉토리에서 변경사항 가져오기 (pull)
+cd "D:/Projects/Codyssey with Claude"
+git pull origin master
+# -> Fast-forward 병합으로 변경사항 정상 반영 확인
+```
