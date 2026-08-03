@@ -225,7 +225,28 @@ class QuizGame:
             self.save_state()
 
     def add_quiz(self):
-        pass
+        """새 퀴즈를 입력받아 목록에 추가하고 저장한다."""
+        print("\n=== 퀴즈 추가 ===")
+        question = input("문제를 입력하세요: ").strip()
+        if not question:
+            print("문제를 입력하지 않아 취소합니다.")
+            return
+
+        choices = []
+        for i in range(1, 5):
+            while True:
+                choice = input(f"선택지 {i}: ").strip()
+                if choice:
+                    choices.append(choice)
+                    break
+                print("선택지를 입력해 주세요.")
+
+        answer = self.get_int_input("정답 번호 (1~4): ", 1, 4)
+
+        new_quiz = Quiz(question, choices, answer)
+        self.quizzes.append(new_quiz)
+        self.save_state()
+        print("퀴즈가 추가되었습니다.")
 
     def show_list(self):
         pass
