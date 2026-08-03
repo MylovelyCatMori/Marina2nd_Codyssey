@@ -98,6 +98,12 @@ week2-mission2/
 ### 재실행 시 데이터 저장 확인
 ![재실행 시 데이터 저장 확인](docs/screenshots/restart.png)
 
+### Git 설정 확인
+![Git 설정](docs/screenshots/git%20config.png)
+
+### Git 커밋 이력
+![Git 로그](docs/screenshots/git%20log.png)
+
 ## Clone/Pull 실습 기록
 
 ```bash
