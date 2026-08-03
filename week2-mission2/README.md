@@ -38,12 +38,17 @@ week2-mission2/
 ├── README.md        # 프로젝트 문서
 ├── .gitattributes   # LF 강제 (Windows/Mac 호환)
 ├── .gitignore       # Python 빌드 파일 제외
+├── STUDY_GUIDE.md   # 동료평가 대비 학습 가이드
 └── docs/
     └── screenshots/ # 실행 화면 스크린샷
-        ├── menu.png
-        ├── play.png
-        ├── add_quiz.png
-        └── score.png
+        ├── manu.png
+        ├── play1.png
+        ├── play2.png
+        ├── add quiz.png
+        ├── add quiz2.png
+        ├── add quiz3.png
+        ├── score.png
+        └── exit.png
 ```
 
 ## 데이터 파일 설명 (state.json)
@@ -76,4 +81,20 @@ week2-mission2/
 
 ## 실행 화면
 
-<!-- 스크린샷은 STEP 9에서 추가 -->
+### 메뉴 화면
+![메뉴 화면](docs/screenshots/manu.png)
+
+### 퀴즈 풀기
+![퀴즈 풀기 1](docs/screenshots/play1.png)
+![퀴즈 풀기 2](docs/screenshots/play2.png)
+
+### 퀴즈 추가
+![퀴즈 추가 1](docs/screenshots/add%20quiz.png)
+![퀴즈 추가 2](docs/screenshots/add%20quiz2.png)
+![퀴즈 추가 3](docs/screenshots/add%20quiz3.png)
+
+### 점수 확인
+![점수 확인](docs/screenshots/score.png)
+
+### 종료
+![종료](docs/screenshots/exit.png)
