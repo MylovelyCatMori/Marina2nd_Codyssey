@@ -66,7 +66,7 @@
 - [ ] 환경 변수 활용 (Dockerfile/Compose에서 주입)
 - [ ] GitHub SSH 키 설정
 
-### Week2 Mission2 - Python & Git 기초 ⬅ 다음 작업
+### Week2 Mission2 - Python & Git 기초
 
 **레포 전략 확정**: Mission1과 동일한 `Marina2nd_Codyssey` 단일 레포 사용. 별도 repo 없음.
 **제출**: 동료평가 시 Marina2nd_Codyssey URL + week2-mission2/ 경로 명시
@@ -74,21 +74,21 @@
 **세팅:**
 - [x] week2-mission2/ 폴더 세팅 -- 2026-07-31 완료
 - [x] .gitattributes, .gitignore, README.md, STEPS.md 생성 -- 2026-07-31
-- [ ] 첫 커밋 + push (STEP 0)
+- [x] 첫 커밋 + push (STEP 0) -- 2026-07-31
 - [ ] knowledge/ 미션 개념 누적
 
 **구현 (STEPS.md 기준):**
-- [ ] STEP 1: Quiz 클래스
-- [ ] STEP 2: 기본 퀴즈 데이터 5개+ (주제: AI/바이브코딩/Physical AI/AX)
-- [ ] STEP 3: QuizGame 클래스 + state.json
-- [ ] STEP 4: 메뉴 + 입력 예외 처리
-- [ ] STEP 5: 퀴즈 풀기 (브랜치)
-- [ ] STEP 6: 퀴즈 추가
-- [ ] STEP 7: 퀴즈 목록
-- [ ] STEP 8: 점수 확인
-- [ ] STEP 9: README 완성 + 스크린샷
-- [ ] STEP 10: clone/pull 실습
-- [ ] 동료평가 신청
+- [x] STEP 1: Quiz 클래스 -- 2026-08-03
+- [x] STEP 2: 기본 퀴즈 데이터 7개 (주제: AI/바이브코딩/Physical AI/AX/Agentic AI) -- 2026-08-03
+- [x] STEP 3: QuizGame 클래스 + state.json -- 2026-08-03
+- [x] STEP 4: 메뉴 + 입력 예외 처리 -- 2026-08-03
+- [x] STEP 5: 퀴즈 풀기 (브랜치 feature/play) -- 2026-08-03
+- [x] STEP 6: 퀴즈 추가 -- 2026-08-03
+- [x] STEP 7: 퀴즈 목록 -- 2026-08-03
+- [x] STEP 8: 점수 확인 -- 2026-08-03
+- [x] STEP 9: README 완성 + 스크린샷 8장 -- 2026-08-03
+- [x] STEP 10: clone/pull 실습 -- 2026-08-03
+- [ ] STUDY_GUIDE.md 학습 후 동료평가 신청
 
 ### Week3 Mission3 - CS 기초 (대기)
 - [ ] `codyssey-p1-mission3` repo 공개 생성 (미션 수령 후)
