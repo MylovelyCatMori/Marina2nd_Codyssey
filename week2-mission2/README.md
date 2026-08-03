@@ -98,3 +98,5 @@ week2-mission2/
 
 ### 종료
 ![종료](docs/screenshots/exit.png)
+
+# Clone/Pull 실습 완료
