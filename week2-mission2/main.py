@@ -1,7 +1,8 @@
 import json
 import os
 
-STATE_FILE = "state.json"
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+STATE_FILE = os.path.join(BASE_DIR, "state.json")
 
 DEFAULT_QUIZZES = [
     {
@@ -121,6 +122,7 @@ class QuizGame:
         """state.json에서 퀴즈 목록과 최고 점수를 불러온다."""
         if not os.path.exists(STATE_FILE):
             self._load_defaults()
+            print(f"기본 퀴즈 데이터를 불러왔습니다. (퀴즈 {len(self.quizzes)}개)")
             return
         try:
             with open(STATE_FILE, "r", encoding="utf-8") as f:
@@ -129,6 +131,7 @@ class QuizGame:
             self.best_score = data.get("best_score", 0)
             if not self.quizzes:
                 self._load_defaults()
+            print(f"저장된 데이터를 불러왔습니다. (퀴즈 {len(self.quizzes)}개, 최고점수 {self.best_score}점)")
         except json.JSONDecodeError:
             print("저장 파일이 손상되었습니다. 기본 데이터로 초기화합니다.")
             self._load_defaults()
