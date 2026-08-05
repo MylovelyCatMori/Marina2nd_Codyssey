@@ -1,5 +1,7 @@
 # AI 지식 퀴즈 게임
 
+> **원격 저장소**: [Marina2nd_Codyssey](https://github.com/MylovelyCatMori/Marina2nd_Codyssey) / `week2-mission2/`
+
 ## 프로젝트 개요
 
 터미널에서 동작하는 AI 주제 퀴즈 게임입니다.
@@ -248,6 +250,71 @@ feature/play:                                C6 -----
 | `Fix:` | 버그 수정 | `Fix: state.json 경로를 main.py 기준으로 변경` |
 | `Docs:` | 문서 작성/수정 | `Docs: README 완성 및 스크린샷 추가` |
 | `Chore:` | 설정/운영 관련 | `Chore: Mission2 초기 세팅` |
+
+### Git 커밋 이력 (텍스트)
+
+```
+* 747b321 Update README.md
+* 43f6074 Update README.md
+* 4e4ca0b Update images in README.md
+* d5acdae Update README with error handling descriptions
+* b9964ad Enhance README with images and quiz instructions
+* e7385bd Docs: README 대원칙 수립 및 Mission2 README 전면 보강
+* 568a713 Docs: README 요구사항 재검증 및 재배열
+* cffdf97 Docs: git config, git log 스크린샷 README에 추가
+* 6cfd1d8 Docs: 재실행 데이터 유지 스크린샷 README에 추가
+* 036bb18 Docs: Clone/Pull 실습 기록 상세 작성
+*   282c532 Merge branch 'master'
+|\
+| * ff25306 Remove quiz topic selection rationale from README
+* | 9302138 Docs: 재실행 데이터 유지 스크린샷 추가 + main.py 상세 학습 주석
+|/
+* 2183b83 Docs: 개발 환경 스크린샷 추가 (git config)
+* d62074c Docs: git log 스크린샷 추가 및 TODO 업데이트
+* 53e7260 Docs: clone/pull 실습용 변경
+* c66e725 Docs: README 완성 및 실행 화면 스크린샷 8장 추가
+* 5b57b7c Fix: state.json 경로를 main.py 기준으로 변경
+* a6deaed Feat: 점수 확인 기능 구현 (최고 점수 표시)
+* 25ce41f Feat: 퀴즈 목록 기능 구현
+* 5a7728a Feat: 퀴즈 추가 기능 구현 및 state.json 자동 저장
+* 5d5d369 Feat: 퀴즈 풀기 기능 구현 (정답 확인/결과 표시/최고점수 갱신)
+* 0883b3c Feat: 메뉴 기능 및 공통 입력/예외 처리 구현
+```
+
+---
+
+## 요구변경 시 수정 위치 가이드
+
+코드 구조를 이해하면 "어디를 고쳐야 하는가?"를 빠르게 판단할 수 있습니다.
+
+| 변경 요구 | 수정 위치 | 이유 |
+|-----------|-----------|------|
+| 점수 계산 방식 변경 (가중치 등) | `QuizGame.play()` 내 `score += 1` 부분 | 점수 산출 로직이 이 메서드에 집중 |
+| 퀴즈 필드 추가 (난이도, 카테고리) | `Quiz.__init__()`, `to_dict()`, `from_dict()` | 퀴즈 데이터 구조를 정의하는 3곳을 함께 수정 |
+| 선택지 개수 변경 (4개 -> 5개) | `QuizGame.add_quiz()` 내 `range(4)` + `Quiz.display()` | 선택지 입력과 출력 두 곳 |
+| 저장 형식 변경 (JSON -> DB) | `load_state()`, `save_state()` | 데이터 입출력이 이 두 메서드에 캡슐화됨 |
+| 메뉴 항목 추가 | `show_menu()` + `run()` 내 분기문 | 메뉴 출력과 선택 처리 두 곳 |
+
+---
+
+## 확장성과 데이터 보호에 대한 고려
+
+### 대규모 확장 시 (예: 퀴즈 1000개)
+
+현재 구조는 `state.json` 하나에 모든 퀴즈를 저장합니다. 퀴즈가 1000개 이상으로 늘어날 경우:
+- **메모리**: 프로그램 시작 시 전체 퀴즈를 메모리에 로드하므로, 수천 개 수준에서는 문제없지만 수만 개부터는 부분 로딩이 필요합니다.
+- **검색**: 현재 순차 탐색이므로, 대량 데이터에서는 카테고리별 분류나 인덱싱이 필요합니다.
+- **저장**: JSON 파일 전체를 매번 덮어쓰므로, 대량 데이터에서는 SQLite 등 DB로 전환하는 것이 적합합니다.
+
+이 과제는 Python 기초 학습이 목적이므로, 현재 구조가 적합합니다.
+
+### 데이터 백업 개념
+
+현재 `state.json` 손상 시 기본 퀴즈로 자동 복구됩니다. 실무에서는 추가로:
+- **임시파일 쓰기 후 교체**: `state.tmp`에 먼저 쓰고, 성공 시 `state.json`으로 이름 변경 (원자적 교체)
+- **롤링 백업**: 저장 시 이전 파일을 `state.json.bak`으로 복사 후 새로 저장
+
+이러한 전략은 파일 쓰기 도중 오류가 발생해도 이전 데이터를 보존할 수 있게 합니다.
 
 ### Clone/Pull 실습 기록
 
