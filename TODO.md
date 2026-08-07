@@ -101,8 +101,21 @@
 - [x] LEARNING_RULES.md에 README 작성 대원칙 추가 (모든 미션 공통 적용)
 - [x] 파일 손상 테스트 스크린샷 GitHub 업로드
 
+**문서 정정 (2026-08-07):**
+- [x] README 브랜치 전략 섹션 정정 -- 커밋 `74d0d4f`
+  - 기존 다이어그램이 존재하지 않는 머지 커밋(C7)을 그리면서 본문엔 Fast-forward라 표기 (자기모순)
+  - 실측: `feature/play`는 0883b3c에서 분기, 5d5d369 1커밋 후 **FF 병합** -- 부모 1개, 갈래 안 남음
+  - FF 3단계 다이어그램 + FF vs 3-way merge 비교 다이어그램 추가
+  - reflog를 브랜치 사용 증거로 인용 (`git reflog show feature/play`)
+  - 실제 3-way merge 사례 추가: 2183b83 -> 9302138(로컬)/ff25306(GitHub 웹) -> 282c532(부모 2개)
+- [ ] `feature/play` 브랜치 삭제 -- 동료평가 종료 후. README가 reflog를 증거로 인용 중이라 보류
+
 **동료평가 준비:**
-- [ ] grill-me 세션으로 핵심 개념 학습 (Python/클래스/파일IO/Git)
+- [x] grill-me 세션으로 핵심 개념 학습 (Python/클래스/파일IO/Git) -- 2026-08-04 R1+R2 완료
+  - R1: Q3 정답, Q1/Q2/Q4/Q6 모름/반만 → 약한 영역 3개 도출
+  - R2: with문 정답, 직렬화 거의 정답(저장 순서 실수), self/cls 아직 약함
+  - R2 Q4 진행 중 (QuizGame() 호출 시 내부 동작)
+- [x] kkirikkiri 코드+요구사항 검증 -- 2026-08-04 종합 PASS (코드품질 PASS, 요구사항 충족 PASS, 수정사항 0건)
 - [ ] 동료평가 신청
 
 ### Week3 Mission3 - CS 기초 (대기)
