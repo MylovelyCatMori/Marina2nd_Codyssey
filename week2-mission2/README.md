@@ -232,15 +232,94 @@ week2-mission2/
 
 ### 브랜치 전략
 
+STEP 5에서 퀴즈 풀기 기능을 `feature/play` 브랜치로 분리해 개발한 뒤 master에 병합했다.
+**이 병합은 Fast-forward(FF) 방식으로 진행되었다.**
+
 ```
-master:        C1 --- C2 --- C3 --- C4 --- C5 --- C7 (merge) --- C8 ...
-                                            \         /
-feature/play:                                C6 -----
+[1] 브랜치 생성 - git checkout -b feature/play
+                        master
+                          ↓
+    ... --- af3be39 --- 0883b3c
+                          ↑
+                     feature/play        (같은 커밋을 가리킴)
+
+[2] 기능 개발 - feature/play에서 커밋
+                        master
+                          ↓
+    ... --- af3be39 --- 0883b3c --- 5d5d369  "Feat: 퀴즈 풀기 기능 구현"
+                                       ↑
+                                  feature/play
+
+[3] git checkout master && git merge feature/play  →  Fast-forward
+                                    master, feature/play
+                                              ↓
+    ... --- af3be39 --- 0883b3c --- 5d5d369 --- 5a7728a --- ...
 ```
 
-- `git checkout -b feature/play`: STEP 5에서 퀴즈 풀기 기능 개발용 브랜치 생성
-- `git merge feature/play`: 기능 완성 후 master에 병합 (Fast-forward)
+- `git checkout -b feature/play`: STEP 5에서 퀴즈 풀기 기능 개발용 브랜치 생성 (0883b3c에서 분기)
+- `git merge feature/play`: 기능 완성 후 master에 병합, Fast-forward로 처리됨
 - **왜 브랜치를 사용하는가?**: 새 기능 개발 도중 버그가 생겨도 master는 안전하게 유지됨
+
+#### Fast-forward와 3-way merge의 차이
+
+**Fast-forward**: 분기한 뒤 master가 한 발짝도 움직이지 않은 경우. 합칠 것이 없으므로
+Git은 새 커밋을 만들지 않고 **master 포인터만 앞으로 밀어준다**.
+
+```
+[병합 전]                        [병합 후 - FF]
+
+master                                        master, feature
+  ↓                                                  ↓
+ C4 --- C5(feature)              C3 --- C4 ------- C5
+  |                                     
+ C3                              새 커밋 없음. 포인터만 이동.
+```
+
+**3-way merge**: 분기한 뒤 **양쪽 모두 커밋이 쌓인** 경우. 두 갈래를 합칠 방법이 없으므로
+Git은 **부모가 2개인 머지 커밋을 새로 만든다**.
+
+```
+[병합 전]                        [병합 후 - merge commit]
+
+     C5a (내 쪽)                      C5a ---┐
+    /                                /        \
+  C4                              C4          M   ← 부모 2개
+    \                                \        /
+     C5b (상대 쪽)                    C5b ---┘
+```
+
+**우리가 STEP 5에서 한 것은 FF다.** `feature/play`로 분기한 뒤 master에 아무 커밋도
+추가하지 않았기 때문이다. 그래서 `git log --graph`를 봐도 갈래가 보이지 않고
+직선으로 나온다. 갈래가 없는 것이 아니라, FF가 갈래를 남기지 않는 방식이기 때문이다.
+
+브랜치를 실제로 썼다는 증거는 reflog에 남아 있다.
+
+```
+$ git reflog show feature/play
+5d5d369 feature/play@{0}: commit: Feat: 퀴즈 풀기 기능 구현 ...
+0883b3c feature/play@{1}: branch: Created from HEAD
+```
+
+#### 이 저장소에 실제로 남은 3-way merge 사례
+
+STEP 10 진행 중, GitHub 웹에서 README를 수정하는 동안 로컬에서도 커밋을 만들어
+로컬 master와 원격 master가 갈라졌다. `git pull`이 이를 자동으로 3-way merge 했다.
+
+```
+                 ┌── 9302138  (로컬 커밋: 스크린샷 추가) ───┐
+                 │                                          │
+    2183b83 ─────┤                                          ├──→ 282c532  (merge commit)
+                 │                                          │
+                 └── ff25306  (GitHub 웹 커밋: README 수정) ─┘
+```
+
+```
+$ git log -1 --format='%h  parents: %p' 282c532
+282c532  parents: 9302138 ff25306
+```
+
+부모가 2개다. 위의 FF 병합(5d5d369)은 부모가 1개뿐이다. 같은 "merge"라도
+양쪽에 커밋이 쌓였는지 아닌지에 따라 결과 모양이 이렇게 달라진다.
 
 ### 커밋 메시지 컨벤션
 
