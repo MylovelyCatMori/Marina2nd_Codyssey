@@ -950,8 +950,6 @@ def run_json_mode():
     요구사항이 지정한 순서 (F10-3):
       필터 로드 -> 패턴 로드/검증 -> MAC 연산/판정/PASS-FAIL 출력
       -> 성능 분석(3x3 포함, 5x5/13x13/25x25) -> 결과 요약
-
-    성능 분석은 STEP 9에서 붙인다.
     """
     # ---- [1] 필터 로드 ----
     print_section('[1] 필터 로드')
@@ -985,8 +983,27 @@ def run_json_mode():
         results.append(result)
         print_case_result(result)
 
-    # ---- [3] 결과 요약 ----
-    print_section('[3] 결과 요약')
+    # ---- [3] 성능 분석 ----
+    print_section('[3] 성능 분석 (평균/{0}회)'.format(REPEAT))
+
+    entries = []
+
+    # 3x3: data.json에 size_3이 없으므로 프로그램에 내장한 필터를 사용한다
+    builtin_cross = Matrix.from_rows(BUILTIN_CROSS_3X3)
+    builtin_x = Matrix.from_rows(BUILTIN_X_3X3)
+    entries.append((MANUAL_SIZE, measure_mac_ms(builtin_cross, builtin_x)))
+
+    # 5x5 / 13x13 / 25x25: 로드된 필터 쌍(Cross x X)으로 측정한다.
+    # 어떤 값이 들어 있든 MAC의 연산 횟수는 N^2로 같으므로,
+    # 크기에 따른 시간 변화를 보는 목적에는 이 조합으로 충분하다.
+    for size in sorted(filter_sets.keys()):
+        pair = filter_sets[size]
+        entries.append((size, measure_mac_ms(pair[LABEL_CROSS], pair[LABEL_X])))
+
+    print_perf_table(entries)
+
+    # ---- [4] 결과 요약 ----
+    print_section('[4] 결과 요약')
     print_summary(results)
 
     print('')
