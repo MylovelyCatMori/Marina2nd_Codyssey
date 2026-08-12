@@ -1117,9 +1117,17 @@ def run_selftest():
 # ============================================================================
 # 진입점 (entry point)
 #
-# 프로그램이 시작되는 지점.
-# 지금은 모드 1만 바로 실행한다. 모드 선택 메뉴는 STEP 10에서 붙인다.
+# 프로그램이 시작되는 지점. 요구사항 F10-1의 모드 선택 흐름을 담당한다.
 # ============================================================================
+
+def print_menu():
+    """모드 선택 메뉴를 출력한다."""
+    print('')
+    print('[모드 선택]')
+    print('1. 사용자 입력 (3x3)')
+    print('2. data.json 분석')
+    print('0. 종료')
+
 
 def main():
     """프로그램 전체 흐름을 제어한다."""
@@ -1130,7 +1138,25 @@ def main():
         return
 
     print('=== Mini NPU Simulator ===')
-    run_manual_mode()
+
+    while True:
+        print_menu()
+
+        try:
+            choice = prompt('선택: ').strip()
+        except UserAbort:
+            print('프로그램을 종료합니다.')
+            return
+
+        if choice == '1':
+            run_manual_mode()
+        elif choice == '2':
+            run_json_mode()
+        elif choice == '0':
+            print('프로그램을 종료합니다.')
+            return
+        else:
+            print("입력 오류: 0, 1, 2 중 하나를 입력하세요. (입력값: {0!r})".format(choice))
 
 
 # ============================================================================
