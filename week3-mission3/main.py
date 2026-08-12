@@ -410,3 +410,99 @@ def decide(score_a, score_b, label_a, label_b, tie_label):
         return label_a     # A가 더 비슷하다
 
     return label_b         # B가 더 비슷하다
+
+
+# ============================================================================
+# 자체 점검 (--selftest)
+#
+# 요구사항이 요구하는 기능은 아니지만, 코어 로직이 맞는지 UI 없이 확인하는 수단이다.
+# 외부 테스트 라이브러리(pytest 등)는 금지이므로 assert만 사용한다.
+#   assert 조건, 메시지  ->  조건이 거짓이면 그 자리에서 오류를 내며 멈춘다.
+# ============================================================================
+
+def run_selftest():
+    """코어 함수들이 정상 동작하는지 점검한다. 실패하면 assert가 즉시 알려 준다."""
+    print('=== 자체 점검 (--selftest) ===')
+    print('')
+
+    # --- Matrix ---
+    matrix = Matrix.from_rows([[1, 2], [3, 4]])
+    assert matrix.size == 2, 'size 계산 오류'
+    assert matrix.get(1, 0) == 3.0, 'get() 오류'
+    matrix.set(1, 0, 9)
+    assert matrix.get(1, 0) == 9.0, 'set() 오류'
+    print('[OK] Matrix 저장 / get / set')
+
+    # --- Matrix 검증 (정사각형이 아니거나 숫자가 아니면 거부) ---
+    for bad_rows in ([[1, 2], [3]], [[1, 'a'], [3, 4]], [], [[True, 1], [0, 1]]):
+        try:
+            Matrix.from_rows(bad_rows)
+            raise AssertionError('잘못된 입력을 통과시킴: {0!r}'.format(bad_rows))
+        except ValueError:
+            pass  # 기대한 동작: ValueError가 나야 정상
+    print('[OK] Matrix 구조 검증 (비정사각/비숫자/빈값/bool 거부)')
+
+    # --- 라벨 정규화 ---
+    assert normalize_label('+') == LABEL_CROSS, "'+' 정규화 오류"
+    assert normalize_label('cross') == LABEL_CROSS, "'cross' 정규화 오류"
+    assert normalize_label(' X ') == LABEL_X, '공백 포함 정규화 오류'
+    assert normalize_label('CROSS') == LABEL_CROSS, '대문자 정규화 오류'
+    assert normalize_label('?') is None, '알 수 없는 라벨 처리 오류'
+    assert normalize_label(None) is None, '문자열 아닌 값 처리 오류'
+    print('[OK] 라벨 정규화 (+/cross -> Cross, x -> X)')
+
+    # --- MAC ---
+    cross = Matrix.from_rows(BUILTIN_CROSS_3X3)
+    x_filter = Matrix.from_rows(BUILTIN_X_3X3)
+    assert mac(cross, cross) == 5.0, '십자 x 십자 = 5.0 이어야 함'
+    assert mac(cross, x_filter) == 1.0, '십자 x X = 1.0 이어야 함'
+    assert mac(x_filter, x_filter) == 5.0, 'X x X = 5.0 이어야 함'
+    print('[OK] MAC 연산 (십자x십자=5.0, 십자xX=1.0)')
+
+    # --- 판정 ---
+    assert decide(5.0, 1.0, 'A', 'B', 'TIE') == 'A', 'A 승리 판정 오류'
+    assert decide(1.0, 5.0, 'A', 'B', 'TIE') == 'B', 'B 승리 판정 오류'
+    assert decide(0.9, 0.8999999999999999, 'A', 'B', 'TIE') == 'TIE', '동점 판정 오류'
+    assert decide(0.9, 0.8, 'A', 'B', 'TIE') == 'A', '유의미한 차이를 동점 처리함'
+    print('[OK] epsilon({0}) 기반 동점 판정'.format(EPSILON))
+
+    # --- 성능 측정 ---
+    elapsed = measure_mac_ms(cross, x_filter, repeat=3)
+    assert elapsed >= 0.0, '측정 시간이 음수'
+    print('[OK] 성능 측정 (3회 평균 {0:.4f} ms)'.format(elapsed))
+
+    print('')
+    print('자체 점검 전 항목 통과.')
+
+
+# ============================================================================
+# 진입점 (entry point)
+#
+# 프로그램이 시작되는 지점.
+# 지금은 자체 점검만 처리한다. 모드 선택 메뉴는 STEP 10에서 붙인다.
+# ============================================================================
+
+def main():
+    """프로그램 전체 흐름을 제어한다."""
+    # sys.argv = 실행할 때 넘어온 인자 목록. sys.argv[0]은 파일 이름 자체다.
+    # 예: python main.py --selftest  ->  ['main.py', '--selftest']
+    if len(sys.argv) > 1 and sys.argv[1] == '--selftest':
+        run_selftest()
+        return
+
+    print('=== Mini NPU Simulator ===')
+    print('(모드 선택 메뉴는 아직 구현되지 않았습니다. python main.py --selftest 를 사용하세요)')
+
+
+# ============================================================================
+# if __name__ == '__main__':
+#   __name__ = 파이썬이 자동으로 넣어 주는 특수 변수.
+#     - 이 파일을 직접 실행하면 값이 '__main__'이 된다.
+#     - 다른 파일에서 import하면 값이 모듈 이름('main')이 된다.
+#   따라서 이 조건문은 "직접 실행할 때만 main()을 돌려라"는 뜻이다.
+#   왜 필요한가? 나중에 이 파일의 함수를 다른 곳에서 가져다 쓸 때
+#   프로그램이 제멋대로 실행되는 것을 막아 준다.
+# ============================================================================
+
+if __name__ == '__main__':
+    main()
