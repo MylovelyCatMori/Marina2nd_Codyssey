@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# 내결함성 테스트용 손상 데이터 사본 (제출 대상 아님)
+data_broken*.json
+
+# data.json은 gitignore 제외 (과제 제공 데이터, 제출 대상)
