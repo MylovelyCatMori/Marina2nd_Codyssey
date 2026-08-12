@@ -426,6 +426,28 @@ def decide(score_a, score_b, label_a, label_b, tie_label):
 
 
 # ============================================================================
+# 판정 결과 보관용 구조
+#
+# 계산 결과를 곧바로 화면에 뿌리지 않고 객체에 담아 두는 이유:
+#   1) 마지막에 "총 몇 건 / 통과 몇 건 / 실패 몇 건"을 세려면 결과 목록이 필요하다.
+#      화면에 출력만 하고 버리면 다시 계산해야 한다.
+#   2) 계산 코드와 출력 코드를 분리하면, 출력 서식을 바꿔도 계산 로직은 그대로다.
+# ============================================================================
+
+class JudgeResult:
+    """케이스 1건의 판정 결과."""
+
+    def __init__(self, case_id, score_cross, score_x, verdict, expected, passed, reason):
+        self.case_id = case_id          # 케이스 식별자 (예: 'size_5_1')
+        self.score_cross = score_cross  # Cross 필터와의 MAC 점수 (오류 시 None)
+        self.score_x = score_x          # X 필터와의 MAC 점수 (오류 시 None)
+        self.verdict = verdict          # 판정 결과 ('Cross' / 'X' / 'UNDECIDED' / 'ERROR')
+        self.expected = expected        # 정규화된 정답 라벨 (알 수 없으면 None)
+        self.passed = passed            # 통과 여부 (True/False)
+        self.reason = reason            # 실패 사유 요약 (통과 시 빈 문자열)
+
+
+# ============================================================================
 # 출력 서식 도우미
 #
 # 화면에 찍는 일만 담당하는 함수들을 한 곳에 모았다.
@@ -641,6 +663,352 @@ def run_manual_mode():
 
 
 # ============================================================================
+# 모드 2: data.json 분석  --  요구사항 F3, F7, F8, F9, F10-3
+# ============================================================================
+
+def load_data(path):
+    """data.json을 읽어 dict로 돌려준다. 실패하면 (None, 사유) 형태로 돌려준다.
+
+    요구사항: 스키마 문제로 프로그램이 비정상 종료되면 안 된다.
+    그래서 아래 세 가지 실패를 각각 구분해 사람이 읽을 수 있는 사유로 바꾼다.
+      1) 파일이 없다
+      2) JSON 문법이 깨졌다
+      3) 최상위 키(filters / patterns)가 없다
+
+    왜 구분하는가?
+      "실패했습니다" 한 줄만 보여 주면 사용자는 무엇을 고쳐야 할지 알 수 없다.
+      원인을 나누면 그대로 조치 방법이 된다. (파일 위치 확인 / 문법 확인 / 스키마 확인)
+    """
+    if not os.path.exists(path):
+        return None, 'data.json 파일을 찾을 수 없습니다. 경로: {0}'.format(path)
+
+    try:
+        # with = 컨텍스트 매니저. 블록을 벗어나면 파일을 자동으로 닫아 준다.
+        #        중간에 오류가 나도 닫히므로 파일이 열린 채 남지 않는다.
+        # encoding='utf-8' = 한글이 포함될 수 있으므로 인코딩을 명시한다.
+        #        생략하면 운영체제 기본값을 쓰는데, Windows와 Mac이 서로 달라 깨질 수 있다.
+        with open(path, 'r', encoding='utf-8') as file_object:
+            data = json.load(file_object)
+    except json.JSONDecodeError as error:
+        # JSONDecodeError = JSON 문법이 깨졌을 때 발생 (쉼표 누락, 괄호 불일치 등)
+        return None, 'data.json의 JSON 형식이 올바르지 않습니다: {0}'.format(error)
+    except OSError as error:
+        # OSError = 권한 없음, 디스크 오류 등 파일 시스템 관련 문제
+        return None, 'data.json을 읽는 중 오류가 발생했습니다: {0}'.format(error)
+
+    if not isinstance(data, dict):
+        return None, 'data.json의 최상위 구조가 객체(dict)가 아닙니다.'
+
+    if 'filters' not in data or 'patterns' not in data:
+        return None, "data.json에 필수 키가 없습니다. 'filters'와 'patterns'가 모두 필요합니다."
+
+    return data, ''
+
+
+def parse_case_size(case_id):
+    """패턴 키에서 크기 N을 뽑아낸다. 'size_13_2' -> 13. 형식이 다르면 None.
+
+    요구사항: "patterns의 각 항목에 대해, 키에서 N을 추출하여 해당 size_N 필터를 선택해야 한다"
+
+    이 데이터에서는 키 이름 자체가 "어느 필터를 쓸지"를 가리키는 연결고리다.
+    (데이터베이스로 치면 별도의 참조 컬럼이 없고 키 문자열 안에 들어 있는 구조다)
+    """
+    if not isinstance(case_id, str):
+        return None
+
+    parts = case_id.split('_')
+    # 'size_13_2'.split('_') -> ['size', '13', '2']
+
+    if len(parts) != 3 or parts[0] != 'size':
+        return None  # 약속된 형식(size_{N}_{idx})이 아니다
+
+    if not parts[1].isdigit():
+        # .isdigit() = 문자열이 전부 숫자로만 이루어졌는지 확인한다.
+        #   '13'.isdigit()  -> True
+        #   '1a'.isdigit()  -> False
+        # int()로 바로 바꾸지 않고 먼저 확인하는 이유: 예외를 흐름 제어에 쓰지 않기 위해서다.
+        return None
+
+    return int(parts[1])
+
+
+def build_filter_sets(raw_filters):
+    """필터를 로드하고 라벨을 정규화한다.
+
+    돌려주는 값: (filter_sets, messages)
+      filter_sets -- {5: {'Cross': Matrix, 'X': Matrix}, 13: {...}, 25: {...}}
+      messages    -- 화면에 출력할 로드 결과 문자열 목록
+
+    한 크기의 필터가 깨져 있어도 나머지는 계속 로드한다.
+    (요구사항: 스키마 문제로 프로그램이 중단되면 안 된다)
+    """
+    filter_sets = {}
+    messages = []
+
+    if not isinstance(raw_filters, dict):
+        messages.append('[FAIL] filters 항목이 객체(dict)가 아닙니다.')
+        return filter_sets, messages
+
+    # sorted() = 정렬. 출력 순서를 매 실행마다 같게 만들어 재현성을 확보한다.
+    #   key=... 는 정렬 기준. size_5, size_13, size_25를 문자열로 정렬하면
+    #   '13' < '25' < '5' 처럼 사전순이 되어 이상해지므로, 숫자 크기로 정렬한다.
+    for size_key in sorted(raw_filters.keys(), key=lambda k: parse_filter_size(k) or 0):
+        size = parse_filter_size(size_key)
+        if size is None:
+            messages.append('[FAIL] 필터 키 형식이 올바르지 않습니다: {0}'.format(size_key))
+            continue
+
+        raw_set = raw_filters[size_key]
+        if not isinstance(raw_set, dict):
+            messages.append('[FAIL] {0} 필터가 객체(dict)가 아닙니다.'.format(size_key))
+            continue
+
+        loaded = {}
+        failed_reason = ''
+
+        for raw_label in raw_set:
+            # 라벨 정규화: 'cross' -> 'Cross', 'x' -> 'X'   (요구사항 F4-3)
+            label = normalize_label(raw_label)
+            if label is None:
+                failed_reason = "알 수 없는 필터 라벨: '{0}'".format(raw_label)
+                break
+
+            try:
+                loaded[label] = Matrix.from_rows(raw_set[raw_label])
+            except ValueError as error:
+                failed_reason = '{0} 필터 구조 오류: {1}'.format(raw_label, error)
+                break
+
+            # 필터 크기가 키에 적힌 크기와 실제로 같은지 확인한다.
+            if loaded[label].size != size:
+                failed_reason = '{0} 필터 크기 불일치: 키={1}, 실제={2}'.format(
+                    raw_label, size, loaded[label].size
+                )
+                break
+
+        if failed_reason:
+            messages.append('[FAIL] {0} 필터 로드 실패 ({1})'.format(size_key, failed_reason))
+            continue
+
+        # 표준 라벨 두 개가 모두 있어야 판정이 가능하다.
+        if LABEL_CROSS not in loaded or LABEL_X not in loaded:
+            messages.append(
+                '[FAIL] {0} 필터에 Cross/X가 모두 있어야 합니다. 발견: {1}'.format(
+                    size_key, ', '.join(sorted(loaded.keys())) or '없음'
+                )
+            )
+            continue
+
+        filter_sets[size] = loaded
+        messages.append('[OK] {0} 필터 로드 완료 (Cross, X)'.format(size_key))
+
+    return filter_sets, messages
+
+
+def parse_filter_size(filter_key):
+    """필터 키에서 크기를 뽑아낸다. 'size_13' -> 13. 형식이 다르면 None."""
+    if not isinstance(filter_key, str):
+        return None
+
+    parts = filter_key.split('_')
+    if len(parts) != 2 or parts[0] != 'size' or not parts[1].isdigit():
+        return None
+
+    return int(parts[1])
+
+
+def judge_case(case_id, raw_case, filter_sets):
+    """케이스 1건을 판정해 JudgeResult로 돌려준다.
+
+    요구사항:
+      - 키에서 N을 추출해 해당 size_N 필터를 선택 (F3-3)
+      - 필터와 패턴의 크기 일치 검증 (F3-4)
+      - 불일치 시 FAIL 처리 + 원인 메시지, 프로그램 중단 금지 (F3-5)
+      - 판정은 표준 라벨(Cross/X) 기준, expected와 비교해 PASS/FAIL (F4-4, F7-3)
+
+    이 함수는 어떤 경우에도 예외를 바깥으로 내보내지 않는다.
+    한 케이스가 깨져도 나머지 케이스는 계속 판정되어야 하기 때문이다.
+    """
+    # --- 검증 1: 케이스 구조 ---
+    if not isinstance(raw_case, dict):
+        return JudgeResult(case_id, None, None, 'ERROR', None, False,
+                           '케이스 데이터가 객체(dict)가 아님')
+
+    if 'input' not in raw_case:
+        return JudgeResult(case_id, None, None, 'ERROR', None, False,
+                           "필수 키 'input' 누락")
+
+    if 'expected' not in raw_case:
+        return JudgeResult(case_id, None, None, 'ERROR', None, False,
+                           "필수 키 'expected' 누락")
+
+    # --- 검증 2: 키에서 크기 N 추출 ---
+    size = parse_case_size(case_id)
+    if size is None:
+        return JudgeResult(case_id, None, None, 'ERROR', None, False,
+                           '패턴 키 형식 오류 (size_{N}_{idx} 형태여야 함)')
+
+    # --- 검증 3: 해당 크기의 필터가 로드되어 있는가 ---
+    if size not in filter_sets:
+        return JudgeResult(case_id, None, None, 'ERROR', None, False,
+                           'size_{0} 필터를 사용할 수 없음'.format(size))
+
+    # --- 검증 4: 입력 패턴 구조 ---
+    try:
+        pattern = Matrix.from_rows(raw_case['input'])
+    except ValueError as error:
+        return JudgeResult(case_id, None, None, 'ERROR', None, False,
+                           'input 구조 오류: {0}'.format(error))
+
+    # --- 검증 5: 라벨 정규화 (expected: '+' -> Cross, 'x' -> X) ---
+    expected = normalize_label(raw_case['expected'])
+    if expected is None:
+        return JudgeResult(case_id, None, None, 'ERROR', None, False,
+                           "expected 라벨을 해석할 수 없음: {0!r}".format(raw_case['expected']))
+
+    filter_cross = filter_sets[size][LABEL_CROSS]
+    filter_x = filter_sets[size][LABEL_X]
+
+    # --- 검증 6: 필터와 패턴의 크기 일치 (요구사항 F3-4) ---
+    if not pattern.same_size_as(filter_cross):
+        return JudgeResult(case_id, None, None, 'ERROR', expected, False,
+                           '크기 불일치: 패턴={0}, 필터={1}'.format(pattern.size, filter_cross.size))
+
+    # --- MAC 연산 (요구사항 F5) ---
+    score_cross = mac(pattern, filter_cross)
+    score_x = mac(pattern, filter_x)
+
+    # --- 판정 (요구사항 F6, F7) ---
+    verdict = decide(score_cross, score_x, LABEL_CROSS, LABEL_X, LABEL_UNDECIDED)
+
+    # --- PASS/FAIL 비교는 반드시 표준 라벨끼리 (요구사항 F4-4) ---
+    passed = (verdict == expected)
+
+    if passed:
+        reason = ''
+    elif verdict == LABEL_UNDECIDED:
+        reason = '동점(UNDECIDED) 처리 규칙 -- |Cross-X| < {0}'.format(EPSILON)
+    else:
+        reason = '판정({0})과 expected({1}) 불일치'.format(verdict, expected)
+
+    return JudgeResult(case_id, score_cross, score_x, verdict, expected, passed, reason)
+
+
+def print_case_result(result):
+    """케이스 1건의 판정 결과를 출력한다. 요구사항 F7-2"""
+    print('')
+    print('--- {0} ---'.format(result.case_id))
+
+    if result.verdict == 'ERROR':
+        print('처리 실패: {0}'.format(result.reason))
+        print('판정: ERROR | expected: {0} | FAIL'.format(result.expected or '-'))
+        return
+
+    # 동점일 때만 자릿수를 펼쳐 부동소수점 차이를 눈에 보이게 한다
+    expand = (result.verdict == LABEL_UNDECIDED)
+
+    print('Cross 점수: {0}'.format(format_score(result.score_cross, expand=expand)))
+    print('X 점수: {0}'.format(format_score(result.score_x, expand=expand)))
+
+    status = 'PASS' if result.passed else 'FAIL'
+    line = '판정: {0} | expected: {1} | {2}'.format(result.verdict, result.expected, status)
+
+    if not result.passed:
+        line = line + ' ({0})'.format(result.reason)
+
+    print(line)
+
+
+def print_summary(results):
+    """전체 결과를 요약해 출력한다. 요구사항 F9-1, F9-2"""
+    total = len(results)
+    passed = 0
+    for result in results:
+        if result.passed:
+            passed = passed + 1
+    failed = total - passed
+
+    print('총 테스트: {0}개'.format(total))
+    print('통과: {0}개'.format(passed))
+    print('실패: {0}개'.format(failed))
+
+    if failed == 0:
+        print('')
+        print('실패 케이스: 없음')
+        return
+
+    print('')
+    print('실패 케이스:')
+    for result in results:
+        if not result.passed:
+            print('- {0}: {1}'.format(result.case_id, result.reason))
+
+
+def run_json_mode():
+    """모드 2 전체 흐름을 실행한다.
+
+    요구사항이 지정한 순서 (F10-3):
+      필터 로드 -> 패턴 로드/검증 -> MAC 연산/판정/PASS-FAIL 출력
+      -> 성능 분석(3x3 포함, 5x5/13x13/25x25) -> 결과 요약
+
+    성능 분석은 STEP 9에서 붙인다.
+    """
+    # ---- [1] 필터 로드 ----
+    print_section('[1] 필터 로드')
+
+    data, error_message = load_data(DATA_FILE)
+    if data is None:
+        print(error_message)
+        print('메뉴로 돌아갑니다.')
+        return
+
+    filter_sets, messages = build_filter_sets(data['filters'])
+    for message in messages:
+        print(message)
+
+    if not filter_sets:
+        print('')
+        print('사용 가능한 필터가 없어 분석을 진행할 수 없습니다. 메뉴로 돌아갑니다.')
+        return
+
+    # ---- [2] 패턴 분석 ----
+    print_section('[2] 패턴 분석 (라벨 정규화 적용)')
+
+    raw_patterns = data['patterns']
+    if not isinstance(raw_patterns, dict):
+        print('patterns 항목이 객체(dict)가 아닙니다. 메뉴로 돌아갑니다.')
+        return
+
+    results = []
+    for case_id in sorted(raw_patterns.keys(), key=sort_key_for_case):
+        result = judge_case(case_id, raw_patterns[case_id], filter_sets)
+        results.append(result)
+        print_case_result(result)
+
+    # ---- [3] 결과 요약 ----
+    print_section('[3] 결과 요약')
+    print_summary(results)
+
+    print('')
+    print('(상세 원인 분석 및 복잡도 설명은 README.md의 "결과 리포트" 섹션 참고)')
+
+
+def sort_key_for_case(case_id):
+    """케이스 출력 순서를 정하는 기준. 크기 오름차순, 같은 크기면 이름순.
+
+    왜 필요한가?
+      dict의 키를 그냥 정렬하면 문자열 사전순이라 size_13이 size_5보다 앞에 온다.
+      크기 순서대로 보여야 성능/난이도 흐름이 자연스럽다.
+      또한 매 실행마다 순서가 같아야 재현성(같은 입력 -> 같은 출력)이 보장된다.
+    """
+    size = parse_case_size(case_id)
+    if size is None:
+        # 형식이 깨진 키는 맨 뒤로 보낸다. 큰 수를 주면 정렬에서 뒤로 밀린다.
+        return (10 ** 9, case_id)
+    return (size, case_id)
+
+
+# ============================================================================
 # 자체 점검 (--selftest)
 #
 # 요구사항이 요구하는 기능은 아니지만, 코어 로직이 맞는지 UI 없이 확인하는 수단이다.
@@ -694,10 +1062,36 @@ def run_selftest():
     assert decide(0.9, 0.8, 'A', 'B', 'TIE') == 'A', '유의미한 차이를 동점 처리함'
     print('[OK] epsilon({0}) 기반 동점 판정'.format(EPSILON))
 
+    # --- 키 파싱 ---
+    assert parse_case_size('size_13_2') == 13, '패턴 키 파싱 오류'
+    assert parse_case_size('size_5_1') == 5, '패턴 키 파싱 오류'
+    assert parse_case_size('bad_key') is None, '잘못된 키를 통과시킴'
+    assert parse_case_size('size_a_1') is None, '숫자가 아닌 크기를 통과시킴'
+    assert parse_filter_size('size_25') == 25, '필터 키 파싱 오류'
+    assert parse_filter_size('size_') is None, '잘못된 필터 키를 통과시킴'
+    print('[OK] 키 파싱 (size_{N}_{idx} -> N)')
+
     # --- 성능 측정 ---
     elapsed = measure_mac_ms(cross, x_filter, repeat=3)
     assert elapsed >= 0.0, '측정 시간이 음수'
     print('[OK] 성능 측정 (3회 평균 {0:.4f} ms)'.format(elapsed))
+
+    # --- 케이스 판정 (정상 / 오류 흐름) ---
+    sample_filters = {3: {LABEL_CROSS: cross, LABEL_X: x_filter}}
+
+    good = judge_case('size_3_1', {'input': BUILTIN_CROSS_3X3, 'expected': '+'}, sample_filters)
+    assert good.verdict == LABEL_CROSS and good.passed, '정상 케이스 판정 오류'
+
+    bad_size = judge_case('size_3_2', {'input': [[1, 0], [0, 1]], 'expected': '+'}, sample_filters)
+    assert not bad_size.passed and bad_size.verdict == 'ERROR', '크기 불일치 처리 오류'
+    assert '크기' in bad_size.reason or '정사각' in bad_size.reason, '크기 오류 사유 누락'
+
+    bad_label = judge_case('size_3_3', {'input': BUILTIN_CROSS_3X3, 'expected': '@'}, sample_filters)
+    assert not bad_label.passed, '알 수 없는 expected를 통과시킴'
+
+    missing = judge_case('size_9_1', {'input': BUILTIN_CROSS_3X3, 'expected': '+'}, sample_filters)
+    assert not missing.passed, '없는 필터 크기를 통과시킴'
+    print('[OK] 케이스 판정 및 오류 격리 (예외 없이 FAIL 처리)')
 
     print('')
     print('자체 점검 전 항목 통과.')
