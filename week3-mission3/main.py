@@ -641,6 +641,161 @@ def run_manual_mode():
 
 
 # ============================================================================
+# 모드 2: data.json 분석  --  요구사항 F3, F7, F8, F9, F10-3
+# ============================================================================
+
+def load_data(path):
+    """data.json을 읽어 dict로 돌려준다. 실패하면 (None, 사유) 형태로 돌려준다.
+
+    요구사항: 스키마 문제로 프로그램이 비정상 종료되면 안 된다.
+    그래서 아래 세 가지 실패를 각각 구분해 사람이 읽을 수 있는 사유로 바꾼다.
+      1) 파일이 없다
+      2) JSON 문법이 깨졌다
+      3) 최상위 키(filters / patterns)가 없다
+
+    왜 구분하는가?
+      "실패했습니다" 한 줄만 보여 주면 사용자는 무엇을 고쳐야 할지 알 수 없다.
+      원인을 나누면 그대로 조치 방법이 된다. (파일 위치 확인 / 문법 확인 / 스키마 확인)
+    """
+    if not os.path.exists(path):
+        return None, 'data.json 파일을 찾을 수 없습니다. 경로: {0}'.format(path)
+
+    try:
+        # with = 컨텍스트 매니저. 블록을 벗어나면 파일을 자동으로 닫아 준다.
+        #        중간에 오류가 나도 닫히므로 파일이 열린 채 남지 않는다.
+        # encoding='utf-8' = 한글이 포함될 수 있으므로 인코딩을 명시한다.
+        #        생략하면 운영체제 기본값을 쓰는데, Windows와 Mac이 서로 달라 깨질 수 있다.
+        with open(path, 'r', encoding='utf-8') as file_object:
+            data = json.load(file_object)
+    except json.JSONDecodeError as error:
+        # JSONDecodeError = JSON 문법이 깨졌을 때 발생 (쉼표 누락, 괄호 불일치 등)
+        return None, 'data.json의 JSON 형식이 올바르지 않습니다: {0}'.format(error)
+    except OSError as error:
+        # OSError = 권한 없음, 디스크 오류 등 파일 시스템 관련 문제
+        return None, 'data.json을 읽는 중 오류가 발생했습니다: {0}'.format(error)
+
+    if not isinstance(data, dict):
+        return None, 'data.json의 최상위 구조가 객체(dict)가 아닙니다.'
+
+    if 'filters' not in data or 'patterns' not in data:
+        return None, "data.json에 필수 키가 없습니다. 'filters'와 'patterns'가 모두 필요합니다."
+
+    return data, ''
+
+
+def parse_case_size(case_id):
+    """패턴 키에서 크기 N을 뽑아낸다. 'size_13_2' -> 13. 형식이 다르면 None.
+
+    요구사항: "patterns의 각 항목에 대해, 키에서 N을 추출하여 해당 size_N 필터를 선택해야 한다"
+
+    이 데이터에서는 키 이름 자체가 "어느 필터를 쓸지"를 가리키는 연결고리다.
+    (데이터베이스로 치면 별도의 참조 컬럼이 없고 키 문자열 안에 들어 있는 구조다)
+    """
+    if not isinstance(case_id, str):
+        return None
+
+    parts = case_id.split('_')
+    # 'size_13_2'.split('_') -> ['size', '13', '2']
+
+    if len(parts) != 3 or parts[0] != 'size':
+        return None  # 약속된 형식(size_{N}_{idx})이 아니다
+
+    if not parts[1].isdigit():
+        # .isdigit() = 문자열이 전부 숫자로만 이루어졌는지 확인한다.
+        #   '13'.isdigit()  -> True
+        #   '1a'.isdigit()  -> False
+        # int()로 바로 바꾸지 않고 먼저 확인하는 이유: 예외를 흐름 제어에 쓰지 않기 위해서다.
+        return None
+
+    return int(parts[1])
+
+
+def build_filter_sets(raw_filters):
+    """필터를 로드하고 라벨을 정규화한다.
+
+    돌려주는 값: (filter_sets, messages)
+      filter_sets -- {5: {'Cross': Matrix, 'X': Matrix}, 13: {...}, 25: {...}}
+      messages    -- 화면에 출력할 로드 결과 문자열 목록
+
+    한 크기의 필터가 깨져 있어도 나머지는 계속 로드한다.
+    (요구사항: 스키마 문제로 프로그램이 중단되면 안 된다)
+    """
+    filter_sets = {}
+    messages = []
+
+    if not isinstance(raw_filters, dict):
+        messages.append('[FAIL] filters 항목이 객체(dict)가 아닙니다.')
+        return filter_sets, messages
+
+    # sorted() = 정렬. 출력 순서를 매 실행마다 같게 만들어 재현성을 확보한다.
+    #   key=... 는 정렬 기준. size_5, size_13, size_25를 문자열로 정렬하면
+    #   '13' < '25' < '5' 처럼 사전순이 되어 이상해지므로, 숫자 크기로 정렬한다.
+    for size_key in sorted(raw_filters.keys(), key=lambda k: parse_filter_size(k) or 0):
+        size = parse_filter_size(size_key)
+        if size is None:
+            messages.append('[FAIL] 필터 키 형식이 올바르지 않습니다: {0}'.format(size_key))
+            continue
+
+        raw_set = raw_filters[size_key]
+        if not isinstance(raw_set, dict):
+            messages.append('[FAIL] {0} 필터가 객체(dict)가 아닙니다.'.format(size_key))
+            continue
+
+        loaded = {}
+        failed_reason = ''
+
+        for raw_label in raw_set:
+            # 라벨 정규화: 'cross' -> 'Cross', 'x' -> 'X'   (요구사항 F4-3)
+            label = normalize_label(raw_label)
+            if label is None:
+                failed_reason = "알 수 없는 필터 라벨: '{0}'".format(raw_label)
+                break
+
+            try:
+                loaded[label] = Matrix.from_rows(raw_set[raw_label])
+            except ValueError as error:
+                failed_reason = '{0} 필터 구조 오류: {1}'.format(raw_label, error)
+                break
+
+            # 필터 크기가 키에 적힌 크기와 실제로 같은지 확인한다.
+            if loaded[label].size != size:
+                failed_reason = '{0} 필터 크기 불일치: 키={1}, 실제={2}'.format(
+                    raw_label, size, loaded[label].size
+                )
+                break
+
+        if failed_reason:
+            messages.append('[FAIL] {0} 필터 로드 실패 ({1})'.format(size_key, failed_reason))
+            continue
+
+        # 표준 라벨 두 개가 모두 있어야 판정이 가능하다.
+        if LABEL_CROSS not in loaded or LABEL_X not in loaded:
+            messages.append(
+                '[FAIL] {0} 필터에 Cross/X가 모두 있어야 합니다. 발견: {1}'.format(
+                    size_key, ', '.join(sorted(loaded.keys())) or '없음'
+                )
+            )
+            continue
+
+        filter_sets[size] = loaded
+        messages.append('[OK] {0} 필터 로드 완료 (Cross, X)'.format(size_key))
+
+    return filter_sets, messages
+
+
+def parse_filter_size(filter_key):
+    """필터 키에서 크기를 뽑아낸다. 'size_13' -> 13. 형식이 다르면 None."""
+    if not isinstance(filter_key, str):
+        return None
+
+    parts = filter_key.split('_')
+    if len(parts) != 2 or parts[0] != 'size' or not parts[1].isdigit():
+        return None
+
+    return int(parts[1])
+
+
+# ============================================================================
 # 자체 점검 (--selftest)
 #
 # 요구사항이 요구하는 기능은 아니지만, 코어 로직이 맞는지 UI 없이 확인하는 수단이다.
@@ -693,6 +848,15 @@ def run_selftest():
     assert decide(0.9, 0.8999999999999999, 'A', 'B', 'TIE') == 'TIE', '동점 판정 오류'
     assert decide(0.9, 0.8, 'A', 'B', 'TIE') == 'A', '유의미한 차이를 동점 처리함'
     print('[OK] epsilon({0}) 기반 동점 판정'.format(EPSILON))
+
+    # --- 키 파싱 ---
+    assert parse_case_size('size_13_2') == 13, '패턴 키 파싱 오류'
+    assert parse_case_size('size_5_1') == 5, '패턴 키 파싱 오류'
+    assert parse_case_size('bad_key') is None, '잘못된 키를 통과시킴'
+    assert parse_case_size('size_a_1') is None, '숫자가 아닌 크기를 통과시킴'
+    assert parse_filter_size('size_25') == 25, '필터 키 파싱 오류'
+    assert parse_filter_size('size_') is None, '잘못된 필터 키를 통과시킴'
+    print('[OK] 키 파싱 (size_{N}_{idx} -> N)')
 
     # --- 성능 측정 ---
     elapsed = measure_mac_ms(cross, x_filter, repeat=3)
