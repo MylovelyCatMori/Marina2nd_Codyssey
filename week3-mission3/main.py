@@ -126,6 +126,19 @@ BUILTIN_X_3X3 = [
 
 
 # ============================================================================
+# 예외 클래스
+#
+# 예외(exception) = 정상 흐름에서 벗어난 상황을 알리는 신호.
+# 사용자가 Ctrl+C를 누르거나 입력이 끊겼을 때, 프로그램을 죽이는 대신
+# "사용자가 중단했다"는 신호로 바꿔 메뉴로 되돌리기 위해 직접 정의한다.
+# ============================================================================
+
+class UserAbort(Exception):
+    """사용자가 입력 도중 중단(Ctrl+C 또는 입력 종료)했음을 알리는 예외."""
+    pass
+
+
+# ============================================================================
 # Matrix 클래스  --  요구사항 F1 (데이터 구조)
 #
 # class(클래스) = 관련된 데이터와 기능을 하나로 묶은 설계도.
@@ -413,6 +426,221 @@ def decide(score_a, score_b, label_a, label_b, tie_label):
 
 
 # ============================================================================
+# 출력 서식 도우미
+#
+# 화면에 찍는 일만 담당하는 함수들을 한 곳에 모았다.
+# 계산 함수(mac, decide 등)는 print를 절대 호출하지 않는다.
+#   -> 성능 측정 구간에 화면 출력이 섞이면 측정값이 오염되기 때문이다.
+# ============================================================================
+
+def print_section(title):
+    """요구사항 예시와 같은 형태의 구역 제목을 출력한다."""
+    print('')
+    print('#' + '-' * 45)
+    print('# ' + title)
+    print('#' + '-' * 45)
+
+
+def format_score(value, expand=False):
+    """점수를 문자열로 만든다.
+
+    expand=True이면 소수점 이하 16자리까지 펼쳐 보여 준다.
+    왜 펼치는가?
+      동점 케이스에서 0.9와 0.8999999999999999를 그냥 반올림해 '0.9'로 찍으면
+      두 값이 똑같아 보인다. 그러면 "왜 동점 판정이 났는지"를 화면에서 확인할 수 없다.
+      부동소수점 오차를 눈으로 보는 것이 이 과제의 학습 목표 중 하나이므로 펼쳐서 보여 준다.
+    """
+    if value is None:
+        return '-'
+    if expand:
+        return '{0:.16f}'.format(value)  # 소수점 이하 16자리 고정 표기
+    return repr(value)
+    # repr() = representation(표현). 파이썬이 그 값을 코드로 되살릴 수 있는 형태로 보여 준다.
+    # float에 대해서는 "원래 값을 복원할 수 있는 최소 자릿수"로 출력한다.
+    #   repr(5.0)                -> '5.0'
+    #   repr(0.8999999999999999) -> '0.8999999999999999'
+    # str()이나 반올림 서식과 달리 오차를 숨기지 않는다.
+
+
+def print_matrix(title, matrix):
+    """숫자판 내용을 화면에 보여 준다. 모드 1의 '저장 확인' 단계에서 사용한다."""
+    print(title)
+    for row in range(matrix.size):
+        cells = []
+        for col in range(matrix.size):
+            # {0:g} = 불필요한 0을 떼고 간결하게 표시한다. 1.0 -> 1, 0.5 -> 0.5
+            cells.append('{0:g}'.format(matrix.get(row, col)))
+        print('  ' + ' '.join(cells))
+        # ' '.join(리스트) = 리스트의 문자열들을 공백으로 이어 붙인다.
+
+
+def print_perf_table(entries):
+    """성능 분석표를 출력한다.  요구사항 F8-4
+
+    표에 반드시 들어가야 하는 열 (요구사항):
+      크기(N x N) / 평균 시간(ms) / 연산 횟수(N^2)
+
+    entries: (크기N, 평균시간ms) 튜플의 리스트
+
+    표 정렬에 대한 참고:
+      한글은 터미널에서 두 칸을 차지하지만 파이썬의 문자열 길이 계산은 한 글자로 센다.
+      그래서 제목 줄은 폭을 직접 계산해 고정 문자열로 두고,
+      값 줄은 영문/숫자(한 칸짜리 문자)만 써서 어긋남이 생기지 않게 했다.
+    """
+    header = '크기' + ' ' * 6 + ' ' * 3 + '평균 시간(ms)' + ' ' * 2 + '연산 횟수(N^2)'
+    print(header)
+    print('-' * 42)
+
+    for size, avg_ms in entries:
+        size_label = '{0}x{0}'.format(size)          # 예: '25x25'
+        avg_label = '{0:.4f}'.format(avg_ms)          # 소수점 4자리. 3x3은 매우 짧아 3자리로는 0.000이 된다
+        ops_label = '{0}'.format(size * size)         # 연산 횟수 = N^2
+        print('{0:<10}{1:>16}{2:>16}'.format(size_label, avg_label, ops_label))
+        # {0:<10} = 왼쪽 정렬, 폭 10칸
+        # {1:>16} = 오른쪽 정렬, 폭 16칸 (숫자는 오른쪽 정렬이 자릿수 비교에 편하다)
+
+
+# ============================================================================
+# 모드 1: 사용자 입력 (3x3)  --  요구사항 F2, F10-2
+# ============================================================================
+
+def prompt(message):
+    """한 줄 입력을 받는다. 사용자가 중단하면 UserAbort 예외로 바꿔 던진다.
+
+    왜 감싸는가?
+      input()은 Ctrl+C에서 KeyboardInterrupt를, 입력이 끊기면 EOFError를 일으킨다.
+      그대로 두면 빨간 오류 메시지(트레이스백)가 쏟아지며 프로그램이 죽는다.
+      요구사항은 "프로그램이 비정상 종료되면 안 된다"이므로,
+      우리가 정의한 UserAbort로 바꿔 메뉴로 안전하게 되돌린다.
+    """
+    try:
+        return input(message)
+    except (EOFError, KeyboardInterrupt):
+        # EOFError = End Of File(파일 끝). 입력이 더 이상 없을 때 발생한다.
+        # KeyboardInterrupt = 사용자가 Ctrl+C를 눌렀을 때 발생한다.
+        print('')
+        raise UserAbort('사용자가 입력을 중단했습니다.')
+
+
+def read_matrix_line(size, row_index):
+    """행 한 줄을 입력받아 숫자 리스트로 돌려준다. 형식이 틀리면 안내 후 그 줄만 다시 받는다.
+
+    요구사항 F2-3 검증 항목:
+      - 열 개수 불일치  -> 안내 문구 출력 후 재입력
+      - 숫자 파싱 실패  -> 안내 문구 출력 후 재입력
+
+    왜 그 줄만 다시 받는가?
+      한 줄 틀렸다고 처음부터 다시 시키면 사용자가 앞의 멀쩡한 줄까지 또 쳐야 한다.
+      틀린 지점만 고치게 하는 것이 오류 복구의 기본이다.
+    """
+    error_message = '입력 형식 오류: 각 줄에 {0}개의 숫자를 공백으로 구분해 입력하세요.'.format(size)
+
+    while True:  # 올바른 입력이 들어올 때까지 무한 반복 (return을 만나야 빠져나간다)
+        raw = prompt('  [{0}행] '.format(row_index + 1))
+
+        tokens = raw.split()
+        # .split() = 문자열을 공백 기준으로 잘라 리스트로 만든다.
+        #   '0 1 0'      -> ['0', '1', '0']
+        #   '0    1   0' -> ['0', '1', '0']   (공백이 몇 개든 알아서 처리한다)
+        #   ''           -> []                (빈 줄은 빈 리스트가 되어 개수 검증에서 걸린다)
+
+        # 검증 1: 열 개수가 맞는가
+        if len(tokens) != size:
+            print(error_message)
+            print('  (입력한 숫자 개수: {0}개)'.format(len(tokens)))
+            continue  # continue = 이번 회차를 건너뛰고 while의 처음으로 돌아간다 -> 재입력
+
+        # 검증 2: 전부 숫자로 바꿀 수 있는가
+        values = []
+        parse_failed = False
+        for token in tokens:
+            try:
+                values.append(float(token))
+                # float('0')   -> 0.0    (성공)
+                # float('0.5') -> 0.5    (성공)
+                # float('a')   -> ValueError 발생 (실패)
+            except ValueError:
+                print(error_message)
+                print('  (숫자로 바꿀 수 없는 값: {0!r})'.format(token))
+                parse_failed = True
+                break  # break = 이 for 반복문을 즉시 빠져나간다 (나머지 토큰은 볼 필요 없다)
+
+        if parse_failed:
+            continue  # 재입력
+
+        return values  # 두 검증을 모두 통과했으므로 결과를 돌려주고 while을 끝낸다
+
+
+def read_matrix(name, size):
+    """size줄을 입력받아 Matrix 객체로 만들어 돌려준다."""
+    print('')
+    print('{0} ({1}줄 입력, 공백 구분)'.format(name, size))
+
+    rows = []
+    for row_index in range(size):
+        rows.append(read_matrix_line(size, row_index))
+
+    # 각 줄이 이미 검증을 통과했으므로 from_rows는 사실상 통과가 보장된다.
+    # 그래도 from_rows를 거치는 이유: 값 변환(float 통일)과 검증 경로를 한 곳으로 모으기 위해서다.
+    return Matrix.from_rows(rows)
+
+
+def run_manual_mode():
+    """모드 1 전체 흐름을 실행한다.
+
+    요구사항이 지정한 순서 (F10-2):
+      필터 A, B 입력 -> 저장 확인 -> 패턴 입력 -> MAC 연산 -> 결과 판정 -> 성능 분석(3x3)
+    """
+    try:
+        # ---- [1] 필터 입력 ----
+        print_section('[1] 필터 입력')
+        filter_a = read_matrix('필터 A', MANUAL_SIZE)
+        filter_b = read_matrix('필터 B', MANUAL_SIZE)
+
+        # ---- 저장 확인 (요구사항 실행 흐름에 명시된 단계) ----
+        print('')
+        print('[저장 확인] 입력한 필터가 아래와 같이 저장되었습니다.')
+        print_matrix('필터 A ({0}x{0})'.format(filter_a.size), filter_a)
+        print_matrix('필터 B ({0}x{0})'.format(filter_b.size), filter_b)
+
+        # ---- [2] 패턴 입력 ----
+        print_section('[2] 패턴 입력')
+        pattern = read_matrix('패턴', MANUAL_SIZE)
+        print('')
+        print('[저장 확인] 입력한 패턴이 아래와 같이 저장되었습니다.')
+        print_matrix('패턴 ({0}x{0})'.format(pattern.size), pattern)
+
+    except UserAbort:
+        print('입력을 중단했습니다. 메뉴로 돌아갑니다.')
+        return
+
+    # ---- [3] MAC 연산 및 판정 ----
+    score_a = mac(pattern, filter_a)
+    score_b = mac(pattern, filter_b)
+
+    # 두 점수 차이가 EPSILON 미만이면 동점 -> 자릿수를 펼쳐 이유를 보여 준다
+    is_tie = abs(score_a - score_b) < EPSILON
+    verdict = decide(score_a, score_b, 'A', 'B', '판정 불가')
+
+    # 연산 시간 측정 (요구사항: 평균/10회)
+    avg_ms = measure_mac_ms(pattern, filter_a)
+
+    print_section('[3] MAC 결과')
+    print('A 점수: {0}'.format(format_score(score_a, expand=is_tie)))
+    print('B 점수: {0}'.format(format_score(score_b, expand=is_tie)))
+    print('연산 시간(평균/{0}회): {1:.4f} ms'.format(REPEAT, avg_ms))
+
+    if is_tie:
+        print('판정: {0} (|A-B| < {1})'.format(verdict, EPSILON))
+    else:
+        print('판정: {0}'.format(verdict))
+
+    # ---- [4] 성능 분석 (3x3) ----
+    print_section('[4] 성능 분석 (평균/{0}회)'.format(REPEAT))
+    print_perf_table([(MANUAL_SIZE, avg_ms)])
+
+
+# ============================================================================
 # 자체 점검 (--selftest)
 #
 # 요구사항이 요구하는 기능은 아니지만, 코어 로직이 맞는지 UI 없이 확인하는 수단이다.
@@ -479,7 +707,7 @@ def run_selftest():
 # 진입점 (entry point)
 #
 # 프로그램이 시작되는 지점.
-# 지금은 자체 점검만 처리한다. 모드 선택 메뉴는 STEP 10에서 붙인다.
+# 지금은 모드 1만 바로 실행한다. 모드 선택 메뉴는 STEP 10에서 붙인다.
 # ============================================================================
 
 def main():
@@ -491,7 +719,7 @@ def main():
         return
 
     print('=== Mini NPU Simulator ===')
-    print('(모드 선택 메뉴는 아직 구현되지 않았습니다. python main.py --selftest 를 사용하세요)')
+    run_manual_mode()
 
 
 # ============================================================================
