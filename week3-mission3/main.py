@@ -406,7 +406,8 @@ def decide(score_a, score_b, label_a, label_b, tie_label):
           Cross 점수 = 0.9
           X     점수 = 0.8999999999999999
       두 값의 차이는 약 0.0000000000000001 (1.1e-16)이다.
-      == 로 비교하면 "다르다"가 되어 X가 이긴 것처럼 처리된다. 이는 사실 왜곡이다.
+      == 로 비교하면 "다르다"가 되고, 대소만 따지면 Cross가 이긴 것으로 처리된다.
+      실제로는 어느 쪽도 이기지 않았으므로 이는 사실 왜곡이다.
 
       그래서 "이 정도 차이는 같다고 본다"는 허용오차(EPSILON) 기준을 세우고,
       그 안이면 어느 쪽도 이기지 않았다(동점)고 판정한다.
@@ -509,7 +510,7 @@ def print_perf_table(entries):
       그래서 제목 줄은 폭을 직접 계산해 고정 문자열로 두고,
       값 줄은 영문/숫자(한 칸짜리 문자)만 써서 어긋남이 생기지 않게 했다.
     """
-    header = '크기' + ' ' * 6 + ' ' * 3 + '평균 시간(ms)' + ' ' * 2 + '연산 횟수(N^2)'
+    header = '크기(N×N)' + ' ' + ' ' * 3 + '평균 시간(ms)' + ' ' * 2 + '연산 횟수(N^2)'
     print(header)
     print('-' * 42)
 
@@ -594,7 +595,14 @@ def read_matrix_line(size, row_index):
 
 
 def read_matrix(name, size):
-    """size줄을 입력받아 Matrix 객체로 만들어 돌려준다."""
+    """size줄을 입력받아 Matrix 객체로 만들어 돌려준다.
+
+    행 수 검증에 대하여 (요구사항 "행 수/열 수 불일치 ... 재입력을 유도해야 한다"):
+      이 함수는 size줄을 순차적으로 요구하고, 각 줄이 통과할 때까지 다음 줄로 넘어가지 않는다.
+      따라서 사용자가 행 수를 틀릴 방법 자체가 없다(항상 정확히 size행이 만들어진다).
+      한 줄에 숫자를 몰아 넣는 경우(예: 3x3인데 한 줄에 9개)는 열 수 검증에 걸려 재입력을 요구한다.
+      즉 행 수는 구조적으로 보장하고, 열 수와 숫자 파싱은 read_matrix_line()이 줄 단위로 검증한다.
+    """
     print('')
     print('{0} ({1}줄 입력, 공백 구분)'.format(name, size))
 
@@ -689,9 +697,14 @@ def load_data(path):
         #        생략하면 운영체제 기본값을 쓰는데, Windows와 Mac이 서로 달라 깨질 수 있다.
         with open(path, 'r', encoding='utf-8') as file_object:
             data = json.load(file_object)
-    except json.JSONDecodeError as error:
-        # JSONDecodeError = JSON 문법이 깨졌을 때 발생 (쉼표 누락, 괄호 불일치 등)
-        return None, 'data.json의 JSON 형식이 올바르지 않습니다: {0}'.format(error)
+    except ValueError as error:
+        # ValueError를 잡는 이유: 여기서 나올 수 있는 예외가 두 종류이고, 둘 다 ValueError의 자식이다.
+        #   1) json.JSONDecodeError -- JSON 문법이 깨졌을 때 (쉼표 누락, 괄호 불일치 등)
+        #   2) UnicodeDecodeError   -- 파일이 UTF-8이 아닐 때
+        #      (예: Windows 메모장이 기본 CP949로 저장한 경우, UTF-16으로 저장한 경우)
+        # JSONDecodeError만 잡으면 인코딩이 다른 파일에서 프로그램이 트레이스백을 뿜고 죽는다.
+        # 요구사항: "프로그램이 비정상 종료되면 안된다"
+        return None, 'data.json을 읽을 수 없습니다 (인코딩 또는 JSON 형식 오류): {0}'.format(error)
     except OSError as error:
         # OSError = 권한 없음, 디스크 오류 등 파일 시스템 관련 문제
         return None, 'data.json을 읽는 중 오류가 발생했습니다: {0}'.format(error)
@@ -722,11 +735,16 @@ def parse_case_size(case_id):
     if len(parts) != 3 or parts[0] != 'size':
         return None  # 약속된 형식(size_{N}_{idx})이 아니다
 
-    if not parts[1].isdigit():
-        # .isdigit() = 문자열이 전부 숫자로만 이루어졌는지 확인한다.
-        #   '13'.isdigit()  -> True
-        #   '1a'.isdigit()  -> False
+    if not parts[1].isdecimal():
+        # .isdecimal() = 문자열이 전부 "10진 숫자"로만 이루어졌는지 확인한다.
+        #   '13'.isdecimal()  -> True
+        #   '1a'.isdecimal()  -> False
         # int()로 바로 바꾸지 않고 먼저 확인하는 이유: 예외를 흐름 제어에 쓰지 않기 위해서다.
+        #
+        # 비슷한 .isdigit()을 쓰지 않는 이유:
+        #   isdigit()은 위첨자 '²'(제곱 기호) 같은 문자도 True로 판정하는데,
+        #   int('²')는 오류를 낸다. 즉 검사를 통과하고도 변환에서 죽는다.
+        #   isdecimal()이 통과시키는 집합은 int()가 받는 집합과 정확히 일치한다.
         return None
 
     return int(parts[1])
@@ -811,7 +829,8 @@ def parse_filter_size(filter_key):
         return None
 
     parts = filter_key.split('_')
-    if len(parts) != 2 or parts[0] != 'size' or not parts[1].isdigit():
+    # .isdecimal()을 쓰는 이유는 parse_case_size()의 주석 참고 (int()가 받는 집합과 정확히 일치)
+    if len(parts) != 2 or parts[0] != 'size' or not parts[1].isdecimal():
         return None
 
     return int(parts[1])
