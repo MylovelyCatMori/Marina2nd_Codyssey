@@ -147,11 +147,28 @@
       `==` 비교 설명 오류(X가 아니라 Cross가 이김), meta.version 허위 주장, 라인번호 3건, Git 7종/브랜치 전략 누락
 - [x] 수정 후 재검증 -- selftest 통과, 6/3/3 회귀 없음, data.json md5 불변
 
+**커밋/배포 (2026-08-12):**
+- [x] STEP 0~12 커밋 수행 후 push -- 커밋 15개, `origin/master` 동기화 완료
+  - 사전정리 1 + STEP 0~12 13개 + `feature/json-mode` `--no-ff` 병합 1
+  - 각 STEP마다 실행 검증 후 커밋. 중간 커밋으로 되돌려도 프로그램이 동작함
+  - 재구성 결과를 최종본과 `diff` 대조: 1줄(주석 표현)만 차이, 나머지 1191줄 동일
+  - Git 필수 명령어 7종 전부 사용: init(M1)/add/commit/push/checkout/pull/clone(M2)
+- [x] 문서 코드참조 48건 자동 재대조 -- 전건 일치
+
 **남은 작업:**
-- [ ] 스크린샷 6장 캡처 (mode1_normal / mode1_error / mode2_judge / mode2_perf / mode2_summary / selftest)
-- [ ] STEP 0~12 커밋 수행 후 push
-- [ ] grill-me 세션으로 핵심 개념 검증 (MAC / 라벨정규화 / 부동소수점 / O(N²))
-- [ ] 동료평가 신청
+- [ ] 스크린샷 6장 캡처 -> `week3-mission3/docs/screenshots/`
+  - `selftest.png` : `python main.py --selftest`
+  - `mode1_normal.png` : 모드1 예시 입력 (A=1.0 / B=5.0 / 판정 B)
+  - `mode1_error.png` : 모드1 오류 입력 3종 (`1 2` / `a b c` / 빈 줄) 재입력 유도
+  - `mode2_judge.png` : 모드2 케이스별 판정 + PASS/FAIL
+  - `mode2_perf.png` : 성능 분석표 (3x3/5x5/13x13/25x25)
+  - `mode2_summary.png` : 결과 요약 (총 6 / 통과 3 / 실패 3)
+  - 캡처 규칙: 입력 명령어와 출력이 한 화면에 함께 보이게
+- [ ] 캡처 후 README 14절 "캡처 대기" 상태 열 갱신 + 이미지 삽입
+- [ ] 스크린샷 커밋: `git add docs/screenshots/ && git commit -m "docs: 실행 화면 스크린샷 6장 추가" && git push origin master`
+- [ ] grill-me 세션으로 핵심 개념 검증 (MAC / 라벨 정규화 / 부동소수점 epsilon / O(N²))
+  - 예상 질문: "왜 3건이 FAIL인가?" -> 답은 README 11-2절 (데이터가 수학적 동점으로 설계됨, 구현 버그 아님)
+- [ ] 동료평가 신청 -- 제출 시 레포 URL + `week3-mission3/` 경로 병기 필수 (단일 레포이므로)
 
 ### Term-Project - 7개 도메인 아이디어톤 (대기)
 - [ ] 제약/Physical AI 도메인 아이디어 사전 구상
