@@ -117,10 +117,41 @@
   - R2 Q4 진행 중 (QuizGame() 호출 시 내부 동작)
 - [x] kkirikkiri 코드+요구사항 검증 -- 2026-08-04 종합 PASS (코드품질 PASS, 요구사항 충족 PASS, 수정사항 0건)
 - [ ] 동료평가 신청
+- [ ] 2차 과제 동료평가 피드백 리뷰 -- 원본 `Week2_Mission2_FB.txt` (레포 루트, 미추적)
 
-### Week3 Mission3 - CS 기초 (대기)
-- [ ] `codyssey-p1-mission3` repo 공개 생성 (미션 수령 후)
-- [ ] week3-mission3/ 폴더 세팅 (학습 이력용)
+### Week3 Mission3 - Mini NPU Simulator (MAC 연산)
+
+**레포 전략 확정 (2026-08-12)**: 신규 repo 생성 취소. Mission1/2와 동일한 `Marina2nd_Codyssey` 단일 레포의 `week3-mission3/` 하위 사용.
+사유: `D:\Projects\CLAUDE.md` 5항 "미션·기능별 별도 레포 금지". 제출 시 레포 URL + 경로 병기.
+
+**설계 (2026-08-12):**
+- [x] week3-mission3/ 폴더 세팅 (.gitattributes, .gitignore, docs/screenshots/)
+- [x] show-me-the-prd로 PRD 4종 생성 -- `PRD/01_PRD.md` ~ `04_PROJECT_SPEC.md` + `PRD/README.md`
+  - `04_PROJECT_SPEC.md`에 요구사항 추적표 전수(124항목 기준) + 예상 결과 정답표 수록
+- [x] STEPS.md 작성 -- STEP 0~12 커밋 단위 가이드
+- [x] 보너스 과제 제외 결정 (1D 최적화, 패턴 생성기) -- 원문 "(선택)" 명시, 필수 완성도 우선
+
+**구현 (2026-08-12):**
+- [x] main.py 1192줄 -- Matrix / normalize_label / mac / decide / measure_mac_ms / 모드1 / 모드2 / --selftest
+- [x] 3x3 내장 상수 (data.json에 size_3 없음. 요구사항은 3x3 성능 측정 요구)
+- [x] README.md 17개 섹션 -- LEARNING_RULES 필수 13종 + 과제 지정 템플릿(실행방법/구현요약/결과리포트/재현성) + 요구사항 대조표
+- [x] 실행 결과 확정: **총 6 / 통과 3 / 실패 3** (FAIL 3건은 데이터가 수학적 동점으로 설계된 결과, Fraction 정확연산으로 교차검증)
+
+**검증 (2026-08-12):**
+- [x] kkirikkiri 4명 팀 검증 -- 요구사항 감사관 + 코드 검증관 + 문서 검증관
+  - 요구사항 124항목 전수 대조: PASS 120 / FAIL 0
+  - 코드 62 시나리오 실행, 문서 라인참조 74건 + 수치 21건 검산
+  - **CRITICAL 0 / HIGH 6 / MEDIUM 5** -- HIGH·MEDIUM 전부 수정 완료
+  - 리포트: `kkirikkiri-report-20260812-mission3.md`
+- [x] 수정 완료: `UnicodeDecodeError` 미포착(트레이스백 크래시), `isdigit`->`isdecimal`,
+      `==` 비교 설명 오류(X가 아니라 Cross가 이김), meta.version 허위 주장, 라인번호 3건, Git 7종/브랜치 전략 누락
+- [x] 수정 후 재검증 -- selftest 통과, 6/3/3 회귀 없음, data.json md5 불변
+
+**남은 작업:**
+- [ ] 스크린샷 6장 캡처 (mode1_normal / mode1_error / mode2_judge / mode2_perf / mode2_summary / selftest)
+- [ ] STEP 0~12 커밋 수행 후 push
+- [ ] grill-me 세션으로 핵심 개념 검증 (MAC / 라벨정규화 / 부동소수점 / O(N²))
+- [ ] 동료평가 신청
 
 ### Term-Project - 7개 도메인 아이디어톤 (대기)
 - [ ] 제약/Physical AI 도메인 아이디어 사전 구상

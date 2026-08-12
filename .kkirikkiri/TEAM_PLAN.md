@@ -1,33 +1,112 @@
 # 팀 작업 계획
 
-- 팀명: kkirikkiri-development-codyssey-structure
-- 목표: Codyssey with Claude 프로젝트 18개월 운영 구조 조직화
-- 생성 시각: 2026-07-28
+- 팀명: kkirikkiri-analysis-0812-mission3
+- 목표: `D:\Projects\S01-codyssey\week3-mission3\` 산출물을 `D:\Projects\S01-codyssey\Week3_Mission3.txt` 요구사항 전수 기준으로 검증하고, CRITICAL/HIGH 이슈를 즉시 수정
+- 생성 시각: 2026-08-12
+- 결과물 형태: 이슈 목록(심각도별) + CRITICAL/HIGH 즉시 수정
+
+## 검증 대상
+
+| 파일 | 역할 |
+|---|---|
+| `week3-mission3/main.py` | 제출물 1. 실행 파일 (1173줄) |
+| `week3-mission3/README.md` | 제출물 2. 실행 방법 + 결과 리포트 |
+| `week3-mission3/STEPS.md` | 단계별 구현 가이드 |
+| `week3-mission3/PRD/01_PRD.md` ~ `04_PROJECT_SPEC.md` | 설계 문서 4종 |
+| `week3-mission3/data.json` | 과제 제공 데이터 (읽기 전용, 수정 금지) |
+
+## 요구사항 원본
+
+`D:\Projects\S01-codyssey\Week3_Mission3.txt` — 이것이 최종 기준이다. PRD나 README가 원문과 충돌하면 원문이 이긴다.
+
+## 핵심 제약 (위반 시 CRITICAL)
+
+1. 외부 라이브러리 금지 — import는 `json`, `os`, `sys`, `time`만
+2. MAC은 반복문 직접 구현 — `sum()`/`zip()`/컴프리헨션 축약 금지
+3. epsilon `1e-9` 기반 비교 — 점수에 `==` 금지
+4. 라벨 정규화 필수 — `+`/`cross` -> `Cross`, `x` -> `X`, 비교는 표준 라벨로만
+5. 성능표 3열 — 크기(N×N) / 평균 시간(ms) / 연산 횟수(N²), 10회 이상 반복 평균
+6. 모드 2는 케이스 단위 FAIL 처리 — 어떤 데이터 오류에도 프로그램 중단 금지
+7. 모드 1은 행/열/숫자 검증 후 재입력 유도
+8. README "결과 리포트" 섹션 10줄 이상 + 실패 원인 분석 + 시간 복잡도 분석
 
 ## 팀 구성
+
 | 이름 | 역할 | 모델 | 담당 업무 |
-|------|------|------|----------|
-| Lead | 팀장 | Opus | 계획/배분/검증/통합 |
-| Architect | 아키텍트 | Opus | 폴더구조 + 거버넌스 파일 생성 |
-| Writer | 문서작가 | Opus | 학습템플릿 + grill 체크포인트 문서화 |
+|---|---|---|---|
+| mission3-lead | 팀장 | Opus | 계획/배분/교차검증/이슈 확정/수정 승인 |
+| req-auditor | 요구사항 감사관 | Opus | 과제 원문 전 항목을 산출물과 1대1 대조 |
+| code-verifier | 코드 검증관 | Opus | main.py 실제 실행, 계산 정확성, 예외 경로 |
+| doc-verifier | 문서 검증관 | Opus | README/PRD/STEPS 사실 오류, 라인번호 대조, 주석 품질 |
 
 ## 태스크 목록
-- [ ] [Architect] 18개월 폴더 뼈대 생성 (phase1~4, archive)
-- [ ] [Architect] .governance/ 파일 3종 생성 (PROTECTED_ASSETS, OPERATING_RULES, LEARNING_CYCLE)
-- [ ] [Writer] knowledge/ SSOT 구조 + 미션 개념 템플릿
-- [ ] [Writer] decision-log/ 결정 레지스트리 구조 + 템플릿
-- [ ] [Writer] grill-me/grill-with-docs 체크포인트 템플릿
-- [ ] [Lead] 전체 통합 검증 + README 업데이트
 
-## 설계 원칙 (Standard Project Structure 기반)
-1. SSOT: knowledge/ 가 유일한 개념 기록 채널
-2. 거버넌스: .governance/ 파일은 승인 없이 변경 금지 (보호자산)
-3. 피드백 루프: 미션 완료 전 grill-me 3문항 PASS 필수
-4. 결정 레지스트리: decision-log/ 에 append-only 기록
-5. 아카이빙: 단계(phase) 완료 시 archive/로 이관
-6. 크로스플랫폼: 모든 파일 LF 줄바꿈, 경로 슬래시(/)
+- [ ] T1: 요구사항 전수 대조 -> req-auditor
+- [ ] T2: 코드 정확성 및 예외 처리 검증 -> code-verifier
+- [ ] T3: 문서 사실 오류 및 주석 품질 검증 -> doc-verifier
+- [ ] T4: 교차 검증 + 이슈 심각도 확정 -> mission3-lead
+- [ ] T5: CRITICAL/HIGH 이슈 수정 -> mission3-lead 지시, 담당자 수행
+- [ ] T6: 수정 후 재검증 (전체 실행 + 예상 결과 대조) -> code-verifier
+
+## 사전 확인된 사실 (검증자는 이를 전제로 삼되, 직접 재확인할 것)
+
+정확 유리수 연산(Fraction)으로 사전 계산한 data.json 예상 결과:
+
+| case_id | Cross 점수 | X 점수 | 수학적 차이 | 판정 | expected | 결과 |
+|---|---|---|---|---|---|---|
+| size_5_1 | 0.9 | 0.8999999999999999 | 0 (9/10 = 9/10) | UNDECIDED | X | FAIL |
+| size_5_2 | 8.9 | 0.1 | 8.8 | Cross | Cross | PASS |
+| size_13_1 | 0.3 | 14.700000000000008 | 14.4 | X | X | PASS |
+| size_13_2 | 7.499999999999997 | 7.5 | 0 (15/2 = 15/2) | UNDECIDED | Cross | FAIL |
+| size_25_1 | 4.9 | 4.899999999999999 | 0 (49/10 = 49/10) | UNDECIDED | X | FAIL |
+| size_25_2 | 52.9 | 0.1 | 52.8 | Cross | Cross | PASS |
+
+**총 6 / 통과 3 / 실패 3** 이 정답이다. 이와 다르면 구현이 틀린 것이다.
+
+## 확정된 프로젝트 결정사항
+
+| 항목 | 결정 | 근거 |
+|---|---|---|
+| 보너스 과제(1D 최적화, 패턴 생성기) | 제외 | 사용자 결정. 요구사항 5절이 "선택"으로 명시 |
+| 레포 전략 | 기존 단일 레포 `Marina2nd_Codyssey`의 `week3-mission3/` | `D:\Projects\CLAUDE.md` 5항 |
+| 3x3 데이터 | main.py 내장 상수 | data.json에 size_3 없음. 요구사항은 3x3 성능 측정을 요구 |
+| `--selftest` 옵션 | 추가함 | 요구사항이 금지하지 않음. 기본 실행은 요구사항대로 메뉴 진입 |
 
 ## 주요 결정사항
-- week1-mission1/ 기존 구조 유지 (이동하지 않음)
-- phase1-admission/ 에 week별 서브폴더 구조 신설
-- grill-with-docs 전용 체크포인트 파일 포함
+
+| 결정 | 내용 | 사유 |
+|---|---|---|
+| HIGH 6건 전부 수정 | 코드 1 + 문서 5 | 동료평가에서 직접 지적당하는 항목 |
+| MEDIUM 5건 전부 수정 | isdecimal / 행수 설명 / 16자리 / 섹션순서 / Git 7종 | 수정 비용이 낮고 문서 신뢰도에 직결 |
+| LOW 4건 미수정 | NaN·Inf, 필터키 중복 덮어쓰기, idx 사전순 정렬, 연산중 Ctrl+C | 요구사항 밖이고 원본 data.json에 영향 없음. 코드를 늘리는 대가가 이득보다 큼 |
+| 성능표 헤더 변경 | `크기` -> `크기(N×N)` | 요구사항 문구와 일치시켜 회색지대 제거. 표 정렬 42열 유지 확인 |
+| epsilon 유지 | `1e-9` 그대로 | FAIL 3건은 데이터가 수학적 동점으로 설계된 결과. 통과시키려 기준을 조작하지 않는다 |
+
+## 검증 결과 (1라운드)
+
+- 목표 달성도: **PASS** — 요구사항 124항목 전수 대조 완료, 4개 관점 모두 커버
+- 완성도: **PASS** — 코드 62 시나리오 실행, 문서 라인참조 74건 대조, 수치 21건 검산
+- 정확성: **PASS** — 정답표를 `Fraction` 정확 연산으로 독립 재계산해 교차검증
+- 일관성: **PASS** — 3명의 결과가 상호 모순 없음. T1의 LOW 2건을 T3가 HIGH로 독립 재발견(교차 확인됨)
+- 종합 판정: **충분** (2라운드 불필요)
+
+### 수정 후 재검증 (2026-08-12)
+
+| 항목 | 결과 |
+|---|---|
+| `--selftest` | 전 항목 통과 |
+| 모드 1 예시 입력 | A=1.0 / B=5.0 / 판정 B |
+| 모드 1 오류 3종 | 안내 후 그 줄만 재입력, 프로그램 유지 |
+| 모드 2 총계 | 총 6 / 통과 3 / 실패 3 (정답표 일치, 회귀 없음) |
+| CP949 data.json | 트레이스백 없이 안내 후 메뉴 복귀 (수정 확인) |
+| `size_²` 키 | 트레이스백 없이 `[FAIL]` 안내 (수정 확인) |
+| 문서 코드참조 48건 | 전건 일치 (자동 대조 스크립트) |
+| import | `json`, `os`, `sys`, `time` 4개뿐 |
+| `mac()` 내 sum/zip | 없음 (주석에만 언급) |
+| `except: pass` | 0건 |
+| `data.json` md5 | `214daadf7af39e8281aa03f5b058368d` — 작업 전후 동일 |
+
+### 남은 사용자 작업
+
+- [ ] 스크린샷 6장 캡처 (`docs/screenshots/`) — STEPS.md STEP 12
+- [ ] STEP 0~12 커밋 수행 후 push
