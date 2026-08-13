@@ -4,3 +4,7 @@ Thumbs.db
 *.swp
 *.log
 Manual/
+
+# Term-Project 작업 문서 -- 공개 레포이므로 8/20 제출 전까지 비공개 유지
+# 제출 후 공개 판단 (평가기준 역산/게이트/에이전트 설계 포함)
+term-project/
