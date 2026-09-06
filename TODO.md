@@ -1,194 +1,117 @@
 # TODO - Codyssey with Claude
 
-최종 업데이트: 2026-08-13
+최종 업데이트: 2026-09-06
+현재 위치: **Step 2 · AI 도구 학습** (본과정 시작, 발대식 2026-09-03)
+
+> 커리큘럼 전체 지도: `phase2-ai-tools/CURRICULUM.md`
+> 학습 방식 규칙: `LEARNING_RULES.md`
+> 용어 사전: `knowledge/glossary.md`
 
 ---
 
-## 일반사항 (프로젝트 운영)
+## 즉시 (9월 1주)
 
-### 즉시
-- [x] GitHub 저장소 생성 후 이 프로젝트 연동 (동료평가 제출 필수) -- Marina2nd_Codyssey
-- [x] git config core.autocrlf false 설정 확인
-
-### 운영 중 지속
-- [ ] 미션 완료시 decision-log/phase1-decisions.md에 트러블슈팅 append
-- [ ] 단계(phase) 완료 후 archive/ 이관
-- [ ] knowledge/ 개념 파일 미션별 누적 기록 유지
-
-### 레포 전략 (재검토 필요)
-- 기본: 단일 레포 `Marina2nd_Codyssey` (master 브랜치)
-- 동료평가용: 미션별 별도 레포 `codyssey-p1-mission2` 등 (main 브랜치, 평가 시스템 연동)
-- 미결정: 앞으로도 별도 레포를 매번 만들지, 단일 레포로 통일할지 추후 결정
+- [ ] **길드 배치 확인** -- 9/7부터 플랫폼에서 확인 가능 → `CURRICULUM.md` 5-4에 기록
+- [ ] **퍼실리테이터 확인** -- 담당자 배정 완료 상태. 이름/연락 채널 확인
+- [ ] **B1-1 과제 원문 확보** -- 플랫폼에서 다운로드 → 레포 루트에 `B1-1_Mission.txt`로 저장 (M1~M3과 동일 방식)
+- [ ] **9월 2주차 미션풀이 집중기간 일정 확인** -- 디스코드 공지
+- [ ] **AICE 10월 시험 일정 확인** -- 응시료 전액 지원. 입과 시점 진단 성적 있으면 기준선으로 보관
 
 ---
 
-## Week & Mission
+## 프로젝트 운영 (지속)
 
-### Week1 Mission1 - 개발 워크스페이스 구축 (완료)
+- [ ] 미션 완료 시 `decision-log/`에 결정/트러블슈팅 append
+- [ ] `knowledge/glossary.md` 용어 누적 -- 🔴 수집 → 🟡 정의 → 🟢 설명 통과
+- [ ] **주 1회 5분 점검** -- 🟡 5개 무작위 설명 (LEARNING_RULES 규칙 4)
+- [ ] 매 미션 종료 시 **Smart Factory 연결 한 줄** 기록 (Step 4에서 회수)
+- [ ] 동료평가 리듬 유지 -- **월 4회 (참여 2 + 받기 2)**
+- [ ] 단계 완료 후 `archive/` 이관
 
-**실습 수행** (캡쳐 규칙: 명령어 입력 + 출력 결과 반드시 함께 포함)
-- [x] 터미널 기본 조작 (pwd, ls -la, mkdir, cp, mv, rm) -- 출력 결과 README 코드블록 기록
-- [x] 권한 변경 실습 (chmod 644/755) -- [📸필수] 변경 전/후 ls -la 비교 (ubuntu 컨테이너에서 수행)
-- [x] Docker 설치 확인 (docker --version, docker info) -- v29.6.2, README에 출력 기록
-- [x] hello-world 컨테이너 실행 -- 출력 결과 README 코드블록 기록
-- [x] ubuntu 컨테이너 진입 및 ls, echo 실행 -- 출력 결과 기록
-- [x] docker images / docker ps -a / docker logs / docker stats -- 출력 결과 기록
-- [x] Dockerfile 빌드 (my-web:1.0) -- 빌드 명령+출력 기록, [📸선택] 터미널 스크린샷
-- [x] 포트 매핑 실행 -- [📸필수] 브라우저 화면 (주소창에 포트 포함, localhost:8080)
-- [x] 바인드 마운트 반영 확인 -- [📸필수] 호스트 파일 변경 전/후 브라우저/curl 비교
-- [x] Docker 볼륨 영속성 검증 -- [📸필수] 컨테이너 삭제 전/후 데이터 유지 증명
-- [x] git config --list 출력 결과 기록 -- README 코드블록 또는 터미널 스크린샷
-- [x] GitHub 저장소 연동 -- [📸필수] VSCode GitHub 로그인 + 저장소 연동 화면 -- 2026-07-29 완료
-
-**문서 완성**
-- [x] week1-mission1/README.md 실제 출력 결과 채우기
-- [x] 트러블슈팅 Case 최소 2건 작성
-- [x] 프로젝트 개요 섹션 추가
-- [x] 컨테이너 종료/유지 차이 정리 추가
-- [x] 스크린샷 4장 README에 첨부
-
-**검증 & 제출**
-- [x] 위 커밋+push 완료 (프로젝트 개요/컨테이너 차이 추가분)
-- [x] `/grill-with-docs` 로 핵심 개념 검증 + MD 저장 (Docker 컨테이너/볼륨/포트매핑) -- 2026-07-29 Q1~Q6 완료
-- [x] knowledge/phase1-concepts.md 실제 내용으로 업데이트 -- 2026-07-29 grill-with-docs Q1~Q6 반영
-- [x] 동료 평가 신청 (500pt 보유 확인 후)
-- [x] 동료 평가 3회 PASS -- 완료 2026-08-03
+**레포 전략 (확정)**: 단일 레포 `Marina2nd_Codyssey`, 미션별 하위 폴더. 제출 시 레포 URL + 경로 병기.
+근거: `D:\Projects\CLAUDE.md` 5항 "미션·기능별 별도 레포 금지".
 
 ---
 
-### 보충 학습 (동료평가 피드백 기반)
+## Step 2 미션 진행표
 
-- [x] 듀얼부팅 + Ubuntu 개념 -- general-concepts.md 저장 완료 (2026-07-31)
-- [x] 포트 개념 (Well-known / Registered / Dynamic) -- general-concepts.md 저장 완료 (2026-07-31)
-- [x] 동료평가 항목 전체 점검 -- 완료 (2026-07-31)
-- [ ] Database ports -- 대기
-- [ ] 메모리 계층별 작동 구조와 성능 비교, 캐시메모리 -- 대기
+**단계 이수 조건 = 필수 미션 10개 + Term-Project(필수) 평가 완료.** 미충족 시 **사이렌(탈락)** 적용.
 
-### Week1 Mission1 - 보너스 과제 (선택, 언제든 가능)
-- [ ] Docker Compose 기초 (단일 서비스 compose로 실행)
-- [ ] Docker Compose 멀티 컨테이너 (웹서버 + 보조 서비스)
-- [ ] Compose 운영 명령어 (up/down/ps/logs)
-- [ ] 환경 변수 활용 (Dockerfile/Compose에서 주입)
-- [ ] GitHub SSH 키 설정
+| # | 미션 | 구분 | 시간 | 상태 |
+|---|---|---|---|---|
+| B1-1 | 나를 소개하는 웹페이지 처음부터 만들기 | 필수 | 160h | **진행 예정** |
+| B1-2 | 버튼 누르면 화면이 스르륵 바뀌는 웹사이트 | 선택 | - | 대기 |
+| B2-1 | 나만의 용돈 기입장 프로그램 | 필수 | 80h | 대기 |
+| B2-2 | 친구 3~5명과 함께 프로그램 만드는 법 | 필수 | 80h | 대기 |
+| B3-1 | 웹사이트 인터넷에 올려 누구나 쓰게 하기 | 필수 | 80h | 대기 |
+| B3-2 | 코드 설명을 AI가 대신 써주는 도우미 | 필수 | 80h | 대기 |
+| B4-1 | 컴퓨터가 알아서 자기 상태 점검하게 만들기 | 필수 | 80h | 대기 |
+| B4-2 | 느려지거나 멈췄을 때 원인 찾아 고치기 | 필수 | 80h | 대기 |
+| B5-1 | 정보를 빠르게 찾아주는 작은 저장소 (Mini Redis) | 필수 | 160h | 대기 |
+| B5-2 | 파일 변경 기록하는 프로그램 (Mini Git) | 필수 | 160h | 대기 |
+| B6-1 | 정보를 정리하는 디지털 서랍장 (SQL DB 설계) | 필수 | 160h | 대기 |
+| B6-2 | 게시판형 웹 서비스 | 선택 | - | 대기 |
+| B6-3 | 로그인·회원 연결 웹 서비스 | 선택 | - | 대기 |
+| TP | Term-Project: FastAPI 기반 AI 챗봇 (필수1+선택1) | 필수1 | 240h | 대기 |
 
-### Week2 Mission2 - Python & Git 기초
+---
 
-**레포 전략 확정**: Mission1과 동일한 `Marina2nd_Codyssey` 단일 레포 사용. 별도 repo 없음.
-**제출**: 동료평가 시 Marina2nd_Codyssey URL + week2-mission2/ 경로 명시
+## B1-1 · 나를 소개하는 웹페이지 (다음 미션)
 
-**세팅:**
-- [x] week2-mission2/ 폴더 세팅 -- 2026-07-31 완료
-- [x] .gitattributes, .gitignore, README.md, STEPS.md 생성 -- 2026-07-31
-- [x] 첫 커밋 + push (STEP 0) -- 2026-07-31
-- [ ] knowledge/ 미션 개념 누적
+**핵심 목표**: 포트폴리오 구축, React 기반 SPA 구현
+**산출물 기준**: 인터넷에 공개된 개인 홈페이지 + 도메인 연결
+**보유 자료**: `B1-1. 프론트엔드_3요소_강의자료.pdf` (레포 루트, 운영진 배포 자료라 미추적)
 
-**구현 (STEPS.md 기준):**
-- [x] STEP 1: Quiz 클래스 -- 2026-08-03
-- [x] STEP 2: 기본 퀴즈 데이터 7개 (주제: AI/바이브코딩/Physical AI/AX/Agentic AI) -- 2026-08-03
-- [x] STEP 3: QuizGame 클래스 + state.json -- 2026-08-03
-- [x] STEP 4: 메뉴 + 입력 예외 처리 -- 2026-08-03
-- [x] STEP 5: 퀴즈 풀기 (브랜치 feature/play) -- 2026-08-03
-- [x] STEP 6: 퀴즈 추가 -- 2026-08-03
-- [x] STEP 7: 퀴즈 목록 -- 2026-08-03
-- [x] STEP 8: 점수 확인 -- 2026-08-03
-- [x] STEP 9: README 완성 + 스크린샷 8장 -- 2026-08-03
-- [x] STEP 10: clone/pull 실습 -- 2026-08-03
+**착수 전 (용어 우선)**
+- [ ] 강의자료 PDF 학습 -- 프론트엔드 3요소
+- [ ] `glossary.md` B1-1 백로그 13개 훑기 (정의 없이 이름만)
+- [ ] 과제 원문 확보 후 요구사항 전수 목록화
 
-**문서 보강 (2026-08-03):**
-- [x] main.py 상세 학습 주석 작성 (LEARNING_RULES 적용)
-- [x] STUDY_GUIDE.md 7단계 학습 가이드 작성
-- [x] README 대원칙 기반 전면 보강 (코드 구조/핵심 개념/예외 처리/Git 기록)
-- [x] LEARNING_RULES.md에 README 작성 대원칙 추가 (모든 미션 공통 적용)
-- [x] 파일 손상 테스트 스크린샷 GitHub 업로드
+**설계**
+- [ ] `phase2-ai-tools/b1-1-portfolio/` 폴더 세팅 (.gitattributes, .gitignore)
+- [ ] show-me-the-prd로 PRD 생성 -- 요구사항 추적표 포함
+- [ ] STEPS.md 작성 (커밋 단위)
 
-**문서 정정 (2026-08-07):**
-- [x] README 브랜치 전략 섹션 정정 -- 커밋 `74d0d4f`
-  - 기존 다이어그램이 존재하지 않는 머지 커밋(C7)을 그리면서 본문엔 Fast-forward라 표기 (자기모순)
-  - 실측: `feature/play`는 0883b3c에서 분기, 5d5d369 1커밋 후 **FF 병합** -- 부모 1개, 갈래 안 남음
-  - FF 3단계 다이어그램 + FF vs 3-way merge 비교 다이어그램 추가
-  - reflog를 브랜치 사용 증거로 인용 (`git reflog show feature/play`)
-  - 실제 3-way merge 사례 추가: 2183b83 -> 9302138(로컬)/ff25306(GitHub 웹) -> 282c532(부모 2개)
-- [ ] `feature/play` 브랜치 삭제 -- 동료평가 종료 후. README가 reflog를 증거로 인용 중이라 보류
+**구현**
+- [ ] STEP 단위 구현 + 각 STEP 실행 검증 후 커밋
+- [ ] 배포 + 도메인 연결
 
-**동료평가 준비:**
-- [x] grill-me 세션으로 핵심 개념 학습 (Python/클래스/파일IO/Git) -- 2026-08-04 R1+R2 완료
-  - R1: Q3 정답, Q1/Q2/Q4/Q6 모름/반만 → 약한 영역 3개 도출
-  - R2: with문 정답, 직렬화 거의 정답(저장 순서 실수), self/cls 아직 약함
-  - R2 Q4 진행 중 (QuizGame() 호출 시 내부 동작)
-- [x] kkirikkiri 코드+요구사항 검증 -- 2026-08-04 종합 PASS (코드품질 PASS, 요구사항 충족 PASS, 수정사항 0건)
-- [ ] 동료평가 신청
-- [ ] 2차 과제 동료평가 피드백 리뷰 -- 원본 `Week2_Mission2_FB.txt` (레포 루트, 미추적)
+**문서·검증**
+- [ ] README 작성 (LEARNING_RULES 필수 13종 섹션)
+- [ ] 스크린샷
+- [ ] 🔴 용어 전부 🟡로 채우기
+- [ ] kkirikkiri 검증
+- [ ] **3문장 리허설** -- 핵심 설계 결정 3~5개
+- [ ] 동료평가 신청 (레포 URL + 경로 병기)
 
-### Week3 Mission3 - Mini NPU Simulator (MAC 연산)
+---
 
-**레포 전략 확정 (2026-08-12)**: 신규 repo 생성 취소. Mission1/2와 동일한 `Marina2nd_Codyssey` 단일 레포의 `week3-mission3/` 하위 사용.
-사유: `D:\Projects\CLAUDE.md` 5항 "미션·기능별 별도 레포 금지". 제출 시 레포 URL + 경로 병기.
+## 기초 보완 백로그 (틈날 때, 우선순위 순)
 
-**설계 (2026-08-12):**
-- [x] week3-mission3/ 폴더 세팅 (.gitattributes, .gitignore, docs/screenshots/)
-- [x] show-me-the-prd로 PRD 4종 생성 -- `PRD/01_PRD.md` ~ `04_PROJECT_SPEC.md` + `PRD/README.md`
-  - `04_PROJECT_SPEC.md`에 요구사항 추적표 전수(124항목 기준) + 예상 결과 정답표 수록
-- [x] STEPS.md 작성 -- STEP 0~12 커밋 단위 가이드
-- [x] 보너스 과제 제외 결정 (1D 최적화, 패턴 생성기) -- 원문 "(선택)" 명시, 필수 완성도 우선
+입학연수에서 미완으로 남은 항목 + 본과정 미션과 직접 연결되는 순서로 재배열.
 
-**구현 (2026-08-12):**
-- [x] main.py 1192줄 -- Matrix / normalize_label / mac / decide / measure_mac_ms / 모드1 / 모드2 / --selftest
-- [x] 3x3 내장 상수 (data.json에 size_3 없음. 요구사항은 3x3 성능 측정 요구)
-- [x] README.md 17개 섹션 -- LEARNING_RULES 필수 13종 + 과제 지정 템플릿(실행방법/구현요약/결과리포트/재현성) + 요구사항 대조표
-- [x] 실행 결과 확정: **총 6 / 통과 3 / 실패 3** (FAIL 3건은 데이터가 수학적 동점으로 설계된 결과, Fraction 정확연산으로 교차검증)
+- [ ] **메모리 계층 구조와 캐시** -- B5-1 Mini Redis 직전 필수. 캐시 개념 없이는 미션 설계 불가
+- [ ] **Database ports / 클라이언트-서버 통신** -- B6-1 DB 설계 직전
+- [ ] GitHub SSH 키 설정 -- 매번 토큰 입력 회피
+- [ ] Docker Compose 기초 (up/down/ps/logs, 환경변수 주입) -- B3-1 배포에서 회수 가능
 
-**검증 (2026-08-12):**
-- [x] kkirikkiri 4명 팀 검증 -- 요구사항 감사관 + 코드 검증관 + 문서 검증관
-  - 요구사항 124항목 전수 대조: PASS 120 / FAIL 0
-  - 코드 62 시나리오 실행, 문서 라인참조 74건 + 수치 21건 검산
-  - **CRITICAL 0 / HIGH 6 / MEDIUM 5** -- HIGH·MEDIUM 전부 수정 완료
-  - 리포트: `kkirikkiri-report-20260812-mission3.md`
-- [x] 수정 완료: `UnicodeDecodeError` 미포착(트레이스백 크래시), `isdigit`->`isdecimal`,
-      `==` 비교 설명 오류(X가 아니라 Cross가 이김), meta.version 허위 주장, 라인번호 3건, Git 7종/브랜치 전략 누락
-- [x] 수정 후 재검증 -- selftest 통과, 6/3/3 회귀 없음, data.json md5 불변
+---
 
-**커밋/배포 (2026-08-12):**
-- [x] STEP 0~12 커밋 수행 후 push -- 커밋 15개, `origin/master` 동기화 완료
-  - 사전정리 1 + STEP 0~12 13개 + `feature/json-mode` `--no-ff` 병합 1
-  - 각 STEP마다 실행 검증 후 커밋. 중간 커밋으로 되돌려도 프로그램이 동작함
-  - 재구성 결과를 최종본과 `diff` 대조: 1줄(주석 표현)만 차이, 나머지 1191줄 동일
-  - Git 필수 명령어 7종 전부 사용: init(M1)/add/commit/push/checkout/pull/clone(M2)
-- [x] 문서 코드참조 48건 자동 재대조 -- 전건 일치
+## 종료된 작업 (입학연수, 2026-07-27 ~ 08-21)
 
-**남은 작업:**
-- [ ] 스크린샷 6장 캡처 -> `week3-mission3/docs/screenshots/`
-  - `selftest.png` : `python main.py --selftest`
-  - `mode1_normal.png` : 모드1 예시 입력 (A=1.0 / B=5.0 / 판정 B)
-  - `mode1_error.png` : 모드1 오류 입력 3종 (`1 2` / `a b c` / 빈 줄) 재입력 유도
-  - `mode2_judge.png` : 모드2 케이스별 판정 + PASS/FAIL
-  - `mode2_perf.png` : 성능 분석표 (3x3/5x5/13x13/25x25)
-  - `mode2_summary.png` : 결과 요약 (총 6 / 통과 3 / 실패 3)
-  - 캡처 규칙: 입력 명령어와 출력이 한 화면에 함께 보이게
-- [ ] 캡처 후 README 14절 "캡처 대기" 상태 열 갱신 + 이미지 삽입
-- [ ] 스크린샷 커밋: `git add docs/screenshots/ && git commit -m "docs: 실행 화면 스크린샷 6장 추가" && git push origin master`
-- [~] 핵심 개념 검증 세션 (MAC / 라벨 정규화 / 부동소수점 epsilon / O(N²)) -- 2026-08-13 1회차 진행
-  - 예상 질문: "왜 3건이 FAIL인가?" -> 답은 README 11-2절 (데이터가 수학적 동점으로 설계됨, 구현 버그 아님)
-  - 진행 방식: README를 6단계로 분해해 설명 -> 단계별 퀴즈 -> 오답 교정 -> main.py 코드 대조
-  - 퀴즈 결과: 1차(개념) 3/3, 2차(설계 의도) 1.5/5, 3차(코드) 4/5
-  - **강한 영역**: MAC 계산 원리, 필터 유사도, 코드 동작 추적 (예외/측정구간/축약금지 범위)
-  - **약한 영역 1 -- 설계 의도**: "왜 dict인가"를 성능으로 오답 (정답: 표기 추가 시 코드가 아니라 데이터만 수정)
-  - **약한 영역 2 -- 정규화 방향**: `+`가 Cross/X 양쪽에 대응된다고 오해 (정답: 여러 표기 -> 표준 1개, many-to-one)
-  - **약한 영역 3 -- 부동소수점 원인**: "0.9와 0.8999...는 같은 값"으로 오답
-    (정답: 저장 비트가 다른 별개 값. 0.9는 오차 1회, 0.1x9는 오차 9회 누적 -- 더하는 횟수/순서 차이)
-  - **약한 영역 4 -- O(N²) 근거**: 셀당 시간 일정 = 칸당 비용 상수 -> 총시간 = 상수 x N² (신규 학습)
-  - **파생 발견 -- 상속/범위 함정 3종 세트** (인터뷰 대비 정리 완료)
-    | 사례 | 함정 |
-    |---|---|
-    | `UnicodeDecodeError`가 `ValueError`의 자식 | `JSONDecodeError`만 잡으면 미포착 |
-    | `bool`이 `int`의 자식 (`isinstance(True, int)` -> True) | `int` 검사만 하면 통과해 버림 |
-    | `'²'.isdigit()`는 True, `int('²')`는 오류 | 검사 범위 != 변환 범위 |
-  - 다음 회차 선택지: (1) 동료평가 실전 문답 (2) `--selftest` 직접 실행 (3) 모드2 본체 코드 읽기
-    (`judge_case`, `build_filter_sets`, `parse_case_size`)
-- [ ] 동료평가 신청 -- 제출 시 레포 URL + `week3-mission3/` 경로 병기 필수 (단일 레포이므로)
+> **전 항목 종료. 잔여 미체크 항목은 수행하지 않는다.**
 
-### Term-Project - 7개 도메인 아이디어톤 (진행 중)
+| 미션 | 결과 |
+|---|---|
+| M1 개발 워크스페이스 구축 (Docker/Git) | 동료평가 3회 PASS (08-03) |
+| M2 Python & Git 기초 (퀴즈 게임) | 완료 |
+| M3 Mini NPU Simulator (MAC 연산) | kkirikkiri 검증 CRITICAL 0, 커밋 15개 push 완료 |
+| Term-Project (AI Smart Factory 아이디어톤) | **통과 → 본과정 진입** |
 
-**도메인**: AI Smart Factory / **마감**: 8/20(목) 09:00 제출, 8/21(금) 발표
+- [ ] (선택) `feature/play` 브랜치 삭제 -- 동료평가 종료로 보류 사유 해소. 정리 시 삭제 가능
 
-> 세부 태스크는 **`term-project/TODO.md`** 참조.
-> 해당 폴더는 `.gitignore` 처리됨 -- 상위 레포가 공개이므로 제출(8/20) 전까지 작업 문서를 비공개 유지한다. 제출 후 공개 여부 재판단.
+**남긴 자산**
+- `knowledge/phase1-concepts.md`, `general-concepts.md`, `troubleshooting-patterns.md`
+- `knowledge/glossary.md` Phase 1 용어 11개
+- M3 파생 발견: 상속/범위 함정 3종 (`UnicodeDecodeError`⊂`ValueError`, `bool`⊂`int`, `'²'.isdigit()`)
+- `decision-log/phase1-decisions.md`
