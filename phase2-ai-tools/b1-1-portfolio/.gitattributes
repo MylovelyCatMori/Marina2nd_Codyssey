@@ -1,0 +1,30 @@
+# Windows에서 작업, Mac에서 동료평가를 받는 환경 대응
+#
+# 줄바꿈 문자가 운영체제마다 다르다.
+#   Windows : CRLF (줄 끝에 보이지 않는 문자 2개)
+#   Mac/Linux : LF  (1개)
+# 이것을 통일하지 않으면 동료가 열었을 때 "전 줄이 수정됨"으로 표시된다.
+
+# 모든 텍스트 파일을 LF로 정규화
+* text=auto eol=lf
+
+# 웹 프로젝트 파일
+*.html text eol=lf
+*.css  text eol=lf
+*.js   text eol=lf
+*.json text eol=lf
+*.md   text eol=lf
+*.txt  text eol=lf
+*.svg  text eol=lf
+
+# 바이너리 파일은 변환 없음
+# 이미지에 줄바꿈 변환을 적용하면 파일이 깨진다.
+*.png  binary
+*.jpg  binary
+*.jpeg binary
+*.gif  binary
+*.webp binary
+*.ico  binary
+*.pdf  binary
+*.woff  binary
+*.woff2 binary

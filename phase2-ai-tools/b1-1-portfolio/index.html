@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<!-- DOCTYPE: 이 문서가 HTML5 규격임을 브라우저에 알린다. 없으면 브라우저가
+     옛날 방식(호환 모드)으로 해석해 CSS가 다르게 적용될 수 있다. -->
+<html lang="ko">
+<!-- lang="ko": 이 문서의 언어가 한국어임을 알린다.
+     화면 낭독기(스크린 리더)가 한국어 발음으로 읽어주는 근거가 된다. -->
+
+<head>
+     <!-- head: 화면에 보이지 않는 정보를 담는 곳. 문서의 설정 구역이다. -->
+
+     <meta charset="UTF-8">
+     <!-- charset: 글자를 어떤 규칙으로 해석할지 지정.
+       UTF-8이 없으면 한글이 깨진다. 항상 head의 첫 줄에 둔다. -->
+
+     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <!-- viewport: 모바일 화면 대응의 출발점. (자세한 설명은 개념 블록 A에서)
+       width=device-width : 페이지 폭을 기기 실제 폭에 맞춘다
+       initial-scale=1.0  : 처음 열 때 확대/축소 없이 100%로 보여준다
+       이 줄이 없으면 모바일에서 데스크톱 화면을 축소해 보여준다. -->
+
+     <title>Phase 0 연결 확인</title>
+     <!-- title: 브라우저 탭에 표시되는 이름. Phase 1에서 실제 제목으로 교체한다. -->
+
+     <!-- F-02: 외부 스타일시트 연결
+       rel="stylesheet" : 이 파일과 나의 관계가 "스타일시트"임을 알린다
+       href="./css/..."  : ./ 는 "현재 폴더 기준"이라는 뜻. 상대경로.
+       (PROJECT_SPEC 금지사항 10번: 절대경로 /css/ 는 배포 시 깨진다) -->
+     <link rel="stylesheet" href="./css/style.css">
+</head>
+
+<body>
+     <!-- body: 화면에 실제로 보이는 내용을 담는 곳. -->
+
+     <h1>Phase 0 · 연결 확인</h1>
+
+     <p id="js-check">이 문장이 바뀌지 않았다면 JavaScript가 연결되지 않은 것입니다.</p>
+
+     <!-- F-24: JavaScript 를 defer 로 연결
+       defer : HTML을 끝까지 다 읽은 뒤에 실행하라는 뜻.
+
+       주의 -- defer 의 효과는 "스크립트를 어디에 두었는가"에 따라 달라진다.
+         head 안에 둘 때 : defer 가 없으면 아래 요소가 아직 없어 null 이 된다. 효과 있음
+         body 끝에 둘 때 : 이미 요소가 다 만들어진 뒤라서 defer 유무가 결과에 영향 없음
+
+       지금은 body 끝이라 defer 를 빼도 동작이 같다. 그래도 붙이는 이유는
+         ① 과제 요구사항(F-24)이고
+         ② 나중에 head 로 옮기더라도 그대로 안전하기 때문이다.
+
+       [Phase 0 실험 기록 · 2026-09-09]
+         실험1) head + defer 없음
+                -> Uncaught TypeError: Cannot set properties of null (setting 'textContent')
+                   querySelector 가 null 을 반환. 요소가 아직 만들어지지 않았기 때문.
+         실험2) head + defer 있음  -> 정상 동작. 위치는 그대로인데 defer 하나로 결과가 뒤집힘.
+         결론) defer = "HTML 을 다 읽을 때까지 기다렸다가 실행하라". -->
+     <script src="./js/main.js" defer></script>
+</body>
+
+</html>
