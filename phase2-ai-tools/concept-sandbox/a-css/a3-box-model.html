@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <title>개념 A3 · 박스 모델</title>
+
+  <!-- 실습장이므로 style 블록을 쓴다. style="..." 속성은 여기서도 금지. -->
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      padding: 2rem;
+      line-height: 1.7;
+      background-color: #fafafa;
+    }
+
+    hr {
+      margin: 3rem 0;
+    }
+
+    /* 실험용 상자들의 공통 바탕.
+       배경을 깔아야 padding 이 어디까지인지 눈에 보인다. */
+    .box {
+      background-color: #cfe8ff;
+      border: 10px solid #1b4b7a;
+      padding: 20px;
+      margin-bottom: 1rem;
+      width: 300px;
+    }
+
+    /* 부모에 테두리를 둘러야 자식이 부모를 넘치는지 보인다 */
+    .ruler {
+      border: 2px dashed #d33;
+      width: 300px;
+      margin-bottom: 2rem;
+    }
+
+    /* ===============================================================
+       실험 1 · box-sizing -- width 300px 는 무엇의 300px 인가
+       =============================================================== */
+
+    /* 브라우저 기본값. width 는 "내용 영역"만 가리킨다 */
+    .content-box {
+      box-sizing: content-box;
+    }
+
+    /* width 가 "테두리 바깥까지"를 가리키게 바꾼다 */
+    .border-box {
+      box-sizing: border-box;
+    }
+
+    /* ===============================================================
+       실험 2 · margin 상쇄 (margin collapse)
+       위아래로 맞닿은 형제의 세로 margin 은 더해지지 않는다.
+       =============================================================== */
+
+    .sibling {
+      background-color: #ffd9a0;
+      border: 1px solid #b26a00;
+      padding: 10px;
+      margin-top: 40px;
+      margin-bottom: 40px;
+    }
+
+    /* 상쇄가 일어나는지 보려면 기준선이 필요하다 */
+    .collapse-wrap {
+      background-color: #eee;
+      border: 2px solid #999;
+    }
+
+    /* ===============================================================
+       실험 3 · margin 과 padding 은 무엇이 다른가
+       둘 다 "여백"인데 왜 이름이 두 개인가.
+       =============================================================== */
+
+    .space-demo {
+      background-color: #d7f5d3;
+      border: 3px solid #2f7a2a;
+      width: 200px;
+      margin-bottom: 1rem;
+    }
+
+    .pad-only {
+      padding: 30px;
+    }
+
+    .margin-only {
+      margin-left: 30px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>A3 실습 · 박스 모델</h1>
+  <p>
+    F12 → Elements 탭에서 요소를 클릭하고, 오른쪽 아래 <strong>Computed</strong> 패널의
+    박스 그림을 함께 보십시오. 색깔별로 margin / border / padding / content 가 표시됩니다.
+  </p>
+
+  <hr>
+
+  <!-- =================================================================
+       실험 1 · box-sizing
+       빨간 점선은 폭 300px 의 기준자다.
+       두 파란 상자 모두 width: 300px 인데, 하나는 기준자를 넘친다.
+       ================================================================= -->
+  <section>
+    <h2>실험 1 · <code>width: 300px</code> 는 무엇의 300px 인가</h2>
+
+    <div class="ruler">↑ 이 빨간 점선이 폭 300px 기준자입니다</div>
+
+    <p><code>box-sizing: content-box</code> (브라우저 기본값)</p>
+    <div class="box content-box">
+      width 300 + padding 20×2 + border 10×2
+    </div>
+
+    <p><code>box-sizing: border-box</code></p>
+    <div class="box border-box">
+      width 300 안에 padding 과 border 가 포함된다
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- =================================================================
+       실험 2 · margin 상쇄
+       두 상자 사이 간격은 40 + 40 = 80px 인가, 아니면 40px 인가.
+       ================================================================= -->
+  <section>
+    <h2>실험 2 · 위아래 margin 은 더해지는가</h2>
+
+    <div class="collapse-wrap">
+      <div class="sibling">첫 번째 (margin-bottom: 40px)</div>
+      <div class="sibling">두 번째 (margin-top: 40px)</div>
+    </div>
+  </section>
+
+  <hr>
+
+  <!-- =================================================================
+       실험 3 · padding 과 margin 의 차이
+       배경색이 어디까지 칠해지는지를 보라. 그것이 두 여백의 결정적 차이다.
+       ================================================================= -->
+  <section>
+    <h2>실험 3 · <code>padding</code> 과 <code>margin</code> 의 차이</h2>
+
+    <div class="space-demo">기준 (여백 없음)</div>
+    <div class="space-demo pad-only">padding: 30px</div>
+    <div class="space-demo margin-only">margin-left: 30px</div>
+  </section>
+
+  <script>
+    // 실험 1 확인용.
+    // offsetWidth 는 "테두리까지 포함한 실제 차지 폭"을 픽셀로 돌려준다.
+    // CSS 에 적은 width 값과 다를 수 있다. 그 차이가 이 실험의 전부다.
+    const contentBox = document.querySelector('.content-box');
+    const borderBox = document.querySelector('.border-box');
+
+    console.log('[실험1] content-box 가 실제로 차지한 폭 :', contentBox.offsetWidth);
+    console.log('[실험1] border-box  가 실제로 차지한 폭 :', borderBox.offsetWidth);
+
+    // 실험 2 확인용.
+    // 두 형제의 위치를 재서 사이 간격을 직접 계산한다.
+    const siblings = document.querySelectorAll('.sibling');
+    const firstBottom = siblings[0].getBoundingClientRect().bottom;
+    const secondTop = siblings[1].getBoundingClientRect().top;
+
+    console.log('[실험2] 두 상자 사이 실제 간격 :', secondTop - firstBottom);
+  </script>
+
+</body>
+
+</html>

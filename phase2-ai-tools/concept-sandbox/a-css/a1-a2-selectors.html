@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <title>개념 A1-A2 · 태그/요소/속성 + 선택자</title>
+
+  <!-- 실습장이므로 style 블록을 쓴다. 미션 폴더에서는 외부 CSS 파일을 쓴다.
+       주의: <style> 블록은 허용, style="..." 속성은 실습장에서도 금지. -->
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      padding: 2rem;
+      line-height: 1.7;
+    }
+
+    hr {
+      margin: 2rem 0;
+    }
+
+    /* ===============================================================
+       실험 1 · 선택자 세 종류
+       =============================================================== */
+
+    /* 태그 선택자 -- "3학년 전원 나와" */
+    .exp1 p {
+      color: red;
+    }
+
+    /* 클래스 선택자 -- "축구부 나와". 점(.)으로 시작한다 */
+    .exp1 .note {
+      color: blue;
+    }
+
+    /* id 선택자 -- "학번 20240101 나와". 샵(#)으로 시작한다 */
+    .exp1 #first {
+      color: green;
+    }
+
+    /* ===============================================================
+       실험 2 · 클래스 여러 개 붙이기
+       한 요소에 class="card big" 처럼 공백으로 나열하면 둘 다 적용된다.
+       =============================================================== */
+
+    .card {
+      border: 2px solid #333;
+      padding: 1rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .big {
+      font-size: 1.5rem;
+    }
+
+    .highlight {
+      background-color: #fff3a0;
+    }
+
+    /* ===============================================================
+       실험 3 · id 중복 시 무슨 일이 나는가
+       =============================================================== */
+
+    #duplicated {
+      color: purple;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>A1-A2 실습</h1>
+  <p>F12를 눌러 Console 탭을 함께 열어두십시오.</p>
+
+  <hr>
+
+  <!-- =================================================================
+       실험 1 · 우선순위 확인 (예측 질문 Q1)
+       세 선택자가 같은 요소를 동시에 가리킨다. 무슨 색이 이길까.
+       ================================================================= -->
+  <section class="exp1">
+    <h2>실험 1 · 선택자 우선순위</h2>
+
+    <!-- 이 요소는 세 선택자에 모두 해당한다:
+         p 태그이고, class="note" 이고, id="first" 다. -->
+    <p class="note" id="first">① 태그 + 클래스 + id 전부 해당</p>
+
+    <p class="note">② 태그 + 클래스만 해당</p>
+
+    <p>③ 태그만 해당</p>
+  </section>
+
+  <hr>
+
+  <!-- =================================================================
+       실험 2 · 클래스 여러 개 (예측 질문 Q2)
+       ================================================================= -->
+  <section>
+    <h2>실험 2 · 클래스 여러 개 붙이기</h2>
+
+    <div class="card">클래스 1개 : card</div>
+
+    <!-- 공백으로 구분해 나열한다. 쉼표가 아니다. -->
+    <div class="card big">클래스 2개 : card + big</div>
+
+    <div class="card big highlight">클래스 3개 : card + big + highlight</div>
+  </section>
+
+  <hr>
+
+  <!-- =================================================================
+       실험 3 · id 중복 (예측 질문 Q3)
+       같은 id 를 두 요소에 붙였다. 에러가 날까?
+       ================================================================= -->
+  <section>
+    <h2>실험 3 · id 를 중복으로 붙이면</h2>
+
+    <p id="duplicated">첫 번째 -- id="duplicated"</p>
+    <p id="duplicated">두 번째 -- 같은 id 를 또 붙였다</p>
+  </section>
+
+  <script>
+    // 실험 3 확인용.
+    // querySelector 는 조건에 맞는 요소를 "하나만" 찾는다.
+    // querySelectorAll 은 "전부" 찾아 목록으로 돌려준다.
+    const one = document.querySelector('#duplicated');
+    const all = document.querySelectorAll('#duplicated');
+
+    console.log('[실험3] querySelector 가 찾은 것 :', one.textContent);
+    console.log('[실험3] 문서에 실제로 있는 개수  :', all.length);
+  </script>
+
+</body>
+
+</html>
