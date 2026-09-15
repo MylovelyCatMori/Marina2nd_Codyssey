@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <title>개념 A5 · Flexbox</title>
+
+  <!-- 실습장이므로 style 블록을 쓴다. style="..." 속성은 여기서도 금지. -->
+  <style>
+    body {
+      font-family: system-ui, sans-serif;
+      padding: 2rem;
+      line-height: 1.7;
+      background-color: #fafafa;
+    }
+
+    hr {
+      margin: 3rem 0;
+    }
+
+    /* ===============================================================
+       실험 1 · display: flex 는 누구에게 영향을 주는가
+       nav > (div.logo, ul.menu > li ×3)
+       =============================================================== */
+    .nav {
+      display: flex;
+      background-color: #e3ecff;
+    }
+
+    .logo {
+      background-color: #1b4b7a;
+      color: #fff;
+      padding: 8px 16px;
+    }
+
+    .menu {
+      background-color: #ffd9a0;
+      margin: 0;               /* ul 의 브라우저 기본 여백 제거 */
+    }
+
+    /* ===============================================================
+       실험 2 · 축 바꾸기
+       높이 200px 상자 안에 폭 60px 작은 상자 3개.
+       =============================================================== */
+    .axis {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      height: 200px;
+      background-color: #eef7ee;
+      margin-bottom: 1rem;
+    }
+
+    .axis-centered {
+      align-items: center;
+    }
+
+    .dot {
+      width: 60px;
+      background-color: #2f9e44;
+      color: #fff;
+      text-align: center;
+    }
+
+    /* ===============================================================
+       실험 3 · 자리가 모자라면
+       폭 400px 부모 안에 폭 200px 자식 3개.
+       부모에 border / padding 을 주지 않는다. 폭 계산을 흐리지 않기 위해서다.
+       =============================================================== */
+    .row {
+      display: flex;
+      width: 400px;
+      background-color: #eee;
+      margin-bottom: 1rem;
+    }
+
+    .row-wrap {
+      flex-wrap: wrap;
+    }
+
+    .cell {
+      box-sizing: border-box;
+      width: 200px;
+      border: 2px solid #b26a00;
+      background-color: #ffd9a0;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>A5 실습 · Flexbox</h1>
+  <p>
+    F12 → Elements 탭에서 <code>display: flex</code> 가 걸린 요소 옆의
+    <strong>flex</strong> 배지를 누르면 배치선이 화면에 겹쳐 보입니다.
+  </p>
+
+  <hr>
+
+  <section>
+    <h2>실험 1 · <code>display: flex</code> 는 어디까지 영향을 주는가</h2>
+
+    <nav class="nav">
+      <div class="logo">LOGO</div>
+      <ul class="menu">
+        <li>About</li>
+        <li>Skills</li>
+        <li>Projects</li>
+      </ul>
+    </nav>
+  </section>
+
+  <hr>
+
+  <section>
+    <h2>실험 2 · 방향을 세로로 바꾸면 <code>justify-content</code> 는 무엇을 움직이는가</h2>
+
+    <p>2-1 · <code>justify-content: center</code> 만</p>
+    <div class="axis" id="axis-a">
+      <div class="dot">1</div>
+      <div class="dot">2</div>
+      <div class="dot">3</div>
+    </div>
+
+    <p>2-2 · 여기에 <code>align-items: center</code> 추가</p>
+    <div class="axis axis-centered" id="axis-b">
+      <div class="dot">1</div>
+      <div class="dot">2</div>
+      <div class="dot">3</div>
+    </div>
+  </section>
+
+  <hr>
+
+  <section>
+    <h2>실험 3 · 400px 에 200px 세 개가 들어가야 할 때</h2>
+
+    <p>3-1 · 기본값 (<code>flex-wrap: nowrap</code>)</p>
+    <div class="row" id="row-nowrap">
+      <div class="cell">1</div>
+      <div class="cell">2</div>
+      <div class="cell">3</div>
+    </div>
+
+    <p>3-2 · <code>flex-wrap: wrap</code></p>
+    <div class="row row-wrap" id="row-wrap">
+      <div class="cell">1</div>
+      <div class="cell">2</div>
+      <div class="cell">3</div>
+    </div>
+  </section>
+
+  <script>
+    // getBoundingClientRect 는 요소가 화면에 실제로 그려진 위치와 크기를 돌려준다.
+    const rect = (el) => el.getBoundingClientRect();
+
+    // 실험 1 · top 값이 같으면 가로로 나란히, 다르면 세로로 쌓인 것이다.
+    const logo = document.querySelector('.logo');
+    const menu = document.querySelector('.menu');
+    const items = document.querySelectorAll('.menu li');
+
+    console.log('[실험1] logo top / menu top :', rect(logo).top, '/', rect(menu).top);
+    items.forEach((li, i) => console.log(`[실험1] li ${i + 1} top :`, rect(li).top));
+
+    // 실험 2 · 부모 기준 상대 위치(left, top)를 잰다.
+    ['axis-a', 'axis-b'].forEach((id) => {
+      const box = document.getElementById(id);
+      const first = box.querySelector('.dot');
+      console.log(
+        `[실험2] ${id} 첫 상자 left / top :`,
+        rect(first).left - rect(box).left,
+        '/',
+        rect(first).top - rect(box).top
+      );
+    });
+
+    // 실험 3 · 각 칸의 실제 폭과 줄 위치
+    ['row-nowrap', 'row-wrap'].forEach((id) => {
+      document.querySelectorAll(`#${id} .cell`).forEach((cell, i) => {
+        console.log(
+          `[실험3] ${id} 칸${i + 1} 폭 / top :`,
+          rect(cell).width.toFixed(1),
+          '/',
+          rect(cell).top
+        );
+      });
+    });
+  </script>
+
+</body>
+
+</html>
