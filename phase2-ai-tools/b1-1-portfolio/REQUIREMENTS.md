@@ -28,9 +28,9 @@
 
 | ID | 요구사항 | 상태 |
 |---|---|---|
-| R-01 | 반응형 포트폴리오 웹사이트 1개 완성 | ⬜ |
-| R-02 | 모바일 / 태블릿 / 데스크톱 전 환경에서 레이아웃 최적화 | ⬜ |
-| R-03 | Hero, About, Skills, Projects, Contact, Footer 6개 섹션 포함 | ⬜ |
+| R-01 | 반응형 포트폴리오 웹사이트 1개 완성 | ✅ |
+| R-02 | 모바일 / 태블릿 / 데스크톱 전 환경에서 레이아웃 최적화 | ✅ |
+| R-03 | Hero, About, Skills, Projects, Contact, Footer 6개 섹션 포함 | ✅ |
 | R-04 | 인터랙티브 UI 동작 (다크모드, 햄버거, 부드러운 스크롤, 스크롤 애니메이션) | ✅ |
 | R-05 | 폼 유효성 검사 구현 | ✅ |
 | R-06 | GitHub API에서 본인 저장소 목록을 가져와 Projects 섹션에 동적 렌더링 | ✅ |
@@ -44,12 +44,12 @@
 
 | ID | 설명해야 할 것 | 상태 |
 |---|---|---|
-| G-01 | 시맨틱 태그를 **왜** 쓰는가 + 내가 구조를 설계한 기준 | ⬜ |
-| G-02 | Flexbox vs Grid 차이 + 각각을 언제 선택하는가 | ⬜ |
-| G-03 | `querySelector`로 DOM 선택 → `addEventListener`로 이벤트 연결하는 흐름 | ⬜ |
-| G-04 | 화살표 함수 / 구조분해 할당 / 배열 메서드(map, filter)가 **왜 필요**하고 어떻게 쓰는가 | ⬜ |
-| G-05 | `fetch` + `async/await` 비동기 데이터 취득 + 로딩/성공/실패 상태의 UI 표현 방법 | ⬜ |
-| G-06 | 하나의 기능에서 **이벤트 → 상태 변경 → DOM 업데이트**가 어떻게 연결되는가 | ⬜ |
+| G-01 | 시맨틱 태그를 **왜** 쓰는가 + 내가 구조를 설계한 기준 | ✅ |
+| G-02 | Flexbox vs Grid 차이 + 각각을 언제 선택하는가 | ✅ |
+| G-03 | `querySelector`로 DOM 선택 → `addEventListener`로 이벤트 연결하는 흐름 | ✅ |
+| G-04 | 화살표 함수 / 구조분해 할당 / 배열 메서드(map, filter)가 **왜 필요**하고 어떻게 쓰는가 | ✅ |
+| G-05 | `fetch` + `async/await` 비동기 데이터 취득 + 로딩/성공/실패 상태의 UI 표현 방법 | ✅ |
+| G-06 | 하나의 기능에서 **이벤트 → 상태 변경 → DOM 업데이트**가 어떻게 연결되는가 | ✅ |
 
 > LEARNING_RULES 규칙 3(3문장 리허설) 대상 = G-01 ~ G-06 중 3~5개 선정.
 
@@ -63,7 +63,7 @@
 |---|---|---|
 | F-01 | 폴더 구조가 역할 분리: `index.html`, `css/`, `js/`, `images/` | ✅ |
 | F-02 | 외부 스타일시트 / JS 파일을 HTML에 올바르게 연결 | ✅ |
-| F-03 | VS Code + Live Server로 실시간 개발 환경 구성 | ⬜ |
+| F-03 | VS Code + Live Server로 실시간 개발 환경 구성 | ✅ (README 3장 실행 방법) |
 
 ### 3-2. HTML 구조 (시맨틱 마크업)
 
@@ -168,7 +168,7 @@
 |---|---|---|
 | F-58 | GitHub Pages 배포 | ✅ |
 | F-59 | 배포 URL에서 전 기능 정상 동작 (반응형 / 인터랙션 / API / 폼 검증) | ✅ |
-| F-60 | README에 프로젝트 설명 / 사용 기술 / 배포 URL / 스크린샷 포함 | ⬜ |
+| F-60 | README에 프로젝트 설명 / 사용 기술 / 배포 URL / 스크린샷 포함 | ✅ |
 
 ---
 
@@ -178,9 +178,9 @@
 |---|---|---|
 | S-01 | GitHub 저장소 URL (단일 레포 + 하위 경로 병기) | ✅ https://github.com/MylovelyCatMori/Marina2nd_Codyssey → `phase2-ai-tools/b1-1-portfolio/` |
 | S-02 | 배포된 사이트 URL (GitHub Pages) | ✅ https://mylovelycatmori.github.io/Marina2nd_Codyssey/phase2-ai-tools/b1-1-portfolio/ |
-| S-03 | 데스크톱 스크린샷 | ⬜ |
-| S-04 | 모바일 스크린샷 | ⬜ |
-| S-05 | 다크모드 스크린샷 | ⬜ |
+| S-03 | 데스크톱 스크린샷 | ✅ `images/screenshots/desktop-light.png` |
+| S-04 | 모바일 스크린샷 | ✅ `images/screenshots/mobile-menu.png` |
+| S-05 | 다크모드 스크린샷 | ✅ `images/screenshots/desktop-dark.png` |
 
 ---
 
