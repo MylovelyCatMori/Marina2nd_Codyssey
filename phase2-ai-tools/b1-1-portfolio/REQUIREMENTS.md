@@ -36,7 +36,7 @@
 | R-06 | GitHub API에서 본인 저장소 목록을 가져와 Projects 섹션에 동적 렌더링 | ✅ |
 | R-07 | 로딩 / 에러 / 빈 상태가 UI로 표현 | ✅ |
 | R-08 | 다크 모드 설정이 로컬스토리지 저장 → 새로고침 후 유지 | ✅ |
-| R-09 | GitHub Pages 배포 + 외부 접속 가능 URL 존재 | ⬜ |
+| R-09 | GitHub Pages 배포 + 외부 접속 가능 URL 존재 | ✅ |
 
 ---
 
@@ -166,8 +166,8 @@
 
 | ID | 요구사항 | 상태 |
 |---|---|---|
-| F-58 | GitHub Pages 배포 | ⬜ |
-| F-59 | 배포 URL에서 전 기능 정상 동작 (반응형 / 인터랙션 / API / 폼 검증) | ⬜ |
+| F-58 | GitHub Pages 배포 | ✅ |
+| F-59 | 배포 URL에서 전 기능 정상 동작 (반응형 / 인터랙션 / API / 폼 검증) | ✅ |
 | F-60 | README에 프로젝트 설명 / 사용 기술 / 배포 URL / 스크린샷 포함 | ⬜ |
 
 ---
@@ -176,8 +176,8 @@
 
 | ID | 제출물 | 상태 |
 |---|---|---|
-| S-01 | GitHub 저장소 URL (단일 레포 + 하위 경로 병기) | ⬜ |
-| S-02 | 배포된 사이트 URL (GitHub Pages) | ⬜ |
+| S-01 | GitHub 저장소 URL (단일 레포 + 하위 경로 병기) | ✅ https://github.com/MylovelyCatMori/Marina2nd_Codyssey → `phase2-ai-tools/b1-1-portfolio/` |
+| S-02 | 배포된 사이트 URL (GitHub Pages) | ✅ https://mylovelycatmori.github.io/Marina2nd_Codyssey/phase2-ai-tools/b1-1-portfolio/ |
 | S-03 | 데스크톱 스크린샷 | ⬜ |
 | S-04 | 모바일 스크린샷 | ⬜ |
 | S-05 | 다크모드 스크린샷 | ⬜ |
