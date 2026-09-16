@@ -1,7 +1,7 @@
 # B1-1 TODO -- 나를 소개하는 웹페이지
 
 최종 업데이트: 2026-09-16
-현재 위치: **Phase 1 완료 / Phase 2 착수 대기**
+현재 위치: **Phase 2 완료 / Phase 3 착수 대기 (API + 4상태 ★ 채점 중심)**
 
 > **운영 방식 변경 (2026-09-16)**: `LEARNING_RULES.md` **규칙 5 · 구현 우선** 적용.
 > 개념 블록을 별도 세션으로 잡지 않는다. 해당 개념을 실제로 쓰는 Phase에서 5줄로 설명한다.
@@ -23,9 +23,9 @@
 | 개념 A · CSS 레이아웃 | - | ⏸ Phase 내 인라인 처리로 전환 |
 | **Phase 1 · 시맨틱 + 반응형** | 1.5일 | ✅ 2026-09-16 |
 | 개념 B · JavaScript 기초 | - | ⏸ Phase 2 내 인라인 처리 |
-| **Phase 2 · DOM/이벤트/다크모드** | 1.5일 | **▶ 다음** |
+| **Phase 2 · DOM/이벤트/다크모드** | 1.5일 | ✅ 2026-09-16 |
 | 개념 C · 비동기·네트워크 | - | ⏸ Phase 3 내 인라인 처리 |
-| Phase 3 · API + 4상태 ★ | 2일 | 대기 |
+| **Phase 3 · API + 4상태 ★** | 2일 | **▶ 다음** |
 | Phase 4 · 폼 유효성 | 1일 | 대기 |
 | Phase 5 · 보너스 + 배포 | 1일 | 대기 |
 | Phase 6 · 문서 + 검증 | 1일 | 대기 |
@@ -154,20 +154,30 @@
 
 ---
 
-## Phase 2 · DOM / 이벤트 / 다크모드 (1.5일)
+## ✅ Phase 2 · DOM / 이벤트 / 다크모드 (완료 2026-09-16)
 
-- [ ] 임계값 상수 정의 -- `SCROLL_TOP=300`, `NAV_SCROLL=60`, `OBSERVER=0.2`
-- [ ] `AppState` 객체 뼈대 (`PRD/02_DATA_MODEL.md` 참조)
-- [ ] 햄버거 메뉴 토글 (F-30)
-- [ ] 부드러운 스크롤 (F-31)
-- [ ] 스크롤탑 버튼 300px (F-32)
-- [ ] nav 배경 변경 60px (F-33)
-- [ ] **다크모드 토글 + localStorage** ← 흐름 1 (F-34, F-35)
-- [ ] 시스템 다크모드 감지 (보너스 B-04)
-- [ ] 스크롤 애니메이션 threshold 0.2 (F-36)
-- [ ] 검증: 다크모드 켜고 새로고침 → 유지
-- [ ] 검증: `var` 0건, `onclick=` 0건
-- [ ] **학습 규칙 2**: `localStorage.setItem` 줄을 지우고 새로고침 → 무엇이 사라지는가
+- [x] 임계값 상수 정의 -- `SCROLL_TOP_THRESHOLD=300`, `NAV_SCROLL_THRESHOLD=60`, `OBSERVER_THRESHOLD=0.2`
+- [x] `AppState` 객체 (`PRD/02_DATA_MODEL.md` 구조 그대로: theme / repoState / activeLanguage / formValues / formErrors / uiState)
+- [x] `storage` 안전 래퍼 -- 시크릿 창에서 localStorage 접근 예외 차단
+- [x] 햄버거 메뉴 토글 + `aria-expanded` 갱신 (F-30)
+- [x] 부드러운 스크롤 + `preventDefault` + 메뉴 자동 닫힘 (F-31, F-29)
+- [x] 스크롤탑 버튼 300px (F-32)
+- [x] nav 배경 변경 60px (F-33)
+- [x] **다크모드 토글 + localStorage** ← 흐름 1 (F-34, F-35, F-57a)
+- [x] 시스템 다크모드 감지 (보너스 B-04 채택)
+- [x] 스크롤 애니메이션 threshold 0.2 + `unobserve` (F-36)
+- [x] scroll 이벤트 `requestAnimationFrame` 묶음 처리
+- [x] 검증: 다크모드 켜고 새로고침 → 유지 (`theme=dark`, 배경 `#12171d`)
+- [x] 검증: 50px → 변화 없음 / 100px → nav 배경 / 400px → 스크롤탑 표시
+- [x] 검증: 모바일 폭에서 메뉴 `none` → 햄버거 클릭 시 `flex`, 링크 클릭 시 자동 닫힘
+- [x] 검증: 콘솔 에러 0건
+- [ ] **학습 규칙 2**: `localStorage.setItem` 줄을 지우고 새로고침 → 무엇이 사라지는가 → **Phase 6 이연**
+
+### Phase 2 남긴 것 (Phase 3·4에서 처리)
+
+- `AppState.repoState` / `formValues` / `formErrors` 는 뼈대만. 값은 아직 안 쓴다
+- F-28 네 이벤트 중 `click` `scroll` 완료. `submit` `input` 은 Phase 4
+- F-26 `innerHTML` 은 Phase 3 카드 생성에서 사용
 
 ---
 
@@ -291,4 +301,5 @@
 | 2026-09-09 | 최초 생성. 설계 + 용어 훑기 + Phase 0 완료 반영 |
 | 2026-09-11 | A1·A2 실습 파일 생성(관찰 보류), **A3 박스 모델 완료**. 관찰 보류 백로그 신설 |
 | 2026-09-15 | **A4 CSS 변수** 예측·해설 완료(오답 3건 교정, 관찰 보류). A5 Flexbox 실습 파일 생성 + 예측 질문 제시 |
+| 2026-09-16 | **Phase 2 완료** -- AppState + 임계값 3종 + 햄버거/부드러운스크롤/스크롤탑/nav배경/다크모드+localStorage/Observer. 흐름 1 확보. F-25~F-36 중 11건 ✅ |
 | 2026-09-16 | **규칙 5 구현 우선 도입.** 개념 A 인라인 전환, A5 5줄 요약 마무리. **Phase 1 완료** -- 시맨틱 구조 + CSS 변수 2종 + Flex nav + Grid 카드 + 768/1024 반응형 + 햄버거 CSS. F-01~F-24 중 23건 ✅ |
