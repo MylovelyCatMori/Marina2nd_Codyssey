@@ -469,9 +469,18 @@ section[id] {
   font-size: 12px;
 }
 
-/* Phase 3에서 쓸 4상태 표시용 자리.
-   status 값에 따라 이 안의 내용이 통째로 바뀐다. */
+.card__link {
+  transition: color var(--transition);
+}
+
+.card__link:hover {
+  color: var(--color-accent);
+}
+
+/* 4상태(로딩 / 성공 / 에러 / 빈) 중 카드가 아닌 셋이 여기에 들어간다.
+   .projects 가 Grid 이므로 한 칸만 차지하지 않도록 전체 폭으로 편다. */
 .state {
+  grid-column: 1 / -1;
   padding: var(--space-5) var(--space-3);
   text-align: center;
   color: var(--color-text-soft);

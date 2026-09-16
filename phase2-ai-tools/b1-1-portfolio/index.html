@@ -149,38 +149,10 @@
         <h2 class="section__title">Projects</h2>
         <p class="section__lead">GitHub 저장소를 불러와 보여 줍니다.</p>
 
-        <!-- Phase 3에서 이 안의 내용을 JavaScript가 통째로 교체한다.
-             아래 카드 3개는 레이아웃 확인용 더미이며 Phase 3에서 전부 제거한다. -->
-        <div class="projects" id="projects-grid">
-
-          <article class="card">
-            <h3 class="card__title">sample-repo-one</h3>
-            <p class="card__desc">더미 카드입니다. Phase 3에서 제거됩니다.</p>
-            <div class="card__meta">
-              <span class="chip">JavaScript</span>
-              <span class="card__stars">★ 0</span>
-            </div>
-          </article>
-
-          <article class="card">
-            <h3 class="card__title">sample-repo-two</h3>
-            <p class="card__desc">Grid 배치가 화면 폭에 따라 몇 칸이 되는지 확인하는 용도입니다.</p>
-            <div class="card__meta">
-              <span class="chip">CSS</span>
-              <span class="card__stars">★ 0</span>
-            </div>
-          </article>
-
-          <article class="card">
-            <h3 class="card__title">sample-repo-three</h3>
-            <p class="card__desc">설명이 없는 저장소를 대비해 기본값 문구를 넣어 둡니다.</p>
-            <div class="card__meta">
-              <span class="chip">HTML</span>
-              <span class="card__stars">★ 0</span>
-            </div>
-          </article>
-
-        </div>
+        <!-- 이 안은 JavaScript가 통째로 채운다.
+             repoState.status 값에 따라 로딩 / 성공 / 에러 / 빈 상태 4가지 중
+             하나가 그려진다. Phase 1의 더미 카드 3개는 여기서 제거되었다. -->
+        <div class="projects" id="projects-grid"></div>
       </div>
     </section>
 
