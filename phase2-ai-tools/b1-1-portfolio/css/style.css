@@ -1,18 +1,720 @@
 /* ===================================================================
-   Phase 0 · 연결 확인용 임시 스타일
-   Phase 1에서 전면 교체된다. 지금은 "CSS가 연결되었는가"만 확인한다.
+   B1-1 포트폴리오 · Phase 1 스타일
+   작성 원칙
+     - 모바일 퍼스트 (F-19): 기본 규칙은 좁은 화면 기준. 넓어질 때만 media query로 덮는다
+     - 브레이크포인트 (F-20): 768px 태블릿 / 1024px 데스크톱
+     - 색 / 글꼴 / 간격은 전부 :root 변수로 (F-15)
    =================================================================== */
 
+/* -------------------------------------------------------------------
+   0. 기본 정리
+   ------------------------------------------------------------------- */
+
+/* 개념 A3 결론: 기본값 content-box 에서는
+   width 300 + padding 20 + border 10 = 실제 360px 이 되어 레이아웃이 터진다.
+   border-box 로 바꾸면 padding 과 border 가 width 안쪽으로 들어온다. */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body,
+h1, h2, h3, p, ul, figure {
+  margin: 0;
+}
+
+ul {
+  padding: 0;
+  list-style: none;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+/* -------------------------------------------------------------------
+   1. CSS 변수 (F-15)
+   :root 는 문서의 최상단(html)을 가리킨다.
+   여기 적은 변수는 모든 자손이 물려받는다.
+   ------------------------------------------------------------------- */
+
+:root {
+  /* 색 -- 라이트 모드 */
+  --color-bg: #ffffff;
+  --color-bg-alt: #f4f6f9;
+  --color-surface: #ffffff;
+  --color-text: #1b232c;
+  --color-text-soft: #5c6875;
+  --color-border: #dde3ea;
+  --color-accent: #2f5bd6;
+  --color-accent-text: #ffffff;
+  --color-danger: #c92a2a;
+  --color-success: #1a7f5a;
+  --color-shadow: rgba(23, 34, 48, 0.10);
+
+  /* 글꼴 */
+  --font-body: system-ui, -apple-system, "Malgun Gothic", "맑은 고딕", sans-serif;
+  --font-mono: ui-monospace, "Consolas", monospace;
+
+  /* 간격 -- 4의 배수로 통일한다. 눈대중 숫자를 섞지 않기 위해서다. */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 16px;
+  --space-4: 24px;
+  --space-5: 32px;
+  --space-6: 48px;
+  --space-7: 72px;
+
+  /* 기타 */
+  --radius: 10px;
+  --nav-height: 60px;
+  --transition: 180ms ease;
+}
+
+/* F-16: 다크 모드 변수 세트.
+   [data-theme="dark"] 는 "data-theme 속성값이 dark 인 요소"를 고르는 선택자다.
+   Phase 2에서 JavaScript가 <html> 에 이 속성을 붙였다 뗐다 한다.
+   색 값만 갈아끼우므로 아래 모든 규칙은 고칠 필요가 없다. */
+[data-theme="dark"] {
+  --color-bg: #12171d;
+  --color-bg-alt: #171e26;
+  --color-surface: #1c242e;
+  --color-text: #e7ecf2;
+  --color-text-soft: #97a4b3;
+  --color-border: #2b3541;
+  --color-accent: #7d9bf5;
+  --color-accent-text: #101722;
+  --color-danger: #ff8787;
+  --color-success: #51cf9b;
+  --color-shadow: rgba(0, 0, 0, 0.45);
+}
+
+/* -------------------------------------------------------------------
+   2. 뼈대
+   ------------------------------------------------------------------- */
+
 body {
-  /* 이 배경색이 보이면 CSS 연결 성공.
-     흰 배경 그대로면 <link> 경로를 확인해야 한다. */
-  background-color: #e8f4ff;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.7;
 
-  /* font-family: 글꼴 지정. 앞에서부터 순서대로 시도하고,
-     사용자 컴퓨터에 없으면 다음 것으로 넘어간다.
-     sans-serif 는 "삐침 없는 글꼴 아무거나"라는 최후의 보루다. */
-  font-family: system-ui, sans-serif;
+  /* 한글은 기본적으로 글자 단위로 줄바꿈된다. "포트폴리오입니 / 다" 처럼 끊긴다.
+     keep-all 은 단어(어절) 단위로 끊게 한다. */
+  word-break: keep-all;
 
-  /* padding: 요소 안쪽 여백. (박스 모델은 개념 블록 A에서 다룬다) */
-  padding: 2rem;
+  transition: background-color var(--transition), color var(--transition);
+}
+
+/* 앵커 링크로 이동했을 때 고정 헤더에 제목이 가려지는 것을 막는다. */
+section[id] {
+  scroll-margin-top: var(--nav-height);
+}
+
+.container {
+  width: 100%;
+  max-width: 1080px;
+  margin: 0 auto;
+  /* 좌우 여백은 항상 확보한다. padding 축약형을 쓰면 좌우가 0이 되기 쉽다. */
+  padding-inline: var(--space-3);
+}
+
+.container--narrow {
+  max-width: 640px;
+}
+
+.section {
+  padding-block: var(--space-6);
+}
+
+.section--alt {
+  background-color: var(--color-bg-alt);
+}
+
+.section__title {
+  font-size: 26px;
+  line-height: 1.3;
+  margin-bottom: var(--space-2);
+}
+
+.section__lead {
+  color: var(--color-text-soft);
+  margin-bottom: var(--space-4);
+}
+
+/* -------------------------------------------------------------------
+   3. 헤더 / 네비게이션  (F-17 Flexbox, F-21 햄버거)
+   ------------------------------------------------------------------- */
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+  transition: background-color var(--transition), box-shadow var(--transition);
+}
+
+/* F-33: 스크롤 60px 이상에서 JavaScript가 이 클래스를 붙인다 (Phase 2) */
+.site-header.is-scrolled {
+  background-color: var(--color-bg-alt);
+  box-shadow: 0 2px 12px var(--color-shadow);
+}
+
+/* F-17: nav 를 Flexbox 로.
+   justify-content: space-between 이 로고는 왼쪽, 나머지는 오른쪽으로 밀어낸다. */
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  height: var(--nav-height);
+  max-width: 1080px;
+  margin: 0 auto;
+  padding-inline: var(--space-3);
+}
+
+.nav__logo {
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+/* F-21: 모바일 기본값 = 메뉴 숨김.
+   화면 밖이 아니라 display:none 으로 완전히 없앤다.
+   Phase 2에서 .is-open 을 붙여 펼친다. */
+.nav__menu {
+  display: none;
+}
+
+.nav__menu.is-open {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+
+  /* 펼쳐진 메뉴는 헤더 바로 아래에 덮어씌운다. */
+  position: absolute;
+  top: var(--nav-height);
+  left: 0;
+  right: 0;
+  padding: var(--space-3);
+  background-color: var(--color-bg);
+  border-bottom: 1px solid var(--color-border);
+  box-shadow: 0 8px 16px var(--color-shadow);
+}
+
+.nav__menu a {
+  display: block;
+  padding-block: var(--space-1);
+  color: var(--color-text-soft);
+  transition: color var(--transition);
+}
+
+.nav__menu a:hover,
+.nav__menu a:focus-visible {
+  color: var(--color-accent);
+}
+
+.nav__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.icon-btn {
+  width: 38px;
+  height: 38px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  font-size: 16px;
+  line-height: 1;
+  transition: background-color var(--transition), border-color var(--transition);
+}
+
+.icon-btn:hover {
+  border-color: var(--color-accent);
+}
+
+/* 햄버거 = 막대 3개. 모바일에서만 보인다. */
+.hamburger {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 38px;
+  height: 38px;
+  padding: 0 8px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background-color: var(--color-surface);
+}
+
+.hamburger__bar {
+  display: block;
+  height: 2px;
+  background-color: var(--color-text);
+  transition: transform var(--transition), opacity var(--transition);
+}
+
+/* 열렸을 때 위아래 막대를 X 로 겹친다 (Phase 2에서 .is-active 부착) */
+.hamburger.is-active .hamburger__bar:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.hamburger.is-active .hamburger__bar:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger.is-active .hamburger__bar:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* -------------------------------------------------------------------
+   4. 버튼  (F-22 hover + transition)
+   ------------------------------------------------------------------- */
+
+.btn {
+  display: inline-block;
+  padding: 12px 22px;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  font-weight: 600;
+  text-align: center;
+  transition: background-color var(--transition), color var(--transition),
+              border-color var(--transition), transform var(--transition);
+}
+
+.btn--primary {
+  background-color: var(--color-accent);
+  color: var(--color-accent-text);
+}
+
+.btn--primary:hover {
+  transform: translateY(-2px);
+}
+
+.btn--ghost {
+  border-color: var(--color-border);
+  color: var(--color-text);
+}
+
+.btn--ghost:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+.btn--block {
+  display: block;
+  width: 100%;
+  border: 0;
+}
+
+/* -------------------------------------------------------------------
+   5. Hero
+   ------------------------------------------------------------------- */
+
+.hero {
+  padding-block: var(--space-7) var(--space-6);
+  background-color: var(--color-bg-alt);
+}
+
+.hero__eyebrow {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--color-accent);
+  margin-bottom: var(--space-2);
+}
+
+.hero__title {
+  font-size: 30px;
+  line-height: 1.35;
+  margin-bottom: var(--space-3);
+}
+
+.hero__desc {
+  color: var(--color-text-soft);
+  max-width: 48ch;
+  margin-bottom: var(--space-4);
+}
+
+.hero__cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+/* -------------------------------------------------------------------
+   6. About
+   ------------------------------------------------------------------- */
+
+.about {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.about__photo {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 1px solid var(--color-border);
+}
+
+.about__text p + p {
+  margin-top: var(--space-3);
+}
+
+/* -------------------------------------------------------------------
+   7. Skills
+   ------------------------------------------------------------------- */
+
+.skills {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.skill {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background-color: var(--color-surface);
+}
+
+.skill__name {
+  font-weight: 700;
+}
+
+.skill__note {
+  font-size: 14px;
+  color: var(--color-text-soft);
+}
+
+/* -------------------------------------------------------------------
+   8. Projects  (F-18 Grid, F-23 box-shadow)
+   ------------------------------------------------------------------- */
+
+/* auto-fit + minmax = "한 칸 최소 260px, 남으면 늘려라. 몇 칸인지는 네가 정해라"
+   media query 없이도 화면 폭에 따라 칸 수가 알아서 바뀐다. */
+.projects {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: var(--space-3);
+}
+
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background-color: var(--color-surface);
+  box-shadow: 0 1px 3px var(--color-shadow);
+  transition: transform var(--transition), box-shadow var(--transition),
+              border-color var(--transition);
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  border-color: var(--color-accent);
+  box-shadow: 0 10px 24px var(--color-shadow);
+}
+
+.card__title {
+  font-size: 18px;
+  /* 긴 저장소 이름이 상자를 뚫고 나가지 않게 한다. */
+  overflow-wrap: anywhere;
+}
+
+.card__desc {
+  flex-grow: 1;
+  font-size: 14px;
+  color: var(--color-text-soft);
+}
+
+.card__meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  font-size: 13px;
+  color: var(--color-text-soft);
+}
+
+.chip {
+  padding: 2px 10px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+}
+
+/* Phase 3에서 쓸 4상태 표시용 자리.
+   status 값에 따라 이 안의 내용이 통째로 바뀐다. */
+.state {
+  padding: var(--space-5) var(--space-3);
+  text-align: center;
+  color: var(--color-text-soft);
+}
+
+.state__msg {
+  margin-bottom: var(--space-3);
+}
+
+/* -------------------------------------------------------------------
+   9. Contact 폼  (F-40 에러 자리)
+   ------------------------------------------------------------------- */
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.field__label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.field__input {
+  width: 100%;
+  padding: 11px 13px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius);
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  font-size: 15px;
+  transition: border-color var(--transition);
+}
+
+.field__input:focus {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 1px;
+  border-color: var(--color-accent);
+}
+
+.field__input--area {
+  resize: vertical;
+}
+
+/* 에러가 있을 때만 JavaScript가 .has-error 를 붙인다 (Phase 4) */
+.field.has-error .field__input {
+  border-color: var(--color-danger);
+}
+
+/* F-40: 에러 문구는 해당 입력칸 바로 아래.
+   글자가 없을 때 자리를 차지하지 않도록 비어 있으면 높이가 0이 된다. */
+.field__error {
+  min-height: 18px;
+  font-size: 13px;
+  color: var(--color-danger);
+}
+
+.form__success {
+  min-height: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-success);
+}
+
+/* -------------------------------------------------------------------
+   10. Footer / 스크롤탑
+   ------------------------------------------------------------------- */
+
+.site-footer {
+  padding-block: var(--space-4);
+  border-top: 1px solid var(--color-border);
+  background-color: var(--color-bg);
+}
+
+.site-footer__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-2);
+  text-align: center;
+}
+
+.site-footer__copy {
+  color: var(--color-text-soft);
+}
+
+.social {
+  display: flex;
+  gap: var(--space-3);
+  font-size: 14px;
+}
+
+.social a {
+  color: var(--color-text-soft);
+  transition: color var(--transition);
+}
+
+.social a:hover {
+  color: var(--color-accent);
+}
+
+/* F-32: 기본은 숨김. 스크롤 300px 이상에서 .is-visible 을 붙인다 (Phase 2) */
+.scroll-top {
+  position: fixed;
+  right: var(--space-3);
+  bottom: var(--space-3);
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  background-color: var(--color-surface);
+  color: var(--color-text);
+  font-size: 18px;
+  box-shadow: 0 4px 14px var(--color-shadow);
+
+  /* 숨김 상태. display:none 대신 이 방식을 쓰면 나타날 때 전환이 가능하다. */
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px);
+  transition: opacity var(--transition), visibility var(--transition),
+              transform var(--transition);
+}
+
+.scroll-top.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+/* -------------------------------------------------------------------
+   11. 스크롤 등장 애니메이션  (F-36, Phase 2에서 Observer가 붙인다)
+   ------------------------------------------------------------------- */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 400ms ease, transform 400ms ease;
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* -------------------------------------------------------------------
+   12. 브레이크포인트  (F-20)
+   여기서부터 "넓어졌을 때만" 적용되는 규칙이다.
+   ------------------------------------------------------------------- */
+
+/* --- 태블릿 768px 이상 --- */
+@media (min-width: 768px) {
+
+  /* 메뉴를 가로로 펼치고 햄버거를 감춘다. */
+  .nav__menu {
+    display: flex;
+    flex-direction: row;
+    gap: var(--space-4);
+    position: static;
+    padding: 0;
+    background-color: transparent;
+    border: 0;
+    box-shadow: none;
+  }
+
+  .hamburger {
+    display: none;
+  }
+
+  .section {
+    padding-block: var(--space-7);
+  }
+
+  .section__title {
+    font-size: 30px;
+  }
+
+  .hero__title {
+    font-size: 40px;
+  }
+
+  /* 사진과 글을 좌우로 나눈다. */
+  .about {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: var(--space-5);
+  }
+
+  .about__photo {
+    width: 160px;
+    height: 160px;
+    /* flex 기본값 shrink:1 때문에 찌그러지는 것을 막는다. */
+    flex-shrink: 0;
+  }
+
+  .skills {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+  }
+
+  .site-footer__inner {
+    flex-direction: row;
+    justify-content: space-between;
+    text-align: left;
+  }
+}
+
+/* --- 데스크톱 1024px 이상 --- */
+@media (min-width: 1024px) {
+
+  .hero {
+    padding-block: 96px var(--space-7);
+  }
+
+  .hero__title {
+    font-size: 48px;
+  }
+
+  .skills {
+    grid-template-columns: repeat(3, 1fr);
+  }
+
+  .projects {
+    gap: var(--space-4);
+  }
+}
+
+/* -------------------------------------------------------------------
+   13. 접근성 -- 움직임을 줄이도록 설정한 사용자
+   ------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
 }

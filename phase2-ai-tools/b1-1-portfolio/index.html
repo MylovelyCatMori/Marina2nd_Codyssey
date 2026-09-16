@@ -1,58 +1,249 @@
 <!DOCTYPE html>
-<!-- DOCTYPE: 이 문서가 HTML5 규격임을 브라우저에 알린다. 없으면 브라우저가
-     옛날 방식(호환 모드)으로 해석해 CSS가 다르게 적용될 수 있다. -->
 <html lang="ko">
-<!-- lang="ko": 이 문서의 언어가 한국어임을 알린다.
-     화면 낭독기(스크린 리더)가 한국어 발음으로 읽어주는 근거가 된다. -->
 
 <head>
-     <!-- head: 화면에 보이지 않는 정보를 담는 곳. 문서의 설정 구역이다. -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-     <meta charset="UTF-8">
-     <!-- charset: 글자를 어떤 규칙으로 해석할지 지정.
-       UTF-8이 없으면 한글이 깨진다. 항상 head의 첫 줄에 둔다. -->
+  <title>포트폴리오 · 나를 소개하는 웹페이지</title>
 
-     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-     <!-- viewport: 모바일 화면 대응의 출발점. (자세한 설명은 개념 블록 A에서)
-       width=device-width : 페이지 폭을 기기 실제 폭에 맞춘다
-       initial-scale=1.0  : 처음 열 때 확대/축소 없이 100%로 보여준다
-       이 줄이 없으면 모바일에서 데스크톱 화면을 축소해 보여준다. -->
-
-     <title>Phase 0 연결 확인</title>
-     <!-- title: 브라우저 탭에 표시되는 이름. Phase 1에서 실제 제목으로 교체한다. -->
-
-     <!-- F-02: 외부 스타일시트 연결
-       rel="stylesheet" : 이 파일과 나의 관계가 "스타일시트"임을 알린다
-       href="./css/..."  : ./ 는 "현재 폴더 기준"이라는 뜻. 상대경로.
-       (PROJECT_SPEC 금지사항 10번: 절대경로 /css/ 는 배포 시 깨진다) -->
-     <link rel="stylesheet" href="./css/style.css">
+  <!-- F-02 / F-14: 외부 스타일시트 연결. ./ 는 현재 폴더 기준(상대경로).
+       절대경로 /css/ 는 GitHub Pages 배포 시 깨진다. -->
+  <link rel="stylesheet" href="./css/style.css">
 </head>
 
 <body>
-     <!-- body: 화면에 실제로 보이는 내용을 담는 곳. -->
 
-     <h1>Phase 0 · 연결 확인</h1>
+  <!-- ============================================================
+       header + nav  (F-04, F-11, F-17, F-21)
+       ============================================================ -->
+  <header class="site-header" id="site-header">
+    <nav class="nav" aria-label="주요 메뉴">
 
-     <p id="js-check">이 문장이 바뀌지 않았다면 JavaScript가 연결되지 않은 것입니다.</p>
+      <a class="nav__logo" href="#hero">PORTFOLIO</a>
 
-     <!-- F-24: JavaScript 를 defer 로 연결
-       defer : HTML을 끝까지 다 읽은 뒤에 실행하라는 뜻.
+      <!-- F-11: 각 섹션으로 이동하는 앵커 링크.
+           href="#about" 의 # 은 "같은 문서 안의 id=about 으로 가라"는 뜻. -->
+      <ul class="nav__menu" id="nav-menu">
+        <li><a href="#about">About</a></li>
+        <li><a href="#skills">Skills</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
 
-       주의 -- defer 의 효과는 "스크립트를 어디에 두었는가"에 따라 달라진다.
-         head 안에 둘 때 : defer 가 없으면 아래 요소가 아직 없어 null 이 된다. 효과 있음
-         body 끝에 둘 때 : 이미 요소가 다 만들어진 뒤라서 defer 유무가 결과에 영향 없음
+      <div class="nav__actions">
+        <!-- F-34: 다크모드 토글. 실제 동작은 Phase 2에서 붙인다. -->
+        <button class="icon-btn" id="theme-toggle" type="button" aria-label="다크 모드 전환">
+          <span class="icon-btn__label" id="theme-icon">☾</span>
+        </button>
 
-       지금은 body 끝이라 defer 를 빼도 동작이 같다. 그래도 붙이는 이유는
-         ① 과제 요구사항(F-24)이고
-         ② 나중에 head 로 옮기더라도 그대로 안전하기 때문이다.
+        <!-- F-21 / F-30: 햄버거 버튼. 모바일에서만 보인다. -->
+        <button class="hamburger" id="hamburger" type="button"
+                aria-label="메뉴 열기" aria-expanded="false" aria-controls="nav-menu">
+          <span class="hamburger__bar"></span>
+          <span class="hamburger__bar"></span>
+          <span class="hamburger__bar"></span>
+        </button>
+      </div>
 
-       [Phase 0 실험 기록 · 2026-09-09]
-         실험1) head + defer 없음
-                -> Uncaught TypeError: Cannot set properties of null (setting 'textContent')
-                   querySelector 가 null 을 반환. 요소가 아직 만들어지지 않았기 때문.
-         실험2) head + defer 있음  -> 정상 동작. 위치는 그대로인데 defer 하나로 결과가 뒤집힘.
-         결론) defer = "HTML 을 다 읽을 때까지 기다렸다가 실행하라". -->
-     <script src="./js/main.js" defer></script>
+    </nav>
+  </header>
+
+  <main>
+
+    <!-- ============================================================
+         Hero  (F-05)
+         ============================================================ -->
+    <section class="hero" id="hero">
+      <div class="container hero__inner">
+        <p class="hero__eyebrow">Frontend Learner</p>
+
+        <!-- B-02 타이핑 효과를 Phase 5에서 이 h1 에 붙인다. -->
+        <h1 class="hero__title">
+          안녕하세요,<br>
+          배우면서 만드는 개발자입니다
+        </h1>
+
+        <p class="hero__desc">
+          순수 HTML · CSS · JavaScript 만으로 만든 포트폴리오입니다.
+          라이브러리 없이 구조와 동작을 직접 설계했습니다.
+        </p>
+
+        <!-- F-05: CTA(Call To Action) 버튼 = 방문자가 다음에 눌렀으면 하는 버튼 -->
+        <div class="hero__cta">
+          <a class="btn btn--primary" href="#projects">프로젝트 보기</a>
+          <a class="btn btn--ghost" href="#contact">연락하기</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         About  (F-06, F-12)
+         ============================================================ -->
+    <section class="section" id="about">
+      <div class="container">
+        <h2 class="section__title">About</h2>
+
+        <div class="about">
+          <!-- F-12: alt 는 이미지가 안 보일 때 대신 읽히는 글이다.
+               "사진"처럼 뻔한 말이 아니라 내용을 적는다. -->
+          <img class="about__photo" src="./images/profile.svg"
+               alt="포트폴리오 주인의 프로필 이미지" width="160" height="160">
+
+          <div class="about__text">
+            <p>
+              코드를 짜는 것보다 <strong>왜 그렇게 짰는지 설명하는 것</strong>을 더 중요하게 생각합니다.
+              그래서 이 페이지의 모든 선택에는 이유를 붙여 두었습니다.
+            </p>
+            <p>
+              프레임워크를 쓰기 전에 브라우저가 실제로 무엇을 하는지 먼저 익히는 중입니다.
+              시맨틱 마크업, 반응형 레이아웃, 상태 기반 렌더링을 직접 구현했습니다.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         Skills  (F-07)
+         ============================================================ -->
+    <section class="section section--alt" id="skills">
+      <div class="container">
+        <h2 class="section__title">Skills</h2>
+        <p class="section__lead">쓸 줄 아는 것과 설명할 수 있는 것만 적었습니다.</p>
+
+        <ul class="skills">
+          <li class="skill">
+            <span class="skill__name">HTML</span>
+            <span class="skill__note">시맨틱 태그로 문서 구조 설계</span>
+          </li>
+          <li class="skill">
+            <span class="skill__name">CSS</span>
+            <span class="skill__note">Flexbox · Grid · 모바일 퍼스트 반응형</span>
+          </li>
+          <li class="skill">
+            <span class="skill__name">JavaScript</span>
+            <span class="skill__note">DOM 조작 · 이벤트 · 상태 기반 렌더링</span>
+          </li>
+          <li class="skill">
+            <span class="skill__name">Fetch API</span>
+            <span class="skill__note">async/await 비동기 통신과 에러 처리</span>
+          </li>
+          <li class="skill">
+            <span class="skill__name">Git</span>
+            <span class="skill__note">브랜치 운영과 커밋 단위 관리</span>
+          </li>
+          <li class="skill">
+            <span class="skill__name">Python</span>
+            <span class="skill__note">기초 문법과 자료구조 활용</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         Projects  (F-08, F-18)
+         ============================================================ -->
+    <section class="section" id="projects">
+      <div class="container">
+        <h2 class="section__title">Projects</h2>
+        <p class="section__lead">GitHub 저장소를 불러와 보여 줍니다.</p>
+
+        <!-- Phase 3에서 이 안의 내용을 JavaScript가 통째로 교체한다.
+             아래 카드 3개는 레이아웃 확인용 더미이며 Phase 3에서 전부 제거한다. -->
+        <div class="projects" id="projects-grid">
+
+          <article class="card">
+            <h3 class="card__title">sample-repo-one</h3>
+            <p class="card__desc">더미 카드입니다. Phase 3에서 제거됩니다.</p>
+            <div class="card__meta">
+              <span class="chip">JavaScript</span>
+              <span class="card__stars">★ 0</span>
+            </div>
+          </article>
+
+          <article class="card">
+            <h3 class="card__title">sample-repo-two</h3>
+            <p class="card__desc">Grid 배치가 화면 폭에 따라 몇 칸이 되는지 확인하는 용도입니다.</p>
+            <div class="card__meta">
+              <span class="chip">CSS</span>
+              <span class="card__stars">★ 0</span>
+            </div>
+          </article>
+
+          <article class="card">
+            <h3 class="card__title">sample-repo-three</h3>
+            <p class="card__desc">설명이 없는 저장소를 대비해 기본값 문구를 넣어 둡니다.</p>
+            <div class="card__meta">
+              <span class="chip">HTML</span>
+              <span class="card__stars">★ 0</span>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================================================
+         Contact  (F-09, F-13, F-37)
+         ============================================================ -->
+    <section class="section section--alt" id="contact">
+      <div class="container container--narrow">
+        <h2 class="section__title">Contact</h2>
+        <p class="section__lead">궁금한 점이 있으면 남겨 주세요.</p>
+
+        <!-- novalidate: 브라우저 기본 검사를 끈다.
+             F-38 / F-39 검증을 JavaScript로 직접 구현해야 하기 때문이다. -->
+        <form class="form" id="contact-form" novalidate>
+
+          <!-- F-13: label 의 for 와 input 의 id 가 같아야 짝이 된다.
+               짝이 맞으면 label 을 눌러도 입력칸에 커서가 간다. -->
+          <div class="field">
+            <label class="field__label" for="name">이름</label>
+            <input class="field__input" type="text" id="name" name="name" autocomplete="name">
+            <p class="field__error" id="name-error"></p>
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="email">이메일</label>
+            <input class="field__input" type="email" id="email" name="email" autocomplete="email">
+            <p class="field__error" id="email-error"></p>
+          </div>
+
+          <div class="field">
+            <label class="field__label" for="message">메시지</label>
+            <textarea class="field__input field__input--area" id="message" name="message" rows="5"></textarea>
+            <p class="field__error" id="message-error"></p>
+          </div>
+
+          <button class="btn btn--primary btn--block" type="submit">보내기</button>
+
+          <p class="form__success" id="form-success"></p>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ============================================================
+       Footer  (F-10)
+       ============================================================ -->
+  <footer class="site-footer">
+    <div class="container site-footer__inner">
+      <small class="site-footer__copy">&copy; 2026 Portfolio. All rights reserved.</small>
+
+      <ul class="social">
+        <li><a href="https://github.com/MylovelyCatMori" target="_blank" rel="noopener noreferrer">GitHub</a></li>
+        <li><a href="#contact">Email</a></li>
+      </ul>
+    </div>
+  </footer>
+
+  <!-- F-32: 스크롤탑 버튼. 표시 조건(300px)은 Phase 2에서 붙인다. -->
+  <button class="scroll-top" id="scroll-top" type="button" aria-label="맨 위로 이동">↑</button>
+
+  <!-- F-24: defer = HTML 을 끝까지 읽은 뒤 실행하라 -->
+  <script src="./js/main.js" defer></script>
 </body>
 
 </html>
