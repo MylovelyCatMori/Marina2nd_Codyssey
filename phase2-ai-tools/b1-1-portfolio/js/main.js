@@ -40,8 +40,13 @@ const AppState = {
   repoState: { status: 'loading', data: [], error: null },
 
   activeLanguage: 'all',              // Phase 5
-  formValues: { name: '', email: '', message: '' },   // Phase 4
-  formErrors: { name: '', email: '', message: '' },   // Phase 4
+
+  formValues: { name: '', email: '', message: '' },
+  formErrors: { name: '', email: '', message: '' },
+
+  // PRD/02_DATA_MODEL.md 에 없는 필드다. 제출 성공 문구도 화면을 결정하는
+  // 값이므로 DOM 에 직접 쓰지 않고 상태로 둔다.
+  formSuccess: '',
 
   uiState: {
     isMenuOpen: false,
@@ -65,8 +70,25 @@ const els = {
   themeIcon: document.querySelector('#theme-icon'),
   scrollTopBtn: document.querySelector('#scroll-top'),
   sections: document.querySelectorAll('main section'),
-  projectsGrid: document.querySelector('#projects-grid')
+  projectsGrid: document.querySelector('#projects-grid'),
+  form: document.querySelector('#contact-form'),
+  formSuccess: document.querySelector('#form-success')
 };
+
+/* 폼 필드 세 개의 요소를 한 번에 묶어둔다.
+   formValues / formErrors 의 키와 이름을 일치시켰으므로
+   필드마다 따로 코드를 쓸 필요가 없다. */
+const FORM_FIELDS = ['name', 'email', 'message'];
+
+const formEls = FORM_FIELDS.reduce((acc, field) => {
+  const input = document.querySelector(`#${field}`);
+  acc[field] = {
+    input,
+    error: document.querySelector(`#${field}-error`),
+    wrapper: input.closest('.field')
+  };
+  return acc;
+}, {});
 
 /* -------------------------------------------------------------------
    localStorage 안전 래퍼
@@ -218,6 +240,59 @@ const renderScrollUI = () => {
   els.scrollTopBtn.classList.toggle('is-visible', showTopButton);
 };
 
+/* -----------------------------------------------------------------
+   폼 검증 (F-37 ~ F-41) -- 흐름 3 (F-57c)
+   ----------------------------------------------------------------- */
+
+/* 이메일 형식 검사식.
+   RFC 규격을 그대로 옮기면 수백 자짜리 정규식이 되고, 그래도 완벽하지
+   않다. 오타를 걸러내는 것이 목적이므로 "공백 없는 글자 @ 공백 없는 글자
+   . 공백 없는 글자" 세 덩어리만 확인한다. 진짜 유효성은 메일이 도착하는지로만
+   알 수 있다. */
+const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const EMPTY_MESSAGES = {
+  name: '이름을 입력해 주세요.',
+  email: '이메일을 입력해 주세요.',
+  message: '메시지를 입력해 주세요.'
+};
+
+/* 필드 하나를 검사해 에러 문구를 돌려준다. 문제가 없으면 빈 문자열이다. */
+const validateField = (field, rawValue) => {
+  // 공백만 입력한 것은 입력하지 않은 것과 같다. (F-38)
+  const value = rawValue.trim();
+
+  if (!value) {
+    return EMPTY_MESSAGES[field];
+  }
+
+  // 순서가 중요하다. 빈 값 검사가 형식 검사보다 먼저다. (F-39)
+  // 빈 칸에 "이메일 형식이 올바르지 않습니다"가 뜨면 무엇이 틀렸는지 알 수 없다.
+  if (field === 'email' && !EMAIL_PATTERN.test(value)) {
+    return '이메일 형식이 올바르지 않습니다. 예: name@example.com';
+  }
+
+  return '';
+};
+
+/* 상태를 읽어 에러 문구와 테두리 색을 화면에 반영한다. (F-40) */
+const renderForm = () => {
+  FORM_FIELDS.forEach((field) => {
+    const message = AppState.formErrors[field];
+    const { input, error, wrapper } = formEls[field];
+
+    // 외부 입력을 화면에 넣을 때는 textContent 를 쓴다.
+    // innerHTML 과 달리 태그로 해석되지 않는다.
+    error.textContent = message;
+    wrapper.classList.toggle('has-error', Boolean(message));
+
+    // 화면 낭독기에 "이 칸에 문제가 있다"를 알린다.
+    input.setAttribute('aria-invalid', String(Boolean(message)));
+  });
+
+  els.formSuccess.textContent = AppState.formSuccess;
+};
+
 /* -------------------------------------------------------------------
    5. 이벤트 -> 상태 변경 -> 렌더
    ------------------------------------------------------------------- */
@@ -361,6 +436,62 @@ const fetchRepos = async () => {
   renderProjects();
 };
 
+/* 폼 제출 (F-29, F-38, F-39, F-41)
+   submit 의 기본 동작은 페이지 새로고침이다. 막지 않으면 검증 결과를
+   보여주기도 전에 화면이 통째로 다시 그려진다. */
+els.form.addEventListener('submit', (event) => {
+  event.preventDefault();
+
+  // ① 입력값을 상태로 옮긴다.
+  FORM_FIELDS.forEach((field) => {
+    AppState.formValues[field] = formEls[field].input.value;
+  });
+
+  // ② 상태를 검사해 에러 상태를 만든다.
+  FORM_FIELDS.forEach((field) => {
+    AppState.formErrors[field] = validateField(field, AppState.formValues[field]);
+  });
+
+  const hasError = FORM_FIELDS.some((field) => AppState.formErrors[field] !== '');
+
+  if (hasError) {
+    AppState.formSuccess = '';
+    renderForm();
+
+    // 첫 번째 문제 칸으로 커서를 옮긴다. 에러 문구가 화면 밖에 있으면
+    // 사용자는 왜 제출이 안 되는지 알 수 없다.
+    const firstBad = FORM_FIELDS.find((field) => AppState.formErrors[field] !== '');
+    formEls[firstBad].input.focus();
+    return;
+  }
+
+  // ③ 통과. 실제 전송은 하지 않는다 (Formspree 미채택, 감점 없음).
+  AppState.formSuccess = '메시지가 전송되었습니다. 감사합니다.';
+  FORM_FIELDS.forEach((field) => { AppState.formValues[field] = ''; });
+  els.form.reset();
+  renderForm();
+});
+
+/* 입력 중 에러 해제 (F-28 input 이벤트)
+   칸 세 개에 각각 리스너를 다는 대신 폼 하나에 단다.
+   event.target 이 어느 칸에서 났는지 알려준다. */
+els.form.addEventListener('input', (event) => {
+  const field = event.target.id;
+  if (!FORM_FIELDS.includes(field)) return;
+
+  AppState.formValues[field] = event.target.value;
+
+  // 이미 에러가 떠 있는 칸만 다시 검사한다. 아직 건드리지도 않은 칸에
+  // 빨간 글씨를 미리 띄우면 사용자를 재촉하는 꼴이 된다.
+  if (AppState.formErrors[field]) {
+    AppState.formErrors[field] = validateField(field, event.target.value);
+  }
+
+  // 고치기 시작하면 이전 성공 문구는 치운다.
+  AppState.formSuccess = '';
+  renderForm();
+});
+
 /* 재시도 버튼 (F-52)
    버튼은 렌더할 때마다 새로 만들어진다. 버튼에 직접 리스너를 달면
    다시 그려질 때 사라진다. 그래서 사라지지 않는 부모에 한 번만 단다. */
@@ -411,13 +542,14 @@ const init = () => {
 
   renderTheme();
   renderMenu();
+  renderForm();
   handleScroll();   // 새로고침 시 이미 스크롤되어 있을 수 있다
   setupReveal();
 
   // await 하지 않는다. 응답을 기다리는 동안 나머지 화면은 이미 쓸 수 있어야 한다.
   fetchRepos();
 
-  console.log('[Phase 3] 초기화 완료. theme =', AppState.theme);
+  console.log('[Phase 4] 초기화 완료. theme =', AppState.theme);
 };
 
 init();
