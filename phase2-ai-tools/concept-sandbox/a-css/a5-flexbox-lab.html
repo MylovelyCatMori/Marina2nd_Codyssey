@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>플렉스 축 실험실</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap">
+
+<style>
+  :root {
+    --ground: #f5f7f9;
+    --surface: #ffffff;
+    --surface-2: #eef1f5;
+    --ink: #172029;
+    --ink-soft: #5b6775;
+    --line: #dae0e7;
+    --accent: #3b5bdb;
+    --accent-soft: #e5eafb;
+    --item: #e8a33d;
+    --item-ink: #442d06;
+    --item-line: #b8791f;
+    --main-axis: #d6336c;
+    --cross-axis: #0b9b78;
+    --ok: #0b9b78;
+
+    --f-body: "IBM Plex Sans KR", system-ui, -apple-system, "Malgun Gothic", sans-serif;
+    --f-mono: "IBM Plex Mono", ui-monospace, "Consolas", monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --ground: #0f141a;
+      --surface: #171e26;
+      --surface-2: #1f2832;
+      --ink: #e6eaf0;
+      --ink-soft: #97a4b4;
+      --line: #2b3542;
+      --accent: #8098f9;
+      --accent-soft: #1d2740;
+      --item: #d99a3c;
+      --item-ink: #1a1205;
+      --item-line: #8d5f18;
+      --main-axis: #f06595;
+      --cross-axis: #38d9a9;
+      --ok: #38d9a9;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #0f141a;
+    --surface: #171e26;
+    --surface-2: #1f2832;
+    --ink: #e6eaf0;
+    --ink-soft: #97a4b4;
+    --line: #2b3542;
+    --accent: #8098f9;
+    --accent-soft: #1d2740;
+    --item: #d99a3c;
+    --item-ink: #1a1205;
+    --item-line: #8d5f18;
+    --main-axis: #f06595;
+    --cross-axis: #38d9a9;
+    --ok: #38d9a9;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--f-body);
+    font-size: 15px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: 880px;
+    margin: 0 auto;
+    padding-inline: 20px;
+    padding-block: 36px 64px;
+  }
+
+  /* ---------- 머리말 ---------- */
+
+  .masthead {
+    border-bottom: 3px solid var(--ink);
+    padding-bottom: 18px;
+    margin-bottom: 8px;
+  }
+
+  .eyebrow {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 10px;
+  }
+
+  h1 {
+    font-size: clamp(28px, 6vw, 40px);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    margin: 0 0 12px;
+    text-wrap: balance;
+  }
+
+  .standfirst {
+    margin: 0;
+    max-width: 58ch;
+    color: var(--ink-soft);
+  }
+
+  .notice {
+    margin-top: 18px;
+    padding: 12px 16px;
+    border-left: 3px solid var(--main-axis);
+    background: var(--surface);
+    font-size: 13.5px;
+    color: var(--ink-soft);
+  }
+  .notice strong { color: var(--ink); }
+
+  /* ---------- 절 ---------- */
+
+  section.lab {
+    margin-top: 44px;
+    padding-top: 26px;
+    border-top: 1px solid var(--line);
+  }
+
+  .tag-no {
+    font-family: var(--f-mono);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--ink-soft);
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  h2 {
+    font-size: clamp(19px, 4vw, 23px);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    margin: 0 0 8px;
+    text-wrap: balance;
+  }
+
+  .lede {
+    margin: 0 0 18px;
+    max-width: 62ch;
+    color: var(--ink-soft);
+    font-size: 14px;
+  }
+
+  /* ---------- 조작부 ---------- */
+
+  .controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px 18px;
+    padding: 14px 16px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    margin-bottom: 14px;
+  }
+
+  .ctl {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--f-mono);
+    font-size: 12px;
+    color: var(--ink-soft);
+  }
+
+  .ctl > span.name { white-space: nowrap; }
+
+  .seg {
+    display: inline-flex;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    overflow: hidden;
+  }
+
+  .seg button {
+    font-family: var(--f-mono);
+    font-size: 12px;
+    padding: 5px 10px;
+    border: 0;
+    background: var(--surface);
+    color: var(--ink-soft);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .seg button + button { border-left: 1px solid var(--line); }
+  .seg button[aria-pressed="true"] {
+    background: var(--accent);
+    color: #fff;
+    font-weight: 600;
+  }
+  .seg button:focus-visible { outline: 2px solid var(--main-axis); outline-offset: -2px; }
+
+  select {
+    font-family: var(--f-mono);
+    font-size: 12px;
+    padding: 5px 8px;
+    border: 1px solid var(--line);
+    border-radius: 2px;
+    background: var(--surface);
+    color: var(--ink);
+  }
+
+  input[type="range"] { width: 150px; accent-color: var(--accent); }
+
+  .swi {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-family: var(--f-mono);
+    font-size: 12px;
+    color: var(--ink-soft);
+    cursor: pointer;
+  }
+  .swi input { accent-color: var(--accent); width: 15px; height: 15px; }
+
+  /* ---------- 무대 ---------- */
+
+  .stage-scroll { overflow-x: auto; }
+
+  .stage {
+    position: relative;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 3px;
+    padding: 30px 26px 26px;
+  }
+
+  .stage-note {
+    position: absolute;
+    top: 8px;
+    left: 12px;
+    font-family: var(--f-mono);
+    font-size: 10.5px;
+    letter-spacing: 0.08em;
+    color: var(--ink-soft);
+  }
+
+  /* flex 컨테이너 역할을 하는 상자 */
+  .box {
+    background: var(--accent-soft);
+    outline: 1px dashed var(--accent);
+    outline-offset: -1px;
+  }
+
+  /* flex 아이템 역할을 하는 상자 */
+  .chip {
+    background: var(--item);
+    color: var(--item-ink);
+    border: 2px solid var(--item-line);
+    font-family: var(--f-mono);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 8px 12px;
+    text-align: center;
+  }
+
+  /* ---------- 판독부 ---------- */
+
+  .readout {
+    margin-top: 12px;
+    padding: 12px 14px;
+    background: var(--surface-2);
+    border-radius: 3px;
+    font-family: var(--f-mono);
+    font-size: 12px;
+    line-height: 1.85;
+    color: var(--ink-soft);
+    font-variant-numeric: tabular-nums;
+  }
+  .readout b { color: var(--ink); font-weight: 600; }
+  .readout .hit { color: var(--ok); font-weight: 600; }
+  .readout .warn { color: var(--main-axis); font-weight: 600; }
+
+  code {
+    font-family: var(--f-mono);
+    font-size: 0.92em;
+    background: var(--surface-2);
+    padding: 1px 5px;
+    border-radius: 2px;
+  }
+
+  /* ---------- 절별 개별 규칙 ---------- */
+
+  #s1-box { padding: 10px; }
+  #s1-box .chip { margin: 0; }
+  #s1-box.on { display: flex; gap: 10px; }
+
+  #s2-outer { display: flex; gap: 12px; align-items: flex-start; padding: 10px; }
+  #s2-group { background: rgba(214, 51, 108, 0.12); outline: 1px dashed var(--main-axis); outline-offset: -1px; padding: 8px; }
+  #s2-group.on { display: flex; gap: 8px; }
+  #s2-group .chip { font-size: 11px; padding: 6px 9px; }
+
+  .axis-stage { position: relative; padding-left: 58px; padding-bottom: 34px; }
+
+  #s3-box {
+    display: flex;
+    gap: 10px;
+    height: 190px;
+    width: 100%;
+    min-width: 240px;
+  }
+  #s3-box .chip { width: 62px; }
+
+  .axis-label {
+    position: absolute;
+    font-family: var(--f-mono);
+    font-size: 10.5px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+  }
+  .axis-arrow { position: absolute; }
+
+  .arrow-h {
+    height: 0;
+    border-top: 2px solid currentColor;
+    left: 58px;
+    right: 26px;
+  }
+  .arrow-v {
+    width: 0;
+    border-left: 2px solid currentColor;
+    top: 30px;
+    bottom: 34px;
+  }
+  .arrow-h::after {
+    content: "";
+    position: absolute;
+    right: -1px;
+    top: -4px;
+    border-left: 7px solid currentColor;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+  }
+  .arrow-v::after {
+    content: "";
+    position: absolute;
+    bottom: -1px;
+    left: -4px;
+    border-top: 7px solid currentColor;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+  }
+
+  #s4-box {
+    display: flex;
+    gap: 10px;
+    height: 130px;
+    padding: 8px;
+  }
+  #s4-box .chip { width: 76px; }
+  #s4-box .chip.fixed-h { height: 34px; }
+
+  .flexrow-box {
+    display: flex;
+    background: var(--accent-soft);
+    outline: 1px dashed var(--accent);
+    outline-offset: -1px;
+  }
+  .flexrow-box .chip { width: 160px; }
+  .flexrow-box.nowrap-locked .chip { flex-shrink: 0; }
+  #s6-box.on { flex-wrap: wrap; }
+
+  .ruler {
+    position: relative;
+    height: 18px;
+    margin-bottom: 4px;
+    font-family: var(--f-mono);
+    font-size: 10px;
+    color: var(--ink-soft);
+  }
+  .ruler::before {
+    content: "";
+    position: absolute;
+    left: 0; right: 0; bottom: 0;
+    border-bottom: 1px solid var(--ink-soft);
+  }
+  .ruler span { position: absolute; bottom: 2px; left: 0; }
+  .ruler em { position: absolute; bottom: 2px; right: 0; font-style: normal; }
+
+  .math {
+    margin-top: 12px;
+    padding: 12px 14px;
+    border: 1px dashed var(--line);
+    border-radius: 3px;
+    font-family: var(--f-mono);
+    font-size: 12px;
+    line-height: 1.9;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink-soft);
+  }
+  .math b { color: var(--ink); font-weight: 600; }
+
+  footer.tail {
+    margin-top: 52px;
+    padding-top: 20px;
+    border-top: 3px solid var(--ink);
+    font-size: 13.5px;
+    color: var(--ink-soft);
+  }
+  footer.tail p { max-width: 60ch; }
+
+  @media (max-width: 520px) {
+    .axis-stage { padding-left: 40px; }
+    .arrow-h { left: 40px; }
+    #s3-box .chip { width: 46px; }
+  }
+
+  /* 레이아웃에 영향을 주는 속성은 절대 전이시키지 않는다.
+     transition: all 은 flex-shrink 와 height 까지 애니메이션 대상으로 삼는다.
+     그러면 판독부가 전이 시작 전의 옛 값을 읽어 화면과 어긋난다. */
+  @media (prefers-reduced-motion: no-preference) {
+    .chip, .box { transition: background-color 180ms ease, border-color 180ms ease; }
+  }
+</style>
+</head>
+
+<body>
+
+<div class="wrap">
+
+  <header class="masthead">
+    <p class="eyebrow">개념 A5 · 사전 지식</p>
+    <h1>플렉스 축 실험실</h1>
+    <p class="standfirst">
+      Flexbox 설명이 글로는 눈에 들어오지 않는 이유는 배치가 <em>움직임</em>이기 때문입니다.
+      아래 여섯 개의 무대를 직접 조작해 보십시오. 각 무대는
+      <code>getBoundingClientRect</code>로 <strong>실제로 그려진 값</strong>을 재서 보여 줍니다.
+      CSS에 적힌 숫자가 아니라 화면에 나온 숫자입니다.
+    </p>
+  </header>
+
+  <div class="notice">
+    <strong>여기에 정답은 없습니다.</strong>
+    이 페이지는 <code>a5-flexbox.html</code>의 실험 1·2·3과 <em>다른 설정</em>만 다룹니다.
+    원리를 익히는 곳이고, 예측 질문은 익힌 원리를 직접 조합해 푸는 것입니다.
+  </div>
+
+  <!-- ========== 1 ========== -->
+  <section class="lab">
+    <span class="tag-no">보충 06</span>
+    <h2>block은 무조건 세로로 쌓인다</h2>
+    <p class="lede">
+      <code>div</code>의 기본 <code>display</code>는 <code>block</code>입니다.
+      가로 자리가 아무리 남아돌아도 형제와 나란히 서지 않습니다.
+      부모에 <code>display: flex</code>를 거는 순간 이 습성이 무력화됩니다.
+      두 상자의 <code>top</code> 값이 같아지는지 보십시오.
+    </p>
+
+    <div class="controls">
+      <div class="ctl">
+        <span class="name">부모 nav의 display</span>
+        <div class="seg" id="s1-seg">
+          <button type="button" data-v="block" aria-pressed="true">block</button>
+          <button type="button" data-v="flex" aria-pressed="false">flex</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="stage">
+      <span class="stage-note">부모 = 연한 파랑 / 자식 = 주황</span>
+      <div class="box" id="s1-box">
+        <div class="chip">LOGO</div>
+        <div class="chip">MENU</div>
+        <div class="chip">THEME</div>
+      </div>
+    </div>
+
+    <div class="readout" id="s1-out"></div>
+  </section>
+
+  <!-- ========== 2 ========== -->
+  <section class="lab">
+    <span class="tag-no">보충 06 이어서</span>
+    <h2>flex는 직접 자식까지만 간다</h2>
+    <p class="lede">
+      바깥 상자에는 <code>display: flex</code>가 <strong>항상 걸려 있습니다</strong>.
+      그런데 분홍 테두리 안쪽의 세 조각은 여전히 세로로 쌓여 있습니다.
+      바깥의 flex가 손자에게 닿지 않기 때문입니다.
+      안쪽 상자에도 직접 걸어야 비로소 눕습니다.
+    </p>
+
+    <div class="controls">
+      <div class="ctl">
+        <span class="name">바깥 article</span>
+        <div class="seg"><button type="button" aria-pressed="true" disabled>flex 고정</button></div>
+      </div>
+      <div class="ctl">
+        <span class="name">안쪽 div.group</span>
+        <div class="seg" id="s2-seg">
+          <button type="button" data-v="block" aria-pressed="true">선언 없음</button>
+          <button type="button" data-v="flex" aria-pressed="false">flex</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="stage">
+      <span class="stage-note">분홍 점선 = 안쪽 상자(손자들의 부모)</span>
+      <div class="box" id="s2-outer">
+        <div class="chip">THUMB</div>
+        <div id="s2-group">
+          <div class="chip">HTML</div>
+          <div class="chip">CSS</div>
+          <div class="chip">JS</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="readout" id="s2-out"></div>
+  </section>
+
+  <!-- ========== 3 ========== -->
+  <section class="lab">
+    <span class="tag-no">보충 07 · 08</span>
+    <h2>축은 이름이 아니라 방향으로 정해진다</h2>
+    <p class="lede">
+      분홍 화살표가 <strong>주축</strong>, 초록 화살표가 <strong>교차축</strong>입니다.
+      <code>flex-direction</code>을 바꿔 보면 화살표가 통째로 돌아눕고,
+      <code>justify-content</code>가 담당하던 방향이 <code>align-items</code> 쪽으로 넘어갑니다.
+      속성 이름은 한 글자도 바뀌지 않았는데 말입니다.
+    </p>
+
+    <div class="controls">
+      <div class="ctl">
+        <span class="name">flex-direction</span>
+        <div class="seg" id="s3-dir">
+          <button type="button" data-v="row" aria-pressed="true">row</button>
+          <button type="button" data-v="column" aria-pressed="false">column</button>
+        </div>
+      </div>
+      <label class="ctl" for="s3-justify">
+        <span class="name">justify-content</span>
+        <select id="s3-justify">
+          <option value="flex-start" selected>flex-start</option>
+          <option value="center">center</option>
+          <option value="flex-end">flex-end</option>
+          <option value="space-between">space-between</option>
+        </select>
+      </label>
+      <label class="ctl" for="s3-align">
+        <span class="name">align-items</span>
+        <select id="s3-align">
+          <option value="flex-start" selected>flex-start</option>
+          <option value="center">center</option>
+          <option value="flex-end">flex-end</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="stage axis-stage" id="s3-stage">
+      <span class="stage-note">화살표: 분홍 = 주축 / 초록 = 교차축</span>
+
+      <div class="axis-arrow arrow-h" id="s3-arrow-h" style="color: var(--main-axis); top: 16px;"></div>
+      <div class="axis-label" id="s3-label-h" style="color: var(--main-axis); top: 20px; left: 8px;">주축</div>
+
+      <div class="axis-arrow arrow-v" id="s3-arrow-v" style="color: var(--cross-axis); left: 34px;"></div>
+      <div class="axis-label" id="s3-label-v" style="color: var(--cross-axis); bottom: 12px; left: 14px;">교차축</div>
+
+      <div class="box" id="s3-box">
+        <div class="chip">1</div>
+        <div class="chip">2</div>
+        <div class="chip">3</div>
+      </div>
+    </div>
+
+    <div class="readout" id="s3-out"></div>
+  </section>
+
+  <!-- ========== 4 ========== -->
+  <section class="lab">
+    <span class="tag-no">보충 09</span>
+    <h2>stretch는 크기가 auto일 때만 작동한다</h2>
+    <p class="lede">
+      <code>align-items</code>의 기본값 <code>stretch</code>는 요청하지 않아도 아이템을 교차축으로 늘립니다.
+      단 <strong>그 방향의 크기가 지정되지 않은 경우에만</strong>입니다.
+      가운데 상자에 높이를 명시하면, 옆의 두 상자가 130px까지 늘어나는 동안 혼자 34px에 머무릅니다.
+      명시적 지정이 기본 동작을 이깁니다.
+    </p>
+
+    <div class="controls">
+      <label class="ctl" for="s4-align">
+        <span class="name">align-items</span>
+        <select id="s4-align">
+          <option value="stretch" selected>stretch (기본값)</option>
+          <option value="flex-start">flex-start</option>
+          <option value="center">center</option>
+          <option value="flex-end">flex-end</option>
+        </select>
+      </label>
+      <label class="swi" for="s4-fixed">
+        <input type="checkbox" id="s4-fixed">
+        가운데 상자에 <code>height: 34px</code> 명시
+      </label>
+    </div>
+
+    <div class="stage">
+      <span class="stage-note">부모 높이 130px · direction은 row 고정</span>
+      <div class="box" id="s4-box">
+        <div class="chip">A</div>
+        <div class="chip" id="s4-mid">B</div>
+        <div class="chip">C</div>
+      </div>
+    </div>
+
+    <div class="readout" id="s4-out"></div>
+  </section>
+
+  <!-- ========== 5 ========== -->
+  <section class="lab">
+    <span class="tag-no">보충 10 · 11</span>
+    <h2>width는 희망 사항이지 보장이 아니다</h2>
+    <p class="lede">
+      세 상자 모두 <code>width: 160px</code>, <code>box-sizing: border-box</code>입니다.
+      부모 폭을 480px 아래로 줄이면 자리가 모자라기 시작합니다.
+      기본값 <code>flex-shrink: 1</code>이 켜져 있으므로 상자들은 지정한 폭을 지키지 못하고 찌그러집니다.
+      계산 과정을 아래에 그대로 펼쳐 놓았습니다.
+    </p>
+
+    <div class="controls">
+      <label class="ctl" for="s5-width">
+        <span class="name">부모 width</span>
+        <input type="range" id="s5-width" min="200" max="560" value="360" step="10">
+        <b id="s5-width-val" style="color: var(--ink); font-family: var(--f-mono);">360px</b>
+      </label>
+      <label class="swi" for="s5-lock">
+        <input type="checkbox" id="s5-lock">
+        자식에 <code>flex-shrink: 0</code> 주기
+      </label>
+    </div>
+
+    <div class="stage">
+      <span class="stage-note">회색 자 = 부모의 실제 폭</span>
+      <div class="stage-scroll">
+        <div id="s5-holder" style="width: 360px; min-width: 200px;">
+          <div class="ruler"><span>0</span><em id="s5-ruler-end">360px</em></div>
+          <div class="flexrow-box" id="s5-box">
+            <div class="chip">1</div>
+            <div class="chip">2</div>
+            <div class="chip">3</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="math" id="s5-math"></div>
+    <div class="readout" id="s5-out"></div>
+  </section>
+
+  <!-- ========== 6 ========== -->
+  <section class="lab">
+    <span class="tag-no">보충 10 이어서</span>
+    <h2>줄바꿈이라는 탈출구</h2>
+    <p class="lede">
+      위 무대에서 상자들이 찌그러진 이유는 기본값 <code>flex-wrap: nowrap</code>이
+      줄바꿈을 막고 있었기 때문입니다. 다른 방법이 없으니 찌그러진 것입니다.
+      <code>wrap</code>을 켜면 브라우저에 선택지가 생깁니다.
+      한 줄에 들어갈 만큼만 배치하고 나머지를 내려보낸 뒤,
+      <strong>각 줄 안에서 다시</strong> 남거나 모자란 자리를 조정합니다.
+    </p>
+
+    <div class="controls">
+      <div class="ctl">
+        <span class="name">flex-wrap</span>
+        <div class="seg" id="s6-seg">
+          <button type="button" data-v="nowrap" aria-pressed="true">nowrap (기본값)</button>
+          <button type="button" data-v="wrap" aria-pressed="false">wrap</button>
+        </div>
+      </div>
+      <label class="ctl" for="s6-count">
+        <span class="name">자식 개수</span>
+        <input type="range" id="s6-count" min="2" max="6" value="4" step="1">
+        <b id="s6-count-val" style="color: var(--ink); font-family: var(--f-mono);">4개</b>
+      </label>
+    </div>
+
+    <div class="stage">
+      <span class="stage-note">부모 width 360px 고정 · 자식 width 160px</span>
+      <div class="stage-scroll">
+        <div style="width: 360px; min-width: 200px;">
+          <div class="ruler"><span>0</span><em>360px</em></div>
+          <div class="flexrow-box" id="s6-box" style="width: 360px;"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="readout" id="s6-out"></div>
+  </section>
+
+  <footer class="tail">
+    <p>
+      여섯 무대의 규칙을 조합하면 <code>a5-flexbox.html</code>의 실험 1·2·3을 예측할 수 있습니다.
+      다만 그 세 실험의 설정은 여기에 들어 있지 않습니다. 조합은 직접 하십시오.
+    </p>
+  </footer>
+
+</div>
+
+<script>
+  "use strict";
+
+  const $ = (id) => document.getElementById(id);
+  const rect = (el) => el.getBoundingClientRect();
+  const px = (n) => n.toFixed(1);
+
+  /* 세그먼트 버튼 묶음. onPick(선택된 값)을 부른다. */
+  function segment(rootId, onPick) {
+    const root = $(rootId);
+    root.addEventListener("click", (e) => {
+      const btn = e.target.closest("button[data-v]");
+      if (!btn) return;
+      root.querySelectorAll("button[data-v]").forEach((b) => {
+        b.setAttribute("aria-pressed", String(b === btn));
+      });
+      onPick(btn.dataset.v);
+    });
+  }
+
+  /* ---------- 1 ---------- */
+  const s1box = $("s1-box");
+  const s1out = $("s1-out");
+
+  function draw1() {
+    const chips = [...s1box.querySelectorAll(".chip")];
+    const tops = chips.map((c) => rect(c).top);
+    const same = Math.abs(tops[0] - tops[2]) < 0.5;
+    s1out.innerHTML =
+      `<b>측정</b> 세 상자의 top : ` +
+      tops.map(px).join(" / ") + `<br>` +
+      `<b>판정</b> ` +
+      (same
+        ? `<span class="hit">top이 같다 → 가로로 나란히 섰다</span>`
+        : `<span class="warn">top이 다르다 → 세로로 쌓였다</span>`) +
+      `<br><b>지금 상태</b> 세 div는 각각 <code>display: block</code>. 바뀐 것은 부모뿐이다.`;
+  }
+
+  segment("s1-seg", (v) => {
+    s1box.classList.toggle("on", v === "flex");
+    draw1();
+  });
+
+  /* ---------- 2 ---------- */
+  const s2group = $("s2-group");
+  const s2out = $("s2-out");
+
+  function draw2() {
+    const tags = [...s2group.querySelectorAll(".chip")];
+    const tops = tags.map((t) => rect(t).top);
+    const inner = Math.abs(tops[0] - tops[2]) < 0.5;
+    const thumb = rect(document.querySelector("#s2-outer > .chip")).top;
+    const group = rect(s2group).top;
+    const outer = Math.abs(thumb - group) < 6;
+
+    s2out.innerHTML =
+      `<b>바깥</b> THUMB top ${px(thumb)} / group top ${px(group)} → ` +
+      (outer ? `<span class="hit">나란히</span>` : `<span class="warn">쌓임</span>`) +
+      ` <span style="opacity:.7">(바깥 flex는 계속 켜져 있다)</span><br>` +
+      `<b>안쪽</b> 세 조각의 top : ` + tops.map(px).join(" / ") + ` → ` +
+      (inner ? `<span class="hit">나란히</span>` : `<span class="warn">쌓임</span>`) + `<br>` +
+      `<b>요점</b> 바깥의 flex를 건드리지 않았는데 안쪽만 바뀐다. 두 층은 서로 무관하다.`;
+  }
+
+  segment("s2-seg", (v) => {
+    s2group.classList.toggle("on", v === "flex");
+    draw2();
+  });
+
+  /* ---------- 3 ---------- */
+  const s3box = $("s3-box");
+  const s3out = $("s3-out");
+  const s3ah = $("s3-arrow-h");
+  const s3av = $("s3-arrow-v");
+  const s3lh = $("s3-label-h");
+  const s3lv = $("s3-label-v");
+  let s3dir = "row";
+
+  function draw3() {
+    s3box.style.flexDirection = s3dir;
+    s3box.style.justifyContent = $("s3-justify").value;
+    s3box.style.alignItems = $("s3-align").value;
+
+    /* 주축이 가로면 가로 화살표가 분홍, 세로 화살표가 초록. column이면 뒤집는다. */
+    const mainIsRow = s3dir === "row";
+    s3ah.style.color = mainIsRow ? "var(--main-axis)" : "var(--cross-axis)";
+    s3lh.style.color = s3ah.style.color;
+    s3lh.textContent = mainIsRow ? "주축" : "교차축";
+    s3av.style.color = mainIsRow ? "var(--cross-axis)" : "var(--main-axis)";
+    s3lv.style.color = s3av.style.color;
+    s3lv.textContent = mainIsRow ? "교차축" : "주축";
+
+    const box = rect(s3box);
+    const first = rect(s3box.querySelector(".chip"));
+    const dx = first.left - box.left;
+    const dy = first.top - box.top;
+
+    s3out.innerHTML =
+      `<b>측정</b> 첫 상자의 부모 기준 위치 — left ${px(dx)} / top ${px(dy)}<br>` +
+      `<b>주축</b> ${mainIsRow ? "가로" : "세로"} → <code>justify-content: ${$("s3-justify").value}</code>가 ` +
+      `${mainIsRow ? "가로" : "세로"} 배치를 움직인다<br>` +
+      `<b>교차축</b> ${mainIsRow ? "세로" : "가로"} → <code>align-items: ${$("s3-align").value}</code>가 ` +
+      `${mainIsRow ? "세로" : "가로"} 배치를 움직인다`;
+  }
+
+  segment("s3-dir", (v) => { s3dir = v; draw3(); });
+  $("s3-justify").addEventListener("change", draw3);
+  $("s3-align").addEventListener("change", draw3);
+
+  /* ---------- 4 ---------- */
+  const s4box = $("s4-box");
+  const s4mid = $("s4-mid");
+  const s4out = $("s4-out");
+
+  function draw4() {
+    s4box.style.alignItems = $("s4-align").value;
+    const fixed = $("s4-fixed").checked;
+    s4mid.classList.toggle("fixed-h", fixed);
+
+    const hs = [...s4box.querySelectorAll(".chip")].map((c) => rect(c).height);
+    const align = $("s4-align").value;
+    let verdict;
+    if (align !== "stretch") {
+      verdict = `<code>${align}</code>은 늘리지 않는 값이다. 셋 다 내용 높이에 머문다.`;
+    } else if (fixed) {
+      verdict = `B는 높이가 <b>명시</b>되어 stretch가 건드리지 못한다. ` +
+                `<span class="warn">A·C만 늘어난다.</span>`;
+    } else {
+      verdict = `셋 다 높이가 <code>auto</code>다. <span class="hit">stretch가 전부 부모 높이까지 늘린다.</span>`;
+    }
+
+    s4out.innerHTML =
+      `<b>측정</b> A / B / C 실제 높이 : ` + hs.map(px).join(" / ") + `px<br>` +
+      `<b>판정</b> ` + verdict;
+  }
+
+  $("s4-align").addEventListener("change", draw4);
+  $("s4-fixed").addEventListener("change", draw4);
+
+  /* ---------- 5 ---------- */
+  const s5holder = $("s5-holder");
+  const s5box = $("s5-box");
+  const s5out = $("s5-out");
+  const s5math = $("s5-math");
+
+  function draw5() {
+    const w = Number($("s5-width").value);
+    const locked = $("s5-lock").checked;
+
+    s5holder.style.width = w + "px";
+    $("s5-width-val").textContent = w + "px";
+    $("s5-ruler-end").textContent = w + "px";
+    s5box.classList.toggle("nowrap-locked", locked);
+
+    const BASIS = 160, COUNT = 3;
+    const need = BASIS * COUNT;
+    const deficit = need - w;
+    const widths = [...s5box.querySelectorAll(".chip")].map((c) => rect(c).width);
+
+    let math;
+    if (locked) {
+      math =
+        `<b>1단계</b> 필요 ${need}px − 부모 ${w}px = ${deficit > 0 ? deficit : 0}px 부족<br>` +
+        `<b>2단계</b> flex-shrink: <b>0</b> → 깎을 몫이 없다<br>` +
+        `<b>결과</b> 160px 유지. ${deficit > 0 ? "부모 밖으로 넘친다." : "자리가 충분하다."}`;
+    } else if (deficit > 0) {
+      const each = deficit / COUNT;
+      math =
+        `<b>1단계</b> 필요 ${need}px − 부모 ${w}px = <b>${deficit}px</b> 부족<br>` +
+        `<b>2단계</b> 가중치 = shrink(1) × basis(160) 로 셋이 동일 → 3등분<br>` +
+        `&nbsp;&nbsp;&nbsp;&nbsp;${deficit} ÷ 3 = <b>${each.toFixed(2)}px</b> 씩 깎인다<br>` +
+        `<b>3단계</b> 160 − ${each.toFixed(2)} = <b>${(BASIS - each).toFixed(2)}px</b> (예상)`;
+    } else {
+      math =
+        `<b>1단계</b> 필요 ${need}px ≤ 부모 ${w}px → 부족분 없음<br>` +
+        `<b>2단계</b> flex-grow 기본값은 0 이므로 <b>남는 자리를 채우지 않는다</b><br>` +
+        `<b>3단계</b> 160px 그대로`;
+    }
+    s5math.innerHTML = math;
+
+    const shrunk = widths.some((x) => x < BASIS - 0.5);
+    const total = widths.reduce((a, b) => a + b, 0);
+    let verdict;
+    if (shrunk) {
+      verdict = `<span class="warn">CSS에 160px이라 적혀 있는데 화면은 다른 값이다.</span>`;
+    } else if (total > w + 0.5) {
+      verdict = `<span class="hit">160px은 지켜졌다.</span> 대신 합계 ${px(total)}px이 ` +
+                `부모 ${w}px을 <span class="warn">넘쳐 밖으로 삐져나온다.</span>`;
+    } else {
+      verdict = `<span class="hit">CSS의 160px이 그대로 지켜졌다.</span>`;
+    }
+
+    s5out.innerHTML =
+      `<b>측정</b> 실제 폭 : ` + widths.map(px).join(" / ") + `px<br>` +
+      `<b>판정</b> ` + verdict;
+  }
+
+  $("s5-width").addEventListener("input", draw5);
+  $("s5-lock").addEventListener("change", draw5);
+
+  /* ---------- 6 ---------- */
+  const s6box = $("s6-box");
+  const s6out = $("s6-out");
+  let s6wrap = false;
+
+  function draw6() {
+    const n = Number($("s6-count").value);
+    $("s6-count-val").textContent = n + "개";
+
+    s6box.innerHTML = "";
+    for (let i = 1; i <= n; i++) {
+      const d = document.createElement("div");
+      d.className = "chip";
+      d.textContent = String(i);
+      s6box.appendChild(d);
+    }
+    s6box.classList.toggle("on", s6wrap);
+
+    const cells = [...s6box.querySelectorAll(".chip")];
+    const tops = cells.map((c) => rect(c).top);
+    const rows = [...new Set(tops.map((t) => Math.round(t)))].length;
+    const widths = cells.map((c) => rect(c).width);
+
+    s6out.innerHTML =
+      `<b>측정</b> 실제 폭 : ` + widths.map(px).join(" / ") + `px<br>` +
+      `<b>줄 수</b> top 값의 종류가 ${rows}개 → <b>${rows}줄</b><br>` +
+      `<b>판정</b> ` +
+      (s6wrap
+        ? `<span class="hit">내려보낼 수 있으니 각 줄 안에서만 자리를 다툰다.</span>`
+        : `<span class="warn">한 줄에 갇혀 있어 개수가 늘수록 더 깎인다.</span>`);
+  }
+
+  segment("s6-seg", (v) => { s6wrap = (v === "wrap"); draw6(); });
+  $("s6-count").addEventListener("input", draw6);
+
+  /* ---------- 최초 그리기 ---------- */
+  function drawAll() {
+    draw1(); draw2(); draw3(); draw4(); draw5(); draw6();
+  }
+
+  drawAll();
+  /* 웹폰트가 늦게 도착하면 글자 크기가 바뀌어 측정값이 달라진다. 다시 잰다. */
+  if (document.fonts && document.fonts.ready) {
+    document.fonts.ready.then(drawAll);
+  }
+  window.addEventListener("resize", drawAll);
+</script>
+
+</body>
+</html>

@@ -61,45 +61,45 @@
 
 | ID | 요구사항 | 상태 |
 |---|---|---|
-| F-01 | 폴더 구조가 역할 분리: `index.html`, `css/`, `js/`, `images/` | ⬜ |
-| F-02 | 외부 스타일시트 / JS 파일을 HTML에 올바르게 연결 | ⬜ |
+| F-01 | 폴더 구조가 역할 분리: `index.html`, `css/`, `js/`, `images/` | ✅ |
+| F-02 | 외부 스타일시트 / JS 파일을 HTML에 올바르게 연결 | ✅ |
 | F-03 | VS Code + Live Server로 실시간 개발 환경 구성 | ⬜ |
 
 ### 3-2. HTML 구조 (시맨틱 마크업)
 
 | ID | 요구사항 | 상태 |
 |---|---|---|
-| F-04 | `div`로만 감싸지 않고 시맨틱 태그 사용: `header`, `nav`, `main`, `section`, `article`, `footer` | ⬜ |
-| F-05 | Hero 섹션 (인사말 + CTA 버튼) | ⬜ |
-| F-06 | About 섹션 (자기소개 + 프로필 이미지) | ⬜ |
-| F-07 | Skills 섹션 (기술 스택 목록) | ⬜ |
-| F-08 | Projects 섹션 (GitHub API 연동 카드) | ⬜ |
-| F-09 | Contact 섹션 (문의 폼) | ⬜ |
-| F-10 | Footer (저작권 + 소셜 링크) | ⬜ |
-| F-11 | 네비게이션에 각 섹션 이동 앵커 링크 존재 | ⬜ |
-| F-12 | 모든 이미지에 의미있는 `alt` 속성 | ⬜ |
-| F-13 | 폼 요소에 `<label>` for-id 매칭 연결 | ⬜ |
+| F-04 | `div`로만 감싸지 않고 시맨틱 태그 사용: `header`, `nav`, `main`, `section`, `article`, `footer` | ✅ |
+| F-05 | Hero 섹션 (인사말 + CTA 버튼) | ✅ |
+| F-06 | About 섹션 (자기소개 + 프로필 이미지) | ✅ |
+| F-07 | Skills 섹션 (기술 스택 목록) | ✅ |
+| F-08 | Projects 섹션 (GitHub API 연동 카드) | ✅ |
+| F-09 | Contact 섹션 (문의 폼) | ✅ |
+| F-10 | Footer (저작권 + 소셜 링크) | ✅ |
+| F-11 | 네비게이션에 각 섹션 이동 앵커 링크 존재 | ✅ |
+| F-12 | 모든 이미지에 의미있는 `alt` 속성 | ✅ |
+| F-13 | 폼 요소에 `<label>` for-id 매칭 연결 | ✅ |
 
 ### 3-3. CSS 스타일링
 
 | ID | 요구사항 | 상태 |
 |---|---|---|
-| F-14 | 외부 스타일시트 `css/style.css` 사용 | ⬜ |
-| F-15 | CSS 변수 `:root`로 색상 / 폰트 / 간격 정의 | ⬜ |
-| F-16 | 다크 모드용 CSS 변수 별도 정의 `[data-theme="dark"]` | ⬜ |
-| F-17 | 네비게이션 레이아웃에 **Flexbox** 사용 (로고 좌 / 메뉴 우) | ⬜ |
-| F-18 | Projects 카드에 **Grid** 사용 (`auto-fit` + `minmax` 반응형) | ⬜ |
-| F-19 | **모바일 퍼스트**로 작성 | ⬜ |
-| F-20 | 브레이크포인트 768px(태블릿) / 1024px(데스크톱) | ⬜ |
-| F-21 | 모바일에서 nav 숨김 + 햄버거 버튼 표시 | ⬜ |
-| F-22 | 버튼 / 카드에 hover 효과 + `transition` | ⬜ |
-| F-23 | 카드에 `box-shadow` | ⬜ |
+| F-14 | 외부 스타일시트 `css/style.css` 사용 | ✅ |
+| F-15 | CSS 변수 `:root`로 색상 / 폰트 / 간격 정의 | ✅ |
+| F-16 | 다크 모드용 CSS 변수 별도 정의 `[data-theme="dark"]` | ✅ |
+| F-17 | 네비게이션 레이아웃에 **Flexbox** 사용 (로고 좌 / 메뉴 우) | ✅ |
+| F-18 | Projects 카드에 **Grid** 사용 (`auto-fit` + `minmax` 반응형) | ✅ |
+| F-19 | **모바일 퍼스트**로 작성 | ✅ |
+| F-20 | 브레이크포인트 768px(태블릿) / 1024px(데스크톱) | ✅ |
+| F-21 | 모바일에서 nav 숨김 + 햄버거 버튼 표시 | ✅ |
+| F-22 | 버튼 / 카드에 hover 효과 + `transition` | ✅ |
+| F-23 | 카드에 `box-shadow` | ✅ |
 
 ### 3-4. JavaScript 기초 (DOM & 이벤트)
 
 | ID | 요구사항 | 상태 |
 |---|---|---|
-| F-24 | JS 파일을 `defer` 속성으로 연결 | ⬜ |
+| F-24 | JS 파일을 `defer` 속성으로 연결 | ✅ |
 | F-25 | `querySelector` / `querySelectorAll`로 요소 선택 | ⬜ |
 | F-26 | `textContent` / `innerHTML`로 내용 변경 | ⬜ |
 | F-27 | `classList.add` / `remove` / `toggle`로 클래스 조작 | ⬜ |
