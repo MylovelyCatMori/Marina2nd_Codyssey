@@ -71,6 +71,8 @@ const els = {
   scrollTopBtn: document.querySelector('#scroll-top'),
   sections: document.querySelectorAll('main section'),
   projectsGrid: document.querySelector('#projects-grid'),
+  projectFilters: document.querySelector('#project-filters'),
+  heroTyped: document.querySelector('#hero-typed'),
   form: document.querySelector('#contact-form'),
   formSuccess: document.querySelector('#form-success')
 };
@@ -193,6 +195,56 @@ const createCard = (repo) => {
   `;
 };
 
+/* 언어 필터 (F-47, B-01) -- 흐름 4
+
+   중요: 원본 `repoState.data` 를 절대 건드리지 않는다.
+   filter 와 slice 는 새 배열을 돌려주는 메서드다. 만약 splice 나 sort 처럼
+   원본을 바꾸는 메서드를 쓰면, "전체" 버튼을 눌러도 이미 사라진 항목은
+   돌아오지 않는다. */
+const UNKNOWN_LANGUAGE = 'Unknown';
+
+const getLanguageList = () => {
+  const langs = AppState.repoState.data.map(
+    (repo) => repo.language || UNKNOWN_LANGUAGE
+  );
+
+  // Set 은 중복을 자동으로 없앤다. 배열로 되돌린 뒤 가나다순으로 정렬한다.
+  return ['all', ...[...new Set(langs)].sort()];
+};
+
+const getVisibleRepos = () => {
+  const { data } = AppState.repoState;
+
+  const filtered = AppState.activeLanguage === 'all'
+    ? data
+    : data.filter((repo) => (repo.language || UNKNOWN_LANGUAGE) === AppState.activeLanguage);
+
+  return filtered.slice(0, MAX_VISIBLE_REPOS);
+};
+
+const renderFilters = () => {
+  const { status } = AppState.repoState;
+
+  // 카드가 없는 상태에서 필터만 떠 있으면 누를 것이 없다.
+  if (status !== 'success') {
+    els.projectFilters.innerHTML = '';
+    return;
+  }
+
+  els.projectFilters.innerHTML = getLanguageList()
+    .map((lang) => {
+      const isActive = lang === AppState.activeLanguage;
+      const label = lang === 'all' ? '전체' : lang;
+
+      return `
+        <button class="filter-btn js-filter" type="button"
+                data-lang="${escapeHtml(lang)}"
+                aria-pressed="${isActive}">${escapeHtml(label)}</button>
+      `;
+    })
+    .join('');
+};
+
 const renderProjects = () => {
   const { status, data, error } = AppState.repoState;
 
@@ -225,11 +277,27 @@ const renderProjects = () => {
   }
 
   // status === 'success' (F-51)
+  const visible = getVisibleRepos();
+
+  // 데이터는 있는데 지금 고른 언어에 해당하는 것만 없는 경우다.
+  // 저장소가 0개인 empty 상태와 다르므로 문구를 나눈다.
+  if (visible.length === 0) {
+    els.projectsGrid.innerHTML = `
+      <div class="state">
+        <p class="state__msg">${escapeHtml(AppState.activeLanguage)} 프로젝트가 없습니다.</p>
+      </div>
+    `;
+    return;
+  }
+
   // map 으로 배열을 HTML 문자열 배열로 바꾼 뒤 이어 붙인다. (F-45, F-43)
-  els.projectsGrid.innerHTML = data
-    .slice(0, MAX_VISIBLE_REPOS)
-    .map(createCard)
-    .join('');
+  els.projectsGrid.innerHTML = visible.map(createCard).join('');
+};
+
+/* 필터와 카드는 항상 같이 그린다. 따로 부르면 한쪽만 갱신되는 사고가 난다. */
+const renderProjectsSection = () => {
+  renderFilters();
+  renderProjects();
 };
 
 /* 스크롤 파생 상태 -> nav 배경(F-33) + 스크롤탑 버튼(F-32) */
@@ -394,7 +462,10 @@ const fetchRepos = async () => {
   // ① 상태를 loading 으로 바꾸고 즉시 화면에 반영한다.
   //    응답을 기다린 뒤에 바꾸면 로딩 화면이 보이지 않는다.
   AppState.repoState = { status: 'loading', data: [], error: null };
-  renderProjects();
+
+  // 새로 받아오면 언어 목록도 달라진다. 선택을 초기화한다.
+  AppState.activeLanguage = 'all';
+  renderProjectsSection();
 
   try {
     const response = await fetch(GITHUB_REPOS_URL);
@@ -433,8 +504,18 @@ const fetchRepos = async () => {
   }
 
   // ③ 성공이든 실패든 마지막에 한 번만 그린다.
-  renderProjects();
+  renderProjectsSection();
 };
+
+/* 언어 필터 클릭 (F-47) -- 흐름 4
+   버튼은 데이터가 올 때마다 다시 만들어지므로 부모에 위임한다. */
+els.projectFilters.addEventListener('click', (event) => {
+  const button = event.target.closest('.js-filter');
+  if (!button) return;
+
+  AppState.activeLanguage = button.dataset.lang;   // ① 상태 변경
+  renderProjectsSection();                         // ② 화면 갱신
+});
 
 /* 폼 제출 (F-29, F-38, F-39, F-41)
    submit 의 기본 동작은 페이지 새로고침이다. 막지 않으면 검증 결과를
@@ -501,6 +582,63 @@ els.projectsGrid.addEventListener('click', (event) => {
 });
 
 /* -------------------------------------------------------------------
+   Hero 타이핑 효과 (보너스 B-02)
+
+   setTimeout 을 재귀로 부르는 방식이다. setInterval 과 달리 매번 다음
+   대기 시간을 다르게 줄 수 있어서, 글자를 칠 때와 문장을 다 친 뒤
+   멈추는 시간을 나눌 수 있다.
+   ------------------------------------------------------------------- */
+
+const TYPING_PHRASES = [
+  '배우면서 만드는 개발자입니다',
+  '설명할 수 있는 코드를 씁니다',
+  '라이브러리 없이 직접 만듭니다'
+];
+
+const TYPE_SPEED = 90;        // 한 글자 치는 간격(ms)
+const ERASE_SPEED = 45;       // 한 글자 지우는 간격(ms)
+const HOLD_AFTER_TYPE = 1800; // 다 치고 멈춰 있는 시간(ms)
+const HOLD_AFTER_ERASE = 350; // 다 지우고 다음 문장까지의 시간(ms)
+
+const startTyping = () => {
+  // 움직임을 줄이도록 설정한 사용자에게는 첫 문장만 그대로 보여준다.
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    els.heroTyped.textContent = TYPING_PHRASES[0];
+    return;
+  }
+
+  let phraseIndex = 0;
+  let charCount = 0;
+  let isErasing = false;
+
+  const tick = () => {
+    const phrase = TYPING_PHRASES[phraseIndex];
+
+    charCount += isErasing ? -1 : 1;
+
+    // textContent 를 쓴다. 글자만 넣을 것이므로 innerHTML 은 불필요하고
+    // 위험하기만 하다.
+    els.heroTyped.textContent = phrase.slice(0, charCount);
+
+    let delay = isErasing ? ERASE_SPEED : TYPE_SPEED;
+
+    if (!isErasing && charCount === phrase.length) {
+      isErasing = true;
+      delay = HOLD_AFTER_TYPE;
+    } else if (isErasing && charCount === 0) {
+      isErasing = false;
+      phraseIndex = (phraseIndex + 1) % TYPING_PHRASES.length;  // 끝나면 처음으로
+      delay = HOLD_AFTER_ERASE;
+    }
+
+    window.setTimeout(tick, delay);
+  };
+
+  els.heroTyped.textContent = '';
+  window.setTimeout(tick, 400);
+};
+
+/* -------------------------------------------------------------------
    스크롤 등장 애니메이션 (F-36)
    IntersectionObserver = "이 요소가 화면에 들어왔는가"를 브라우저가
    대신 감시해주는 도구. scroll 이벤트로 위치를 계산하는 것보다 싸다.
@@ -545,11 +683,12 @@ const init = () => {
   renderForm();
   handleScroll();   // 새로고침 시 이미 스크롤되어 있을 수 있다
   setupReveal();
+  startTyping();
 
   // await 하지 않는다. 응답을 기다리는 동안 나머지 화면은 이미 쓸 수 있어야 한다.
   fetchRepos();
 
-  console.log('[Phase 4] 초기화 완료. theme =', AppState.theme);
+  console.log('[Phase 5] 초기화 완료. theme =', AppState.theme);
 };
 
 init();

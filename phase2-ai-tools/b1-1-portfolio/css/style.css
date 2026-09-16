@@ -348,6 +348,30 @@ section[id] {
   margin-bottom: var(--space-3);
 }
 
+/* 타이핑 효과 (B-02)
+   글자 수가 계속 바뀌므로 줄 높이가 흔들리지 않도록 inline-block 으로 둔다. */
+.hero__typed {
+  display: inline-block;
+  min-height: 1.35em;
+  vertical-align: bottom;
+}
+
+/* 커서 막대. 내용이 없는 장식이므로 CSS 로만 그린다. */
+.hero__caret {
+  display: inline-block;
+  width: 3px;
+  height: 0.95em;
+  margin-left: 2px;
+  vertical-align: baseline;
+  background-color: var(--color-accent);
+  animation: caret-blink 1s step-end infinite;
+}
+
+@keyframes caret-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
 .hero__desc {
   color: var(--color-text-soft);
   max-width: 48ch;
@@ -412,6 +436,43 @@ section[id] {
 /* -------------------------------------------------------------------
    8. Projects  (F-18 Grid, F-23 box-shadow)
    ------------------------------------------------------------------- */
+
+/* 언어 필터 버튼 줄 (B-01) */
+.filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+/* 비어 있을 때 margin 만 남아 빈 공간이 생기는 것을 막는다. */
+.filters:empty {
+  margin-bottom: 0;
+}
+
+.filter-btn {
+  padding: 6px 14px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background-color: var(--color-surface);
+  color: var(--color-text-soft);
+  font-size: 13px;
+  transition: background-color var(--transition), color var(--transition),
+              border-color var(--transition);
+}
+
+.filter-btn:hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+}
+
+/* 지금 고른 버튼. 색만으로 구분하지 않도록 굵기도 함께 바꾼다. */
+.filter-btn[aria-pressed="true"] {
+  background-color: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-accent-text);
+  font-weight: 600;
+}
 
 /* auto-fit + minmax = "한 칸 최소 260px, 남으면 늘려라. 몇 칸인지는 네가 정해라"
    media query 없이도 화면 폭에 따라 칸 수가 알아서 바뀐다. */

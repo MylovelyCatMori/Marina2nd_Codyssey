@@ -58,10 +58,13 @@
       <div class="container hero__inner">
         <p class="hero__eyebrow">Frontend Learner</p>
 
-        <!-- B-02 타이핑 효과를 Phase 5에서 이 h1 에 붙인다. -->
+        <!-- B-02 타이핑 효과.
+             span 안의 글자는 JavaScript가 꺼졌을 때 그대로 보이는 대비책이다.
+             aria-live="polite"는 글자가 바뀔 때 화면 낭독기가 읽도록 한다. -->
         <h1 class="hero__title">
           안녕하세요,<br>
-          배우면서 만드는 개발자입니다
+          <span class="hero__typed" id="hero-typed" aria-live="polite">배우면서 만드는 개발자입니다</span><span
+            class="hero__caret" id="hero-caret" aria-hidden="true"></span>
         </h1>
 
         <p class="hero__desc">
@@ -148,6 +151,10 @@
       <div class="container">
         <h2 class="section__title">Projects</h2>
         <p class="section__lead">GitHub 저장소를 불러와 보여 줍니다.</p>
+
+        <!-- B-01 언어별 필터. 버튼은 받아온 데이터에서 만들어지므로
+             여기는 빈 상자로 둔다. -->
+        <div class="filters" id="project-filters" role="group" aria-label="언어별 필터"></div>
 
         <!-- 이 안은 JavaScript가 통째로 채운다.
              repoState.status 값에 따라 로딩 / 성공 / 에러 / 빈 상태 4가지 중
