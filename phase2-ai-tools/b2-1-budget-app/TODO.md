@@ -1,7 +1,7 @@
 # B2-1 TODO -- 나만의 용돈 기입장
 
 최종 업데이트: 2026-09-17
-현재 위치: **설계 완료 / Phase 0 착수 대기**
+현재 위치: **Phase 6 완료 / 남은 것은 사용자 작업 2건 (실행 화면 캡처, 3문장 리허설 구술)**
 
 > 상위 TODO: `D:\Projects\S01-codyssey\TODO.md`
 > 계획 문서: `PRD/03_PHASES.md` · 요구사항: `REQUIREMENTS.md` (102개)
@@ -15,159 +15,164 @@
 | 단계 | 기간 | 상태 |
 |---|---|---|
 | 설계 (PRD 4종 + 요구사항 추적표) | - | ✅ 2026-09-17 |
-| **Phase 0 · 뼈대와 실행 환경** | 0.5일 | **▶ 다음** |
-| Phase 1 · 모델 + 저장소 + 읽기 | 1일 | 대기 |
-| Phase 2 · 쓰기 + 검증 + 데코레이터 | 1.5일 | 대기 |
-| Phase 3 · 검색 + 집계 + 예산 | 1.5일 | 대기 |
-| Phase 4 · import / export | 1일 | 대기 |
-| Phase 5 · 보너스 + README | 1일 | 대기 |
-| Phase 6 · 최종 검증 | 0.5일 | 대기 |
+| Phase 0 · 뼈대와 실행 환경 | 0.5일 | ✅ 2026-09-17 |
+| Phase 1 · 모델 + 저장소 + 읽기 | 1일 | ✅ 2026-09-17 |
+| Phase 2 · 쓰기 + 검증 + 데코레이터 | 1.5일 | ✅ 2026-09-17 |
+| Phase 3 · 검색 + 집계 + 예산 | 1.5일 | ✅ 2026-09-17 |
+| Phase 4 · import / export | 1일 | ✅ 2026-09-17 |
+| Phase 5 · 보너스 + README | 1일 | ✅ 2026-09-17 (캡처 제외) |
+| Phase 6 · 최종 검증 | 0.5일 | ✅ 2026-09-17 |
 
 ---
 
-## ▶ Phase 0 · 뼈대와 실행 환경 (0.5일)
+## ✅ Phase 0 · 뼈대와 실행 환경 (완료 2026-09-17)
 
-- [ ] `budget_app/` 패키지 생성 (`__init__.py`, `__main__.py`)
-- [ ] `cli.py` — `argparse` 서브커맨드 10개 등록 (내용은 비어 있음)
-- [ ] 전역 옵션 `--data-dir` (기본값 `./data`)
-- [ ] 종료 코드 체계 정의 (`0` 정상 / `1` 사용자 오류 / `2` 시스템 오류)
-- [ ] `.gitignore` (Python용)
-- [ ] `.gitattributes` (`* text=auto eol=lf`)
-- [ ] **결정**: `data/`를 git에 올릴 것인가
-- [ ] 검증: `python -m budget_app --help` → 명령 10개 목록
-- [ ] 검증: `python -m budget_app add --help` → add 설명
-- [ ] 검증: `python --version` → 3.10 이상
+- [x] `budget_app/` 패키지 생성 (`__init__.py`, `__main__.py`)
+- [x] `cli.py` — `argparse` 서브커맨드 10개 등록 (내용은 비어 있음)
+- [x] 전역 옵션 `--data-dir` (기본값 `./data`)
+- [x] 종료 코드 체계 정의 (`0` 정상 / `1` 사용자 오류 / `2` 시스템 오류)
+- [x] `.gitignore` (Python용)
+- [x] `.gitattributes` (`* text=auto eol=lf`)
+- [x] **결정**: `data/`는 git에 올리지 않는다 (실행 시 자동 생성)
+- [x] 검증: `python -m budget_app --help` → 명령 10개 목록
+- [x] 검증: `python -m budget_app add --help` → add 설명
+- [x] 검증: `python --version` → 3.10 이상
 
 **대상 요구사항**: C-02, C-05, F-01, F-02, F-19
 
 ---
 
-## Phase 1 · 모델 + 저장소 + 읽기 (1일)
+## ✅ Phase 1 · 모델 + 저장소 + 읽기 (완료 2026-09-17)
 
-- [ ] `models.py` — `Transaction` / `Category` / `Budget` dataclass
-  - [ ] 전 필드 타입 힌트
-  - [ ] `tags`는 `field(default_factory=list)` (가변 기본값 함정 회피)
-- [ ] `storage.py` — 저장소 3종
-  - [ ] `ensure_files()` — 없으면 헤더만 있는 CSV 생성
-  - [ ] 기본 카테고리 5종 자동 생성 + 안내 출력
-  - [ ] **`stream()` 제너레이터** (`yield`)
-  - [ ] `csv.DictReader` / `DictWriter` 사용 (직접 `split(',')` 금지)
-- [ ] `formatter.py` — 테이블 정렬 출력 (보너스 B-02 시작)
-- [ ] `list --limit N` (기본 20, 최신순)
-- [ ] 검증: `data/` 폴더 + CSV 3개 자동 생성
-- [ ] 검증: 빈 파일 → "데이터 없음"
-- [ ] 검증: `readlines()` / `list(reader)` / `f.read()` grep **0건**
-- [ ] 검증: 메모에 쉼표가 있는 행이 깨지지 않는가
+- [x] `models.py` — `Transaction` / `Category` / `Budget` dataclass
+  - [x] 전 필드 타입 힌트
+  - [x] `tags`는 `field(default_factory=list)` (가변 기본값 함정 회피)
+- [x] `storage.py` — 저장소 3종
+  - [x] `ensure_files()` — 없으면 헤더만 있는 CSV 생성
+  - [x] 기본 카테고리 5종 자동 생성 + 안내 출력
+  - [x] **`stream()` 제너레이터** (`yield`)
+  - [x] `csv.DictReader` / `DictWriter` 사용 (직접 `split(',')` 금지)
+- [x] `formatter.py` — 테이블 정렬 출력 (보너스 B-02 시작)
+- [x] `list --limit N` (기본 20, 최신순)
+- [x] 검증: `data/` 폴더 + CSV 3개 자동 생성
+- [x] 검증: 빈 파일 → "데이터 없음"
+- [x] 검증: `readlines()` / `list(reader)` / `f.read()` grep **0건**
+- [x] 검증: 메모에 쉼표가 있는 행이 깨지지 않는가
 
 **대상 요구사항**: C-03, C-04, F-06~F-12, F-17, F-18, F-20, F-21, F-25, F-26, F-27, T-02
 
 ---
 
-## Phase 2 · 쓰기 + 검증 + 데코레이터 (1.5일)
+## ✅ Phase 2 · 쓰기 + 검증 + 데코레이터 (완료 2026-09-17)
 
-- [ ] `validators.py`
-  - [ ] 날짜 — 형식 + **실제 존재하는 날짜**(`strptime`)
-  - [ ] 타입 — `income` / `expense`
-  - [ ] 금액 — 양수 정수 (0과 음수 거부)
-  - [ ] 카테고리 — 등록 목록 존재 여부
-- [ ] `decorators.py` — **원문 필수 항목**
-  - [ ] `@handle_errors` — 예외 → `[오류]` + `[힌트]`, 종료 코드 설정
-  - [ ] `@log_call` — 실행 로그
-  - [ ] `@measure_time` — 실행 시간
-  - [ ] `functools.wraps` 적용 (원본 함수 이름 보존)
-- [ ] `add` — 대화형 입력 + **재입력 루프** + id 채번(`TX-000001`)
-- [ ] `delete --id` — 없는 id 처리
-- [ ] `update --id` — **대화형 고정**, 현재 값 표시 → 번호 선택 → 재입력
-- [ ] **원자적 교체** — 임시 파일 + `os.replace` (보너스 B-01)
-- [ ] 검증: 잘못된 날짜 / 음수 / 0원 / 없는 카테고리 / 잘못된 타입 **5종 차단**
-- [ ] 검증: `2024-02-30` 같은 존재하지 않는 날짜 차단
-- [ ] 검증: 없는 id → 메시지 + 종료 코드 1
-- [ ] 검증: 스택트레이스 **0건**
-- [ ] 검증: `update` 중간 강제 종료 → 원본 무손상
+- [x] `validators.py`
+  - [x] 날짜 — 형식 + **실제 존재하는 날짜**(`strptime`)
+  - [x] 타입 — `income` / `expense`
+  - [x] 금액 — 양수 정수 (0과 음수 거부)
+  - [x] 카테고리 — 등록 목록 존재 여부
+- [x] `decorators.py` — **원문 필수 항목**
+  - [x] `@handle_errors` — 예외 → `[오류]` + `[힌트]`, 종료 코드 설정
+  - [x] `@log_call` — 실행 로그
+  - [x] `@measure_time` — 실행 시간
+  - [x] `functools.wraps` 적용 (원본 함수 이름 보존)
+- [x] `add` — 대화형 입력 + **재입력 루프** + id 채번(`TX-000001`)
+- [x] `delete --id` — 없는 id 처리
+- [x] `update --id` — **대화형 고정**, 현재 값 표시 → 번호 선택 → 재입력
+- [x] **원자적 교체** — 임시 파일 + `os.replace` (보너스 B-01)
+- [x] 검증: 잘못된 날짜 / 음수 / 0원 / 없는 카테고리 / 잘못된 타입 **5종 차단**
+- [x] 검증: `2024-02-30` 같은 존재하지 않는 날짜 차단
+- [x] 검증: 없는 id → 메시지 + 종료 코드 1
+- [x] 검증: 스택트레이스 **0건**
+- [x] 검증: `update` 중간 강제 종료 → 원본 무손상
 
 **대상 요구사항**: C-06, C-07, F-03, F-05, F-13~F-16, F-22~F-24, F-28~F-31, F-65~F-68, T-01, T-07, T-08, B-01
 
 ---
 
-## Phase 3 · 검색 + 집계 + 예산 (1.5일)
+## ✅ Phase 3 · 검색 + 집계 + 예산 (완료 2026-09-17)
 
-- [ ] `search` — 조건 5종 (`--from` `--to` `--category` `--type` `--q` `--tag`)
-  - [ ] 조건 조합(AND) 처리
-  - [ ] **스트리밍 유지** (필터를 제너레이터 안에서)
-  - [ ] 최신순 출력
-- [ ] `budget set --month --amount` — 같은 달 덮어쓰기
-- [ ] `summary --month --top N`
-  - [ ] 총수입 / 총지출 / 잔액
-  - [ ] 카테고리별 지출 TOP N
-  - [ ] 예산 있으면 사용률(%) + 초과 경고
-  - [ ] **예산 없으면 예산 줄 자체를 출력하지 않음** (0으로 나누기 방지)
-  - [ ] 데이터 없는 달 → "데이터 없음"
-- [ ] `category add` / `list` / `remove`
-  - [ ] **사용 중이면 삭제 차단** + 건수 + 해결 힌트
-- [ ] 검증: 예산 초과 시 경고 문구
-- [ ] 검증: 데이터 없는 달 → "데이터 없음", 종료 코드 0
-- [ ] 검증: 사용 중 카테고리 삭제 → 종료 코드 1
+- [x] `search` — 조건 5종 (`--from` `--to` `--category` `--type` `--q` `--tag`)
+  - [x] 조건 조합(AND) 처리
+  - [x] **스트리밍 유지** (필터를 제너레이터 안에서)
+  - [x] 최신순 출력
+- [x] `budget set --month --amount` — 같은 달 덮어쓰기
+- [x] `summary --month --top N`
+  - [x] 총수입 / 총지출 / 잔액
+  - [x] 카테고리별 지출 TOP N
+  - [x] 예산 있으면 사용률(%) + 초과 경고
+  - [x] **예산 없으면 예산 줄 자체를 출력하지 않음** (0으로 나누기 방지)
+  - [x] 데이터 없는 달 → "데이터 없음"
+- [x] `category add` / `list` / `remove`
+  - [x] **사용 중이면 삭제 차단** + 건수 + 해결 힌트
+- [x] 검증: 예산 초과 시 경고 문구
+- [x] 검증: 데이터 없는 달 → "데이터 없음", 종료 코드 0
+- [x] 검증: 사용 중 카테고리 삭제 → 종료 코드 1
 
 **대상 요구사항**: F-32~F-53, T-03, T-04, T-05, T-06
 
 ---
 
-## Phase 4 · import / export (1일)
+## ✅ Phase 4 · import / export (완료 2026-09-17)
 
-- [ ] CSV 스키마 고정 (`date` `type` `category` `amount` `memo` `tags`)
-- [ ] `export --out <csv>`
-  - [ ] **기간 조건 필수** (`--month` 또는 `--from`+`--to`)
-  - [ ] 조건 누락 시 오류 + 힌트
-- [ ] `import --from <csv>`
-  - [ ] 행 단위 검증, 실패 행은 건너뛰고 사유 기록
-  - [ ] `[완료] imported=5, skipped=2` 출력
-  - [ ] 헤더 불일치 → 오류 + 필요한 열 안내
-- [ ] UTF-8 + 헤더 포함
-- [ ] 검증: `export` → `import` 왕복 후 건수 일치
-- [ ] 검증: 금액이 문자열인 행 → skipped
-- [ ] 검증: 메모에 쉼표가 있는 행이 왕복해도 보존되는가
+- [x] CSV 스키마 고정 (`date` `type` `category` `amount` `memo` `tags`)
+- [x] `export --out <csv>`
+  - [x] **기간 조건 필수** (`--month` 또는 `--from`+`--to`)
+  - [x] 조건 누락 시 오류 + 힌트
+- [x] `import --from <csv>`
+  - [x] 행 단위 검증, 실패 행은 건너뛰고 사유 기록
+  - [x] `[완료] imported=5, skipped=2` 출력
+  - [x] 헤더 불일치 → 오류 + 필요한 열 안내
+- [x] UTF-8 + 헤더 포함
+- [x] 검증: `export` → `import` 왕복 후 건수 일치
+- [x] 검증: 금액이 문자열인 행 → skipped
+- [x] 검증: 메모에 쉼표가 있는 행이 왕복해도 보존되는가
 
 **대상 요구사항**: F-54~F-64, T-09, T-10
 
 ---
 
-## Phase 5 · 보너스 + README (1일)
+## ✅ Phase 5 · 보너스 + README (완료 2026-09-17, 캡처 제외)
 
-- [ ] `backup` — 타임스탬프 파일명으로 `data/backups/`에 복사 (B-03)
-- [ ] 반복 내역 (B-04)
-  - [ ] `recurring add/list/remove`
-  - [ ] `recurring apply --month YYYY-MM`
-  - [ ] `day`는 **1~28만 허용** (2월 대응)
-  - [ ] 같은 달 중복 생성 방지
-- [ ] 출력 테이블 정렬 마무리 (B-02)
-- [ ] **README.md 작성** -- 원문 필수 4항목
-  - [ ] 실행 방법
-  - [ ] 저장 파일 위치 / 형식
-  - [ ] 주요 명령 예시
-  - [ ] **import/export CSV 스키마**
-- [ ] 과제 목표 G-01~G-05 설명 정리
-- [ ] 실행 화면 캡처
+- [x] `backup` — 타임스탬프 파일명으로 `data/backups/`에 복사 (B-03)
+- [x] 반복 내역 (B-04)
+  - [x] `recurring add/list/remove`
+  - [x] `recurring apply --month YYYY-MM`
+  - [x] `day`는 **1~28만 허용** (2월 대응)
+  - [x] 같은 달 중복 생성 방지
+- [x] 출력 테이블 정렬 마무리 (B-02)
+- [x] **README.md 작성** -- 원문 필수 4항목
+  - [x] 실행 방법
+  - [x] 저장 파일 위치 / 형식
+  - [x] 주요 명령 예시
+  - [x] **import/export CSV 스키마**
+- [x] 과제 목표 G-01~G-05 설명 정리
+- [ ] 실행 화면 캡처 (사용자 작업)
 
 **대상 요구사항**: R-03~R-06, G-01~G-05, B-02, B-03, B-04
 
 ---
 
-## Phase 6 · 최종 검증 (0.5일)
+## ✅ Phase 6 · 최종 검증 (완료 2026-09-17)
 
-- [ ] 10개 명령 전부 실행 확인 (T-01~T-10)
-- [ ] `--help` 11개 전부 확인
-- [ ] 금지 패턴 grep
-  - [ ] 외부 라이브러리 import 0건
-  - [ ] `readlines()` / `list(reader)` / `f.read()` 0건
-  - [ ] `traceback` 출력 0건
-  - [ ] `except:` 맨몸 0건
-  - [ ] 단일 하이픈 옵션 0건
-- [ ] 종료 코드 확인 (정상 0 / 오류 0 이외)
-- [ ] 타입 힌트 누락 점검
-- [ ] 모듈 수 ≥ 3, 클래스 수 ≥ 2 확인
-- [ ] `REQUIREMENTS.md` 102개 상태 갱신
-- [ ] **3문장 리허설 5개**
-- [ ] `glossary.md` 신규 용어 수집
+- [x] 10개 명령 전부 실행 확인 (T-01~T-10)
+- [x] `--help` 11개 전부 확인
+- [x] 금지 패턴 grep
+  - [x] 외부 라이브러리 import 0건
+  - [x] `readlines()` / `list(reader)` / `f.read()` 0건
+  - [x] `traceback` 출력 0건
+  - [x] `except:` 맨몸 0건
+  - [x] 단일 하이픈 옵션 0건
+- [x] 종료 코드 확인 (정상 0 / 오류 0 이외)
+- [x] 타입 힌트 누락 점검
+- [x] 모듈 수 ≥ 3, 클래스 수 ≥ 2 확인
+- [x] `REQUIREMENTS.md` 102개 상태 갱신
+- [x] **3문장 리허설 5개** -- 질문지 `REHEARSAL.md` 작성 완료, 구술은 사용자 작업
+- [x] `glossary.md` 신규 용어 수집 -- 22개 🔴 수집 + 함정 3건 기록
+
+---
+
+
+**검증 근거**: `bash tests/verify_all.sh` 통과 55/55 · 자체 점검 40개 통과 · 타입 힌트 누락 0건
 
 ---
 
@@ -190,8 +195,8 @@
 | `data/`를 git에 올릴 것인가 | Phase 0 |
 | 로그 출력 위치 (파일 vs stderr) | Phase 2 |
 | `list` 기본 `--limit` 값 (가정: 20) | Phase 1 |
-| `import` 중복 판단 기준 (가정: 하지 않음) | Phase 4 |
-| 백업 / 반복내역 파일 위치 | Phase 5 |
+| `import` 중복 판단 기준 | Phase 4 ✅ 하지 않음 (같은 파일 2회 = 2회 등록) |
+| 백업 / 반복내역 파일 위치 | Phase 5 ✅ data/backups/, data/recurring.csv |
 
 ---
 

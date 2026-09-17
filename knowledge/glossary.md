@@ -188,6 +188,48 @@
 
 ---
 
+---
+
+## Phase 2 · B2-1 용어 수집 (2026-09-17)
+
+> 수집 규칙(`LEARNING_RULES.md` 규칙 1): **이름과 만난 곳만 적는다. 정의는 본인 말로 직접 채운다.**
+> 세션 중 Claude가 한 줄 정의를 이미 준 항목도 있으나, **그대로 옮겨 적지 않는다.**
+> 남의 문장을 붙여넣으면 동료평가에서 다시 막힌다.
+> 채우는 순서: 🔴 이름만 → 5칸 채우면 🟡 → 설명 통과하면 🟢
+
+| # | 상태 | 용어 | 내가 본 곳 (B2-1) |
+|---|---|---|---|
+| 1 | 🔴 | 제너레이터 (generator) / `yield` | `storage.py` `stream()` |
+| 2 | 🔴 | 이터레이터 (Iterator) 타입 힌트 | `storage.py` 반환 타입 |
+| 3 | 🔴 | 스트리밍 처리 | `services.py` `search_transactions()` |
+| 4 | 🔴 | `deque` / `maxlen` | `storage.py` `latest()` |
+| 5 | 🔴 | 데코레이터 (decorator) | `decorators.py` `@handle_errors` |
+| 6 | 🔴 | `functools.wraps` | `decorators.py` 전 데코레이터 |
+| 7 | 🔴 | 공통 관심사 분리 (cross-cutting concern) | `cli.py` 명령 함수 위 3줄 |
+| 8 | 🔴 | dataclass / `field(default_factory=list)` | `models.py` `Transaction.tags` |
+| 9 | 🔴 | 가변 기본값 함정 (mutable default) | `models.py` 주석 |
+| 10 | 🔴 | 원자적 교체 (atomic replace) / `os.replace` | `storage.py` `_rewrite_all()` |
+| 11 | 🔴 | 계층 경계 (CLI / 서비스 / 저장소 / 모델) | `PRD/04_PROJECT_SPEC.md` 표 |
+| 12 | 🔴 | 저장소 패턴 (Repository) | `storage.py` `TransactionRepository` |
+| 13 | 🔴 | 종료 코드 (exit code) 0 / 1 / 2 | `exit_codes.py` |
+| 14 | 🔴 | `argparse` 서브커맨드 | `cli.py` `build_parser()` |
+| 15 | 🔴 | `csv.DictReader` / `DictWriter` | `storage.py` 읽기·쓰기 |
+| 16 | 🔴 | 외래키 제약이 없다는 말 | `services.py` `remove_category()` |
+| 17 | 🔴 | `Counter` / `most_common()` | `services.py` `summarize_month()` |
+| 18 | 🔴 | 프로퍼티 (`@property`) | `models.py` `MonthlySummary.balance` |
+| 19 | 🔴 | 사전순 정렬 = 시간순 정렬 | `services.py` `matches()` 날짜 비교 |
+| 20 | 🔴 | 왕복 검사 (round trip) | `tests/test_phase4.py` |
+| 21 | 🔴 | 문자 폭 (`east_asian_width`) | `formatter.py` `display_width()` |
+| 22 | 🔴 | 표준 입출력 인코딩 (`reconfigure`) | `__main__.py` |
+
+**세션 중 실제로 부딪힌 함정 3가지** (정의를 채울 때 여기부터 보십시오)
+
+| 함정 | 무슨 일이 있었나 |
+|---|---|
+| `int('１２３')` 이 통과한다 | 전각 숫자를 파이썬 `int()` 가 123 으로 받아들여 금액 검증이 뚫렸다. `isascii()` 확인을 추가했다 |
+| 표준 입력 인코딩 | 출력만 UTF-8로 맞춰 둬서 한글 메모가 깨진 채 저장 단계에서 터졌다 (`UnicodeEncodeError`) |
+| 예상 밖 예외가 그물을 빠져나감 | 위 오류가 스택트레이스로 그대로 노출됐다. `@handle_errors` 마지막에 `except Exception` 을 두어 두 줄로 바꿨다 |
+
 ## 변경 이력
 
 | 날짜 | 내용 |
@@ -195,3 +237,4 @@
 | 2026-09-06 | 최초 생성. Phase 1 용어 11개 정리 + B1-1 백로그 13개 수집 |
 | 2026-09-09 | B1-1 백로그 재정비 (13개 → A그룹 38개 + B그룹 3개). 사유: 최초 백로그가 강의자료 PDF만 근거로 작성되어 과제 원문과 불일치. React/SPA는 이번 미션 **금지 대상**이므로 B그룹으로 분리 |
 | 2026-09-11 | 개념 A3 박스 모델 완료. 8번 🔴→🟡 승급 + `box-sizing` · margin 상쇄 2건 신규 기입 |
+| 2026-09-17 | B2-1 용어 22개 수집(🔴) + 실제로 부딪힌 함정 3건 기록 |
