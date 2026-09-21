@@ -1,10 +1,11 @@
 # TODO - Codyssey with Claude
 
-최종 업데이트: 2026-09-11
+최종 업데이트: 2026-09-21
 현재 위치: **Step 2 · AI 도구 학습** (본과정 시작, 발대식 2026-09-03)
 
 > 커리큘럼 전체 지도: `phase2-ai-tools/CURRICULUM.md`
-> 학습 방식 규칙: `LEARNING_RULES.md`
+> 학습 방식 규칙: `LEARNING_RULES.md` (**규칙 6 검증 폐쇄 루프 신설 2026-09-21**)
+> 회의감이 들 때: `WHY.md`
 > 용어 사전: `knowledge/glossary.md`
 
 ---
@@ -24,6 +25,9 @@
 - [ ] 미션 완료 시 `decision-log/`에 결정/트러블슈팅 append
 - [ ] `knowledge/glossary.md` 용어 누적 -- 🔴 수집 → 🟡 정의 → 🟢 설명 통과
 - [ ] **주 1회 5분 점검** -- 🟡 5개 무작위 설명 (LEARNING_RULES 규칙 4)
+- [ ] **매 미션 G0** -- 착수 직전 `FAILCASES.md`에 실패 조건 3개, 10분 상한 (규칙 6, B3-1부터)
+- [ ] **매 미션 G1** -- 구현 직후 G0 목록 대조, 포착률 1줄 기록, 10분 (규칙 6)
+- [ ] **포착률 추세 확인** -- 3개 미션 누적 후 과정 지속 여부 판단 근거로 사용
 - [ ] 매 미션 종료 시 **Smart Factory 연결 한 줄** 기록 (Step 4에서 회수)
 - [ ] 동료평가 리듬 유지 -- **월 4회 (참여 2 + 받기 2)**
 - [ ] 단계 완료 후 `archive/` 이관
@@ -82,8 +86,8 @@
 > 사유: 개념 A 단계에서 설명 깊이가 계속 깊어져 8일간 Phase 1에 진입하지 못했다.
 
 **B1-1 잔여 (동료평가 준비, 사용자 참여 필요)**
-- [ ] **3문장 리허설 5개** -- `status` 문자열 하나 / Flex vs Grid / `filter`·`slice` / 이벤트 위임 / CSS 변수 테마
-- [ ] `glossary.md` 🔴 34개 → 🟡 승급
+- [ ] **3문장 리허설 5개** -- `status` 문자열 하나 / Flex vs Grid / `filter`·`slice` / 이벤트 위임 / CSS 변수 테마 *(규칙 6 G2 소급, 40분 상한)*
+- [ ] `glossary.md` 🔴 34개 → 🟡 승급 *(규칙 6 G3 소급, 20분 상한)*
 - [ ] 샌드박스 관찰 대조 4파일 (`concept-sandbox/a-css/`)
 - [ ] kkirikkiri 검증
 - [ ] 동료평가 신청 (레포 URL + 하위 경로 병기)
@@ -120,8 +124,8 @@
 
 **B2-1 잔여 (사용자 참여 필요)**
 - [ ] 실행 화면 캡처 6종 (`REQUIREMENTS.md` 확인 표)
-- [ ] 3문장 리허설 5개 구술 (`b2-1-budget-app/REHEARSAL.md`) → G-01~G-05 🟨 → ✅
-- [ ] `knowledge/glossary.md` B2-1 용어 22개 정의 채우기 (🔴 → 🟡)
+- [ ] 3문장 리허설 5개 구술 (`b2-1-budget-app/REHEARSAL.md`) → G-01~G-05 🟨 → ✅ *(규칙 6 G2 소급, 40분 상한)*
+- [ ] `knowledge/glossary.md` B2-1 용어 22개 정의 채우기 (🔴 → 🟡) *(규칙 6 G3 소급, 20분 상한)*
 
 **확정된 선택** (원문이 택일을 요구한 항목)
 
