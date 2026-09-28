@@ -95,7 +95,10 @@
   - 1번 성능 오답 → 반례 스크립트 실행 후 재시도 통과 / 2번 원리 미도달 → 반례 HTML 대조 후 재시도 통과
   - 3·4·5번 1회 통과. **약점은 지식이 아니라 답변 틀이었음** (2문장=무엇이 불가능해지는가 / 3문장=화면에서 무엇이 깨지는가)
 - [ ] `glossary.md` 🔴 34개 → 🟡 승급 *(규칙 6 G3 소급, 20분 상한)*
-- [ ] 샌드박스 관찰 대조 4파일 (`concept-sandbox/a-css/`)
+- [x] **샌드박스 관찰 대조 4파일 ✅ 완료 (2026-09-28)** -- 기록: `concept-sandbox/a-css/OBSERVATION.md`
+  - 40건 대조. a1-a2 🟨 1건(`querySelector` 기준) / a3·a4 전부 일치 / **a5 예측 오답 2건 신규**
+  - 교정 5건: `querySelector` 기준 = DOM 트리 순서 · id 중복 무에러 · 변수명 오타는 투명 · `justify-content`는 주축 · flex `width`는 희망값
+- [ ] **`querySelector` 심화** *(2026-09-28 신설)* -- 문서 순서 / 정적 vs 라이브 / `element.querySelector` 범위 / 참조가 낡는 문제와 이벤트 위임의 관계. 세부 항목은 `b1-1-portfolio/TODO.md` "추가 학습 필요" 절
 - [ ] kkirikkiri 검증
 - [ ] 동료평가 신청 (레포 URL + 하위 경로 병기)
 

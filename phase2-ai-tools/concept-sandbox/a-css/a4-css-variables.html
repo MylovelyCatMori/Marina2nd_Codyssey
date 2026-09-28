@@ -72,16 +72,19 @@
        =============================================================== */
     .typo-value {
       background-color: orange;
-      background-color: blu;              /* 값 오타. 변수 아님 */
+      background-color: blu;
+      /* 값 오타. 변수 아님 */
     }
 
     .typo-variable {
       background-color: orange;
-      background-color: var(--color-acent); /* 변수 이름 오타. c 하나 빠짐 */
+      background-color: var(--color-acent);
+      /* 변수 이름 오타. c 하나 빠짐 */
     }
 
     .with-fallback {
-      background-color: var(--color-acent, orange); /* 두 번째 자리 = 대체값 */
+      background-color: var(--color-acent, orange);
+      /* 두 번째 자리 = 대체값 */
     }
   </style>
 </head>

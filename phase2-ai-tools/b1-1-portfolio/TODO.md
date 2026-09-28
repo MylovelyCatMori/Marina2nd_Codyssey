@@ -1,7 +1,7 @@
 # B1-1 TODO -- 나를 소개하는 웹페이지
 
-최종 업데이트: 2026-09-16
-현재 위치: **구현 전 단계 완료. 남은 것은 학습 검증 3종 (사용자 참여 필요)**
+최종 업데이트: 2026-09-28
+현재 위치: **관찰 대조 완료. 남은 것은 용어 승급 · kkirikkiri · 동료평가 신청**
 배포 URL: https://mylovelycatmori.github.io/Marina2nd_Codyssey/phase2-ai-tools/b1-1-portfolio/
 
 > **운영 방식 변경 (2026-09-16)**: `LEARNING_RULES.md` **규칙 5 · 구현 우선** 적용.
@@ -22,6 +22,7 @@
 | 용어 훑기 (A그룹 38개) | - | ✅ 2026-09-09 |
 | Phase 0 · 뼈대와 환경 | 0.5일 | ✅ 2026-09-09 |
 | 개념 A · CSS 레이아웃 | - | ⏸ Phase 내 인라인 처리로 전환 |
+| **샌드박스 관찰 대조 4파일** | - | ✅ 2026-09-28 (40건, 오답 교정 5건) |
 | **Phase 1 · 시맨틱 + 반응형** | 1.5일 | ✅ 2026-09-16 |
 | 개념 B · JavaScript 기초 | - | ⏸ Phase 2 내 인라인 처리 |
 | **Phase 2 · DOM/이벤트/다크모드** | 1.5일 | ✅ 2026-09-16 |
@@ -95,20 +96,50 @@
 
 ---
 
-## ⚠ 관찰 보류 백로그 (테스트 환경 확보 시 일괄 처리)
+## ✅ 관찰 보류 백로그 -- 전량 해소 (2026-09-28)
 
-> 예측과 해설은 마쳤으나 브라우저 실행 대조를 못 한 항목. 🟢 승급의 전제 조건이다.
+> 예측과 해설은 마쳤으나 브라우저 실행 대조를 못 했던 항목. **네 파일 전부 대조 완료.**
+> 전체 기록: **`concept-sandbox/a-css/OBSERVATION.md`** (콘솔 실제값 · 판정 · 오답 사유)
 
-- [ ] `concept-sandbox/a-css/a1-a2-selectors.html` -- 선택자 우선순위 / 클래스 다중 / id 중복 3실험
-  - 예측 기록: Q1 green(id 최우선) · Q2 셋 다 적용 · Q3 id는 고유값이라 중복 불가
-  - **Q3 미완**: 규칙만 답했고 "규칙 위반 시 브라우저의 실제 동작"은 미답
-- [ ] `concept-sandbox/a-css/a3-box-model.html` -- box-sizing / margin 상쇄 / padding-margin 3실험
-  - 예측 기록: Q1 300·360 · Q2 40px · Q3 margin(**오답**, 정답 padding)
-- [ ] `concept-sandbox/a-css/a4-css-variables.html` -- 범위 / 테마 전환 / 오타 3실험
-  - 예측 기록: Q1 A·B·C 파랑(**B 오답**, 정답 초록) · Q2 전부 주황(**B 오답**, 정답 초록) · Q3 D orange · E orange(**오답**, 정답 투명)
-  - Console 기대값: B `#2f9e44` · E `rgba(0, 0, 0, 0)` · 토글 후 B만 초록 유지
-  - **확인 질문 미답**: ① `.swatch`에 `--color-accent: red` 추가 시 A·B·C와 dark 전환 결과 ② B를 `section`으로 한 겹 더 감쌌을 때 B 색과 탐색 순서
-- [ ] 확인 방법: Live Server로 열고 F12 Console 두 줄 + Elements→Computed 박스 그림
+- [x] `concept-sandbox/a-css/a1-a2-selectors.html` -- 8건 ✅ 7 / 🟨 1
+  - Q1·Q2 예측 적중. Q3 미답이던 "규칙 위반 시 실제 동작" 3칸 채움
+  - 🟨 Q3 기준 교정: `querySelector`의 기준은 원본 텍스트 순서가 아니라 **조회 시점의 DOM 트리 순서**
+- [x] `concept-sandbox/a-css/a3-box-model.html` -- 8건 전부 ✅
+  - Console `360` / `300` / `40` 일치. Computed 박스로 padding·margin 5개 항목 확인
+  - 정리 질문 정답: "배경색을 어디까지 칠하느냐"
+- [x] `concept-sandbox/a-css/a4-css-variables.html` -- 14건 전부 ✅. 예측 오답 3건 대조 확인
+  - Styles 패널 관찰이 결정적: D는 `blu` **값에만** 취소선, E는 **앞 줄 `orange` 전체에** 취소선
+  - 확인 질문 ① 테두리 전부 빨강 적중. 단 B 배경은 흰색이 아니라 `.zone`의 리터럴 `#eef7ee` 유지
+  - 확인 질문 ② 색 초록 유지 적중. 경로는 `div#inside` → `section` → `.zone` → `body` → `html`
+- [x] `concept-sandbox/a-css/a5-flexbox.html` -- 10건 전부 ✅. **예측 오답 2건 신규 발견**
+  - Q1 적중 (`li` 세로 쌓임). `display:flex`는 직계 자식에게만 적용
+  - **❌ Q2**: `justify-content`는 가로가 아니라 **주축** 정렬. `column`에서는 세로를 움직인다
+  - **❌ Q3**: `flex-wrap` 기본값은 `nowrap`. `flex-shrink: 1`이 기본이라 200px이 133.3으로 줄어든다
+
+**이번 관찰로 교정된 5가지** (glossary 정의에 반영할 재료)
+
+| # | 교정 내용 |
+|---|---|
+| 1 | `querySelector`의 기준 = 조회 시점의 DOM 트리 순서 (원본 텍스트 순서 아님) |
+| 2 | id 중복은 규격 위반이지만 브라우저는 에러 없이 관용 처리한다 |
+| 3 | 변수 이름 오타는 문법을 통과해 앞 줄을 덮은 뒤 쓰러져 **투명**이 된다. 값 오타는 실격이라 앞 줄이 살아남는다 |
+| 4 | `justify-content` = 주축 / `align-items` = 교차축 |
+| 5 | flex 안의 `width`는 약속이 아니라 희망값 |
+
+---
+
+## 추가 학습 필요 (2026-09-28 신설)
+
+- [ ] **`querySelector` 심화 이해** -- 관찰 대조에서 기준을 "먼저 선언된 것"으로 잘못 짚었다(🟨).
+  결론은 맞았으나 기준이 틀렸으므로 다시 다룬다. 확인할 것:
+  - [ ] 탐색 순서의 정체 -- 문서 순서(document order) = 깊이 우선 전위 순회. 왜 "위에 있는 것"이 아니라 "트리에서 먼저 닿는 것"인가
+  - [ ] `querySelector` vs `querySelectorAll` -- 반환 타입 차이(`Element` vs `NodeList`), 없을 때의 반환값(`null` vs 길이 0)
+  - [ ] **정적 vs 라이브** -- `querySelectorAll`은 정적 스냅샷, `getElementsByClassName`은 라이브 컬렉션. DOM이 바뀔 때 동작이 갈린다
+  - [ ] `getElementById` / `getElementsByTagName` 과의 차이와 선택 기준
+  - [ ] CSS 선택자 문법을 그대로 쓴다는 점 -- `#id`, `.class`, `a[href^="#"]`, `:not()`, 자손/자식 결합자
+  - [ ] `element.querySelector()` -- 문서 전체가 아니라 그 요소 하위만 검색. `closest()`는 반대로 조상 방향
+  - [ ] **담아둔 참조가 낡는 문제** -- `main.js`의 `els`는 시작 시 한 번만 조회한다. 다시 그려지는 요소(재시도·필터 버튼)에 직접 리스너를 달지 않고 부모에 위임한 이유와 직결
+  - [ ] 완료 기준: 위임을 쓴 이유를 3문장으로 설명. 1문장 무엇 / 2문장 위임 없이 달면 무엇이 불가능해지는가 / 3문장 화면에서 무엇이 깨지는가
 
 ---
 
@@ -390,6 +421,7 @@
 |---|---|
 | 2026-09-28 | **AI 사전평가 15/15 PASS.** 권장 보완 15건은 원문 미요구로 전량 제외. 자체 리뷰로 R-1(리사이즈 메뉴 버그) · R-2(디버그 로그) · R-3(Phase 주석 6곳) 반영 |
 | 2026-09-09 | 최초 생성. 설계 + 용어 훑기 + Phase 0 완료 반영 |
+| 2026-09-28 | **관찰 보류 백로그 전량 해소.** 네 파일 40건 대조, `OBSERVATION.md` 신설. a5에서 예측 오답 2건 신규 발견(`justify-content` 주축 / `flex-shrink` 기본값). `querySelector` 심화 항목 신설 |
 | 2026-09-11 | A1·A2 실습 파일 생성(관찰 보류), **A3 박스 모델 완료**. 관찰 보류 백로그 신설 |
 | 2026-09-15 | **A4 CSS 변수** 예측·해설 완료(오답 3건 교정, 관찰 보류). A5 Flexbox 실습 파일 생성 + 예측 질문 제시 |
 | 2026-09-16 | **Phase 5 완료** -- 언어 필터(흐름 4) + Hero 타이핑 + favicon. **GitHub Pages 배포 및 배포 URL 전 기능 검증 완료.** F-47·F-58·F-59·R-09·S-01·S-02 ✅ |
