@@ -36,7 +36,7 @@ const MAX_VISIBLE_REPOS = 9;        // 화면에 보여줄 저장소 개수 상�
 const AppState = {
   theme: 'light',
 
-  // Phase 3에서 채운다. status: 'loading' | 'success' | 'error' | 'empty'
+  // status: 'loading' | 'success' | 'error' | 'empty'
   repoState: { status: 'loading', data: [], error: null },
 
   activeLanguage: 'all',              // Phase 5
@@ -687,8 +687,6 @@ const init = () => {
 
   // await 하지 않는다. 응답을 기다리는 동안 나머지 화면은 이미 쓸 수 있어야 한다.
   fetchRepos();
-
-  console.log('[Phase 5] 초기화 완료. theme =', AppState.theme);
 };
 
 init();

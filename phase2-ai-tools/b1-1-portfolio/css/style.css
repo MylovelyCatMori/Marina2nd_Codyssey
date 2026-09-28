@@ -1,5 +1,5 @@
 /* ===================================================================
-   B1-1 포트폴리오 · Phase 1 스타일
+   B1-1 포트폴리오 · style.css
    작성 원칙
      - 모바일 퍼스트 (F-19): 기본 규칙은 좁은 화면 기준. 넓어질 때만 media query로 덮는다
      - 브레이크포인트 (F-20): 768px 태블릿 / 1024px 데스크톱
@@ -195,7 +195,7 @@ section[id] {
 
 /* F-21: 모바일 기본값 = 메뉴 숨김.
    화면 밖이 아니라 display:none 으로 완전히 없앤다.
-   Phase 2에서 .is-open 을 붙여 펼친다. */
+   .is-open 이 붙으면 펼쳐진다. */
 .nav__menu {
   display: none;
 }
@@ -271,7 +271,7 @@ section[id] {
   transition: transform var(--transition), opacity var(--transition);
 }
 
-/* 열렸을 때 위아래 막대를 X 로 겹친다 (Phase 2에서 .is-active 부착) */
+/* 열렸을 때 위아래 막대를 X 로 겹친다 (.is-active 부착 시) */
 .hamburger.is-active .hamburger__bar:nth-child(1) {
   transform: translateY(7px) rotate(45deg);
 }
@@ -702,8 +702,12 @@ section[id] {
 /* --- 태블릿 768px 이상 --- */
 @media (min-width: 768px) {
 
-  /* 메뉴를 가로로 펼치고 햄버거를 감춘다. */
-  .nav__menu {
+  /* 메뉴를 가로로 펼치고 햄버거를 감춘다.
+     .is-open 도 같이 적는다. 이것을 빼면 모바일에서 메뉴를 열어둔 채
+     창을 넓혔을 때 .nav__menu.is-open(특이도 0,2,0)이 이겨서
+     세로 메뉴가 헤더 아래에 그대로 덮여 남는다. */
+  .nav__menu,
+  .nav__menu.is-open {
     display: flex;
     flex-direction: row;
     gap: var(--space-4);
